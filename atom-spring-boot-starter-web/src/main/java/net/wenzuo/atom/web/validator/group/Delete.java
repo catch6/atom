@@ -12,7 +12,7 @@
 
 package net.wenzuo.atom.web.validator.group;
 
-import jakarta.validation.groups.Default;
+import javax.validation.groups.Default;
 
 /**
  * @author Catch

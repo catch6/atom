@@ -12,12 +12,6 @@
 
 package net.wenzuo.atom.web.config;
 
-import jakarta.annotation.Resource;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.utils.NanoIdUtils;
 import net.wenzuo.atom.web.properties.LoggingProperties;
@@ -35,6 +29,12 @@ import org.springframework.util.PathMatcher;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -135,7 +135,7 @@ public class LoggingFilter extends OncePerRequestFilter {
 
 		String queryString = wrapper.getQueryString();
 		if (queryString != null) {
-			msg.append('?').append(URLDecoder.decode(queryString, StandardCharsets.UTF_8));
+			msg.append('?').append(URLDecoder.decode(queryString, StandardCharsets.UTF_8.name()));
 		}
 
 		// String client = request.getRemoteAddr();

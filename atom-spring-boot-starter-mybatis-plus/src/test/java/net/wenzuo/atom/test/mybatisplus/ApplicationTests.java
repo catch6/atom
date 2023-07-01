@@ -13,13 +13,14 @@
 package net.wenzuo.atom.test.mybatisplus;
 
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.mybatisplus.config.MybatisPlusAutoConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import javax.annotation.Resource;
 
 /**
  * @author Catch

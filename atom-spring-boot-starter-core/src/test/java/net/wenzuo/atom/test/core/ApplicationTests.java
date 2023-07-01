@@ -12,7 +12,6 @@
 
 package net.wenzuo.atom.test.core;
 
-import jakarta.annotation.Resource;
 import net.wenzuo.atom.core.config.CoreAsyncConfiguration;
 import net.wenzuo.atom.core.config.CoreAutoConfiguration;
 import net.wenzuo.atom.core.config.CoreJsonConfiguration;
@@ -21,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
+import javax.annotation.Resource;
+
 /**
  * @author Catch
  * @since 2023-06-06
@@ -28,14 +29,14 @@ import org.springframework.context.ApplicationContext;
 @SpringBootTest
 class ApplicationTests {
 
-    @Resource
-    private ApplicationContext applicationContext;
+	@Resource
+	private ApplicationContext applicationContext;
 
-    @Test
-    void contextLoads() {
-        Assertions.assertNotNull(applicationContext.getBean(CoreAutoConfiguration.class));
-        Assertions.assertNotNull(applicationContext.getBean(CoreAsyncConfiguration.class));
-        Assertions.assertNotNull(applicationContext.getBean(CoreJsonConfiguration.class));
-    }
+	@Test
+	void contextLoads() {
+		Assertions.assertNotNull(applicationContext.getBean(CoreAutoConfiguration.class));
+		Assertions.assertNotNull(applicationContext.getBean(CoreAsyncConfiguration.class));
+		Assertions.assertNotNull(applicationContext.getBean(CoreJsonConfiguration.class));
+	}
 
 }

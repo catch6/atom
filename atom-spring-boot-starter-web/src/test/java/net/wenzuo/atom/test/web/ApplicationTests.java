@@ -12,7 +12,6 @@
 
 package net.wenzuo.atom.test.web;
 
-import jakarta.annotation.Resource;
 import net.wenzuo.atom.core.utils.JsonUtils;
 import net.wenzuo.atom.test.web.params.TestReq;
 import org.junit.jupiter.api.Test;
@@ -26,6 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.util.ResourceUtils;
 
+import javax.annotation.Resource;
 import java.io.FileInputStream;
 
 /**

@@ -12,9 +12,8 @@
 
 package net.wenzuo.atom.web.validator;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

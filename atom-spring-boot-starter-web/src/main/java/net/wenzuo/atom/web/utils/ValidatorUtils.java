@@ -12,9 +12,9 @@
 
 package net.wenzuo.atom.web.utils;
 
-import jakarta.validation.*;
 import org.hibernate.validator.HibernateValidator;
 
+import javax.validation.*;
 import java.util.Set;
 
 /**

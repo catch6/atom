@@ -13,13 +13,13 @@
 package net.wenzuo.atom.web.utils;
 
 import com.alibaba.excel.EasyExcel;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import net.wenzuo.atom.core.utils.JsonUtils;
 import org.springframework.http.HttpHeaders;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -60,7 +60,7 @@ public class ResponseUtils {
 	@SneakyThrows
 	public static void renderXlsx(HttpServletResponse response, String filename, Class head, Supplier<Collection> supplier) {
 		filename = (filename == null ? "表格" : filename) + ".xlsx";
-		filename = URLEncoder.encode(filename, StandardCharsets.UTF_8);
+		filename = URLEncoder.encode(filename, StandardCharsets.UTF_8.name());
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		response.setContentType(TYPE_EXCEL);
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + filename + ";filename*=UTF-8''" + filename);

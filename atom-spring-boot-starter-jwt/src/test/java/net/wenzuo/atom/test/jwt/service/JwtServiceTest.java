@@ -12,11 +12,12 @@
 
 package net.wenzuo.atom.test.jwt.service;
 
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.jwt.service.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.annotation.Resource;
 
 /**
  * @author Catch
@@ -26,21 +27,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class JwtServiceTest {
 
-    @Resource
-    private JwtService jwtService;
+	@Resource
+	private JwtService jwtService;
 
-    @Test
-    void sign() {
-        String signed = jwtService.sign("test");
-        log.info("signed: {}", signed);
-    }
+	@Test
+	void sign() {
+		String signed = jwtService.sign("test");
+		log.info("signed: {}", signed);
+	}
 
-    @Test
-    void parse() {
-        String signed = jwtService.sign("test");
-        log.info("signed: {}", signed);
-        String parsed = jwtService.parse(signed, String.class);
-        log.info("parsed: {}", parsed);
-    }
+	@Test
+	void parse() {
+		String signed = jwtService.sign("test");
+		log.info("signed: {}", signed);
+		String parsed = jwtService.parse(signed, String.class);
+		log.info("parsed: {}", parsed);
+	}
 
 }

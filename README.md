@@ -13,7 +13,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 
 ## 版本
 
-此分支基于 JDK17+，SpringBoot 3.x，SpringCloud 2022.x，SpringCloud Alibaba 2022.x开发。
+此分支基于 JDK8+，SpringBoot 2.7+，SpringCloud 2021.x，SpringCloud Alibaba 2021.x开发。
 
 各分支版本号对应关系如下:
 
@@ -41,7 +41,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 <parent>
 	<groupId>net.wenzuo</groupId>
 	<artifactId>atom</artifactId>
-	<version>2.0.0</version>
+	<version>1.0.0</version>
 	<relativePath/>
 </parent>
 ```

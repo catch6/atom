@@ -12,8 +12,6 @@
 
 package net.wenzuo.atom.web.config;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.exception.HttpStatusException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -30,6 +28,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.Iterator;
 import java.util.Set;
 

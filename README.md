@@ -2,10 +2,13 @@
 
 <p align="center">
 	<a target="_blank" href="https://central.sonatype.com/artifact/net.wenzuo/atom">
-		<img src="https://img.shields.io/maven-central/v/net.wenzuo/atom.svg?label=Maven%20Central" />
+        <img alt="Atom" src="https://img.shields.io/maven-central/v/net.wenzuo/atom?versionPrefix=1.&label=atom">
 	</a>
 	<a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
-		<img src="https://img.shields.io/badge/JDK-17+-blue.svg" />
+		<img alt="Jdk" src="https://img.shields.io/badge/Jdk-8+-d93a32.svg" />
+	</a>
+	<a target="_blank" href="https://central.sonatype.com/artifact/org.springframework.boot/spring-boot">
+		<img alt="SpringBoot" src="https://img.shields.io/maven-central/v/org.springframework.boot/spring-boot?versionPrefix=2.7&logo=springboot&label=SpringBoot&color=73b839"/>
 	</a>
 </p>
 

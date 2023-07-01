@@ -36,6 +36,7 @@
     </licenses>
     <modules>
         <module>atom-spring-boot-starter-core</module>
+        <module>atom-spring-boot-starter-jwt</module>
     </modules>
 
     <scm>
@@ -94,6 +95,18 @@
                 <version>${spring-cloud-alibaba-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <!-- atom 依赖 -->
+            <dependency>
+                <groupId>net.wenzuo</groupId>
+                <artifactId>atom-spring-boot-starter-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.wenzuo</groupId>
+                <artifactId>atom-spring-boot-starter-jwt</artifactId>
+                <version>${revision}</version>
             </dependency>
 
             <!-- 第三方依赖 -->

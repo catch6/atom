@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://10.0.222.163:3306/atom_mybatis_plus_test?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&rewriteBatchedStatements=true

@@ -8,7 +8,7 @@
 		<img alt="Jdk" src="https://img.shields.io/badge/Jdk-8+-d93a32.svg" />
 	</a>
 	<a target="_blank" href="https://central.sonatype.com/artifact/org.springframework.boot/spring-boot">
-		<img alt="SpringBoot" src="https://img.shields.io/maven-central/v/org.springframework.boot/spring-boot?versionPrefix=2.7&logo=springboot&label=SpringBoot&color=73b839"/>
+		<img alt="SpringBoot" src="https://img.shields.io/badge/SpringBoot-2.7+-73b839.svg?logo=springboot" />
 	</a>
 </p>
 

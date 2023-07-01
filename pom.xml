@@ -39,6 +39,9 @@
 		<module>atom-spring-boot-starter-jwt</module>
 		<module>atom-spring-boot-starter-mybatis-plus</module>
 		<module>atom-spring-boot-starter-redis</module>
+		<module>atom-spring-boot-starter-web</module>
+		<module>atom-spring-cloud-starter-consul</module>
+		<module>atom-spring-cloud-starter-feign</module>
 	</modules>
 
 	<scm>
@@ -118,6 +121,21 @@
 			<dependency>
 				<groupId>net.wenzuo</groupId>
 				<artifactId>atom-spring-boot-starter-redis</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-boot-starter-web</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-cloud-starter-consul</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-cloud-starter-feign</artifactId>
 				<version>${revision}</version>
 			</dependency>
 

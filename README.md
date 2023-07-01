@@ -20,10 +20,10 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 ```xml
 
 <parent>
-    <groupId>net.wenzuo</groupId>
-    <artifactId>atom</artifactId>
-    <version>2.0.0</version>
-    <relativePath/>
+	<groupId>net.wenzuo</groupId>
+	<artifactId>atom</artifactId>
+	<version>2.0.0</version>
+	<relativePath/>
 </parent>
 ```
 
@@ -32,15 +32,33 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 ```xml
 
 <dependency>
-    <groupId>net.wenzuo</groupId>
-    <artifactId>atom-spring-boot-starter-web</artifactId>
+	<groupId>net.wenzuo</groupId>
+	<artifactId>atom-spring-boot-starter-web</artifactId>
 </dependency>
 ```
 
 ## 配置项
 
-下面为项目的默认配置项，可以在 application.yml 中覆盖
+各个模块的配置项，可以在 application.yml 中覆盖
 
 ```yaml
 
+```
+
+## 一些建议
+
+建议在生产环境中在网关侧配置CORS并关闭服务的CORS配置
+建议在生产环境关闭Swagger及其相关配置
+
+```yaml
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+atom:
+  web:
+    cors:
+      enabled: false
 ```

@@ -2,7 +2,7 @@
 
 <p align="center">
 	<a target="_blank" href="https://central.sonatype.com/artifact/net.wenzuo/atom">
-        <img alt="Atom" src="https://img.shields.io/maven-central/v/net.wenzuo/atom?versionPrefix=1.&label=atom">
+        <img alt="Atom" src="https://img.shields.io/maven-central/v/net.wenzuo/atom?versionPrefix=1.&label=Atom">
 	</a>
 	<a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
 		<img alt="Jdk" src="https://img.shields.io/badge/Jdk-8+-d93a32.svg" />

@@ -20,10 +20,10 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 ```xml
 
 <parent>
-	<groupId>net.wenzuo</groupId>
-	<artifactId>mono</artifactId>
-	<version>1.0.0</version>
-	<relativePath/>
+    <groupId>net.wenzuo</groupId>
+    <artifactId>atom</artifactId>
+    <version>2.0.0</version>
+    <relativePath/>
 </parent>
 ```
 
@@ -32,8 +32,8 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 ```xml
 
 <dependency>
-	<groupId>net.wenzuo</groupId>
-	<artifactId>atom-spring-boot-starter-web</artifactId>
+    <groupId>net.wenzuo</groupId>
+    <artifactId>atom-spring-boot-starter-web</artifactId>
 </dependency>
 ```
 

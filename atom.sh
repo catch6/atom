@@ -40,13 +40,9 @@ if [ "${ACTION}" == "version" ]; then
   sed -i '' "s/<version>.*<\/version>/<version>${VERSION}<\/version>/g" README.md
   info "修改 README.md 版本号...OK!\n"
 
-  info "更新子模块 pom.xml 中 parent.version 版本号..."
-  mvn versions:set -DnewVersion=${VERSION}
-  info "更新子模块 pom.xml 中 parent.version 版本号...OK!\n"
-
-  info "更新 pom.xml 中 atom.version 版本号..."
-  sed -i '' "s/<atom\.version>.*<\/atom\.version>/<atom\.version>${VERSION}<\/atom\.version>/g" pom.xml
-  info "更新 pom.xml 中 atom.version 版本号...OK!\n"
+  info "更新 pom.xml 中 revision 版本号..."
+  sed -i '' "s/<revision>.*<\/revision>/<revision>${VERSION}<\/revision>/g" pom.xml
+  info "更新 pom.xml 中 revision 版本号...OK!\n"
 
   info "版本${VERSION}设置完成!"
 elif [ "${ACTION}" == "deploy" ]; then
@@ -80,13 +76,9 @@ elif [ "${ACTION}" == "deploy" ]; then
   sed -i '' "s/<version>.*<\/version>/<version>${VERSION}<\/version>/g" README.md
   info "修改 README.md 版本号...OK!\n"
 
-  info "更新子模块 pom.xml 中 parent.version 版本号..."
-  mvn versions:set -DnewVersion=${VERSION}
-  info "更新子模块 pom.xml 中 parent.version 版本号...OK!\n"
-
-  info "更新 pom.xml 中 atom.version 版本号..."
-  sed -i '' "s/<atom\.version>.*<\/atom\.version>/<atom\.version>${VERSION}<\/atom\.version>/g" pom.xml
-  info "更新 pom.xml 中 atom.version 版本号...OK!\n"
+  info "更新 pom.xml 中 revision 版本号..."
+  sed -i '' "s/<revision>.*<\/revision>/<revision>${VERSION}<\/revision>/g" pom.xml
+  info "更新 pom.xml 中 revision 版本号...OK!\n"
 
   info "发布到 maven..."
   mvn clean deploy -DskipTests

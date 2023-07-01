@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2022-2023 Catch
+ * [Atom] is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
+
+package net.wenzuo.atom.web.properties;
+
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+/**
+ * @author Catch
+ * @since 2023-06-28
+ */
+@Data
+@ConfigurationProperties(prefix = "atom.web.logging")
+public class LoggingProperties {
+
+	/**
+	 * 是否启用请求响应日志记录
+	 */
+	private Boolean enabled = true;
+
+	/**
+	 * 日志过滤包含的路径
+	 */
+	private String[] includePath = {"/**"};
+
+	/**
+	 * 日志过滤排除的路径
+	 */
+	private String[] excludePath = {};
+
+	/**
+	 * 日志过滤内部排除的路径, 优先级高于 excludePath, 一般不建议修改
+	 */
+	private String[] internalExcludePath = {"/actuator/**", "/error", "/v3/api-docs/**", "/swagger-ui*/**", "/webjars/**"};
+
+}

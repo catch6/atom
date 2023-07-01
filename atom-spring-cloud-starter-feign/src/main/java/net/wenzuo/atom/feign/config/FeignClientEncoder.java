@@ -29,7 +29,7 @@ import java.lang.reflect.Type;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(value = "atom.feign.codec", matchIfMissing = true)
+@ConditionalOnProperty(value = "atom.feign.logging", matchIfMissing = true)
 public class FeignClientEncoder extends SpringEncoder {
 
 	static final ThreadLocal<Long> TIMER = new ThreadLocal<>();

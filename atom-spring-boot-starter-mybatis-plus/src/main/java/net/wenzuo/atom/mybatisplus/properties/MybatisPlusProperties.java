@@ -31,7 +31,7 @@ public class MybatisPlusProperties {
 	/**
 	 * 是否启用 mysql 分页插件
 	 */
-	private boolean interceptor = true;
+	private boolean pagination = true;
 
 	/**
 	 * 是否启用自动填充 create_time update_time 为当前时间(mapper.xml 中除外)

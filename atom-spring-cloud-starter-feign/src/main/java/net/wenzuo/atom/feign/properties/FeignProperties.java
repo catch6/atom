@@ -28,11 +28,11 @@ public class FeignProperties {
 	 */
 	private Boolean enabled = true;
 	/**
-	 * 是否启用 FeignClientEncoder 和 FeignClientDecoder
+	 * 是否启用Feign请求响应日志记录
 	 */
-	private Boolean codec = true;
+	private Boolean logging = true;
 	/**
-	 * 是否启用 FeignExceptionHandler
+	 * 是否启用 Feign 第三方响应结果异常处理
 	 */
 	private Boolean exceptionHandler = true;
 

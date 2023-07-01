@@ -33,7 +33,7 @@ import java.lang.reflect.Type;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(value = "atom.feign.codec", matchIfMissing = true)
+@ConditionalOnProperty(value = "atom.feign.logging", matchIfMissing = true)
 public class FeignClientDecoder extends SpringDecoder {
 
 	public FeignClientDecoder(ObjectFactory<HttpMessageConverters> messageConverters, ObjectProvider<HttpMessageConverterCustomizer> customizers) {

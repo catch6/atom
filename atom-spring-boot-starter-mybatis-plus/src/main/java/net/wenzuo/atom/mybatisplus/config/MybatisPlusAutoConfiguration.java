@@ -32,7 +32,7 @@ import org.springframework.context.annotation.PropertySource;
 @ConditionalOnProperty(value = "atom.mybatis-plus.enabled", matchIfMissing = true)
 public class MybatisPlusAutoConfiguration {
 
-	@ConditionalOnProperty(value = "atom.mybatis-plus.interceptor", matchIfMissing = true)
+	@ConditionalOnProperty(value = "atom.mybatis-plus.pagination", matchIfMissing = true)
 	@Bean
 	public MybatisPlusInterceptor mybatisPlusInterceptor() {
 		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();

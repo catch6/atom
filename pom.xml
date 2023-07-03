@@ -65,9 +65,7 @@
 	</developers>
 
 	<properties>
-		<java.version>8</java.version>
-
-		<revision>1.0.0</revision>
+		<revision>1.0.1</revision>
 		<spring-cloud-dependencies.version>2021.0.5</spring-cloud-dependencies.version>
 		<spring-cloud-alibaba-dependencies.version>2021.0.5.0</spring-cloud-alibaba-dependencies.version>
 
@@ -76,6 +74,7 @@
 		<guava.version>32.0.1-jre</guava.version>
 		<mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
 		<springdoc-openapi-starter-webmvc-ui.version>2.1.0</springdoc-openapi-starter-webmvc-ui.version>
+		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
 		<easyexcel.version>3.3.2</easyexcel.version>
 
 		<nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
@@ -164,6 +163,11 @@
 				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 				<version>${springdoc-openapi-starter-webmvc-ui.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-ui</artifactId>
+				<version>${springdoc-openapi-ui.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.alibaba</groupId>

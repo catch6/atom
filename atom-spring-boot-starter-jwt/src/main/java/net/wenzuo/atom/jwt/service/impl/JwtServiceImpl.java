@@ -40,7 +40,7 @@ public class JwtServiceImpl implements JwtService {
 		Optional<JWSAlgorithm> jwsAlgorithm = jwsSigner.supportedJWSAlgorithms()
 													   .stream()
 													   .findFirst();
-		if (jwsAlgorithm.isPresent()) {
+		if (!jwsAlgorithm.isPresent()) {
 			throw new RuntimeException("JWSAlgorithm is empty");
 		}
 		JWSHeader jwsHeader = new JWSHeader(jwsAlgorithm.get());

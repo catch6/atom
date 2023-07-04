@@ -81,7 +81,7 @@ elif [ "${ACTION}" == "deploy" ]; then
   info "更新 pom.xml 中 revision 版本号...OK!\n"
 
   info "发布到 maven..."
-  mvn clean deploy -DskipTests
+  mvn -Possrh -Prelease clean deploy -DskipTests
   info "发布到 maven...OK!\n"
 
   info "提交代码并推送..."

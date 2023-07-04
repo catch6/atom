@@ -18,15 +18,15 @@ import org.springframework.http.HttpStatus;
  * @author Catch
  * @since 2023-05-30
  */
-public class UnauthorizedException extends HttpException {
+public class TooLargeException extends HttpException {
 
-	private static final int STATUS = HttpStatus.UNAUTHORIZED.value();
+	private static final int STATUS = HttpStatus.PAYLOAD_TOO_LARGE.value();
 
-	public UnauthorizedException(String message) {
+	public TooLargeException(String message) {
 		super(STATUS, message);
 	}
 
-	public UnauthorizedException(Throwable t, String message) {
+	public TooLargeException(Throwable t, String message) {
 		super(t, STATUS, message);
 	}
 

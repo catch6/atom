@@ -12,26 +12,22 @@
 
 package net.wenzuo.atom.core.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author Catch
  * @since 2023-05-30
  */
-public class BadRequestException extends HttpStatusException {
+public class BadRequestException extends HttpException {
 
-    public BadRequestException(String message) {
-        super(400, message);
-    }
+	private static final int STATUS = HttpStatus.BAD_REQUEST.value();
 
-    public BadRequestException(String format, Object... args) {
-        super(400, String.format(format, args));
-    }
+	public BadRequestException(String message) {
+		super(STATUS, message);
+	}
 
-    public BadRequestException(Throwable t) {
-        super(400, t);
-    }
-
-    public BadRequestException(String message, Throwable t) {
-        super(400, message, t);
-    }
+	public BadRequestException(Throwable t, String message) {
+		super(t, STATUS, message);
+	}
 
 }

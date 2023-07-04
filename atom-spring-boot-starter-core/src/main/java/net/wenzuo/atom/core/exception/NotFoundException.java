@@ -12,26 +12,22 @@
 
 package net.wenzuo.atom.core.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author Catch
  * @since 2023-05-30
  */
-public class NotFoundException extends HttpStatusException {
+public class NotFoundException extends HttpException {
 
-    public NotFoundException(String message) {
-        super(404, message);
-    }
+	private static final int STATUS = HttpStatus.NOT_FOUND.value();
 
-    public NotFoundException(String format, Object... args) {
-        super(404, String.format(format, args));
-    }
+	public NotFoundException(String message) {
+		super(STATUS, message);
+	}
 
-    public NotFoundException(Throwable t) {
-        super(404, t);
-    }
-
-    public NotFoundException(String message, Throwable t) {
-        super(404, message, t);
-    }
+	public NotFoundException(Throwable t, String message) {
+		super(t, STATUS, message);
+	}
 
 }

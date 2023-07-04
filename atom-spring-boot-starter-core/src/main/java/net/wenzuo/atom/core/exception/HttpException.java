@@ -12,26 +12,28 @@
 
 package net.wenzuo.atom.core.exception;
 
+import lombok.Getter;
+
 /**
  * @author Catch
- * @since 2023-05-30
+ * @since 2023-07-03
  */
-public class RequestTooLargeException extends HttpStatusException {
+@Getter
+public class HttpException extends RuntimeException {
 
-    public RequestTooLargeException(String message) {
-        super(413, message);
-    }
+	private final int status;
+	private final String message;
 
-    public RequestTooLargeException(String format, Object... args) {
-        super(413, String.format(format, args));
-    }
+	public HttpException(int status, String message) {
+		super(message);
+		this.status = status;
+		this.message = message;
+	}
 
-    public RequestTooLargeException(Throwable t) {
-        super(413, t);
-    }
-
-    public RequestTooLargeException(String message, Throwable t) {
-        super(413, message, t);
-    }
+	public HttpException(Throwable t, int status, String message) {
+		super(t);
+		this.status = status;
+		this.message = message;
+	}
 
 }

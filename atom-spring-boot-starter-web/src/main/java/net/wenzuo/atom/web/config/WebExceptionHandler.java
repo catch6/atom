@@ -15,7 +15,7 @@ package net.wenzuo.atom.web.config;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.exception.HttpStatusException;
+import net.wenzuo.atom.core.exception.HttpException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,8 +48,8 @@ public class WebExceptionHandler {
 	 * @param e 异常对象
 	 * @return Result
 	 */
-	@ExceptionHandler(HttpStatusException.class)
-	public ResponseEntity<String> handler(HttpStatusException e) {
+	@ExceptionHandler(HttpException.class)
+	public ResponseEntity<String> handler(HttpException e) {
 		if (e.getStatus() < 500) {
 			log.warn(e.getMessage(), e);
 		} else {
@@ -69,11 +69,7 @@ public class WebExceptionHandler {
 	 */
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<String> handler(MethodArgumentTypeMismatchException e) {
-		log.warn(e.getMessage(), e);
-		Class<?> type = e.getRequiredType();
-		if (type == null) {
-			return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body("请求参数类型不匹配");
-		}
+		log.warn("请求参数类型不匹配" + e.getMessage(), e);
 		return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN).body("请求参数类型不匹配");
 	}
 
@@ -148,7 +144,7 @@ public class WebExceptionHandler {
 	public ResponseEntity<String> handler(MissingServletRequestParameterException e) {
 		log.warn("请求参数缺失：" + e.getParameterName(), e);
 		return ResponseEntity.badRequest().contentType(MediaType.TEXT_PLAIN)
-							 .body("请求参数缺失：" + e.getParameterName());
+							 .body("请求参数缺失");
 	}
 
 	/**
@@ -165,12 +161,12 @@ public class WebExceptionHandler {
 		if (supportedMethods == null) {
 			log.warn("请求方法错误: 不支持" + method, e);
 			return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).contentType(MediaType.TEXT_PLAIN)
-								 .body("请求方法错误: 不支持" + method);
+								 .body("请求方法错误");
 		}
 		String methods = String.join(", ", supportedMethods);
 		log.warn("请求方法错误: 不支持" + method + ", 支持" + methods, e);
 		return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).contentType(MediaType.TEXT_PLAIN)
-							 .body("请求方法错误: 不支持" + method + ", 支持" + methods);
+							 .body("请求方法错误");
 	}
 
 	/**
@@ -190,7 +186,8 @@ public class WebExceptionHandler {
 		}
 		String message = "请求内容类型错误: 不支持" + contentType;
 		log.warn(message, e);
-		return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).contentType(MediaType.TEXT_PLAIN).body(message);
+		return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).contentType(MediaType.TEXT_PLAIN)
+							 .body("请求内容类型错误");
 	}
 
 	/**

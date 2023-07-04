@@ -13,7 +13,7 @@
 package net.wenzuo.atom.web.config;
 
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.exception.HttpStatusException;
+import net.wenzuo.atom.core.exception.HttpException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,8 +48,8 @@ public class WebExceptionHandler {
 	 * @param e 异常对象
 	 * @return Result
 	 */
-	@ExceptionHandler(HttpStatusException.class)
-	public ResponseEntity<String> handler(HttpStatusException e) {
+	@ExceptionHandler(HttpException.class)
+	public ResponseEntity<String> handler(HttpException e) {
 		if (e.getStatus() < 500) {
 			log.warn(e.getMessage(), e);
 		} else {
@@ -97,7 +97,7 @@ public class WebExceptionHandler {
 
 	/**
 	 * 请求参数校验失败异常处理
-	 * 当参数有 {@link jakarta.validation.Valid} 注解并校验失败时触发
+	 * 当参数有 {@link javax.validation.Valid} 注解并校验失败时触发
 	 *
 	 * @param e 异常对象
 	 * @return Result

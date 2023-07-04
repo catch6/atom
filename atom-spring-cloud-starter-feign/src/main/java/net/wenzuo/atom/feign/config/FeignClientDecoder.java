@@ -46,12 +46,12 @@ public class FeignClientDecoder extends SpringDecoder {
 		FeignClientEncoder.TIMER.remove();
 		int status = response.status();
 		Object result = super.decode(response, type);
-		String data = JsonUtils.toJson(result);
-		log.info("THIRD-RESPONSE: {}ms {} {}", time, status, data);
+		String jsonString = JsonUtils.toJson(result);
+		log.info("THIRD-RESPONSE: {}ms {} {}", time, status, jsonString);
 		if (status == 200) {
 			return result;
 		}
-		throw new ThirdException(status, data, response.request());
+		throw new ThirdException(status, jsonString, response.request());
 	}
 
 }

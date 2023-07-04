@@ -12,6 +12,7 @@
 
 package net.wenzuo.atom.feign.config;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
@@ -42,6 +43,22 @@ public class FeignExceptionHandler {
 			log.error(e.getMessage(), e);
 		}
 		return ResponseEntity.status(e.status()).contentType(MediaType.TEXT_PLAIN).body(e.getMessage());
+	}
+
+	/**
+	 * openfeign 异常处理,
+	 *
+	 * @param e 异常对象
+	 * @return Result
+	 */
+	@ExceptionHandler(FeignException.class)
+	public ResponseEntity<String> handler(FeignException e) {
+		if (e.status() < 500) {
+			log.warn(e.getMessage(), e);
+		} else {
+			log.error(e.getMessage(), e);
+		}
+		return ResponseEntity.status(e.status()).contentType(MediaType.TEXT_PLAIN).body("第三方服务异常");
 	}
 
 }

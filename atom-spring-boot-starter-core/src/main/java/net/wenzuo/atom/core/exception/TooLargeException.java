@@ -12,26 +12,22 @@
 
 package net.wenzuo.atom.core.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author Catch
  * @since 2023-05-30
  */
-public class ServerException extends HttpStatusException {
+public class TooLargeException extends HttpException {
 
-    public ServerException(String message) {
-        super(500, message);
-    }
+	private static final int STATUS = HttpStatus.PAYLOAD_TOO_LARGE.value();
 
-    public ServerException(String format, Object... args) {
-        super(500, String.format(format, args));
-    }
+	public TooLargeException(String message) {
+		super(STATUS, message);
+	}
 
-    public ServerException(Throwable t) {
-        super(500, t);
-    }
-
-    public ServerException(String message, Throwable t) {
-        super(500, message, t);
-    }
+	public TooLargeException(Throwable t, String message) {
+		super(t, STATUS, message);
+	}
 
 }

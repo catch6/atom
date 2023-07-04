@@ -14,11 +14,13 @@ package net.wenzuo.atom.feign.config;
 
 import feign.FeignException;
 import feign.Request;
+import lombok.Getter;
 
 /**
  * @author Catch
  * @since 2021-12-02
  */
+@Getter
 public class ThirdException extends FeignException {
 
 	public ThirdException(int status, String message, Request request) {

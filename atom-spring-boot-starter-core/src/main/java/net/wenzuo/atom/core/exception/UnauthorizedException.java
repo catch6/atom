@@ -12,26 +12,22 @@
 
 package net.wenzuo.atom.core.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author Catch
  * @since 2023-05-30
  */
-public class UnauthorizedException extends HttpStatusException {
+public class UnauthorizedException extends HttpException {
 
-    public UnauthorizedException(String message) {
-        super(401, message);
-    }
+	private static final int STATUS = HttpStatus.UNAUTHORIZED.value();
 
-    public UnauthorizedException(String format, Object... args) {
-        super(401, String.format(format, args));
-    }
+	public UnauthorizedException(String message) {
+		super(STATUS, message);
+	}
 
-    public UnauthorizedException(Throwable t) {
-        super(401, t);
-    }
-
-    public UnauthorizedException(String message, Throwable t) {
-        super(401, message, t);
-    }
+	public UnauthorizedException(Throwable t, String message) {
+		super(t, STATUS, message);
+	}
 
 }

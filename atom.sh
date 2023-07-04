@@ -68,9 +68,9 @@ elif [ "${ACTION}" == "deploy" ]; then
   git pull origin main
   info "拉取 main 分支...OK!\n"
 
-  info "合并 develop 分支到 main 分支..."
-  git merge develop
-  info "合并 develop 分支到 main 分支...OK!\n"
+  info "合并 2.x 分支到 main 分支..."
+  git merge 2.x
+  info "合并 2.x 分支到 main 分支...OK!\n"
 
   info "修改 README.md 版本号..."
   sed -i '' "s/<version>.*<\/version>/<version>${VERSION}<\/version>/g" README.md
@@ -113,17 +113,17 @@ elif [ "${ACTION}" == "deploy" ]; then
   git push origin "${VERSION}"
   info "推送 tag...OK!\n"
 
-  info "切换到 develop 分支..."
-  git checkout develop
-  info "切换到 develop 分支...OK!\n"
+  info "切换到 2.x 分支..."
+  git checkout 2.x
+  info "切换到 2.x 分支...OK!\n"
 
-  info "将 main 分支合并到 develop 分支..."
+  info "将 main 分支合并到 2.x 分支..."
   git merge main
-  info "将 main 分支合并到 develop 分支...OK!\n"
+  info "将 main 分支合并到 2.x 分支...OK!\n"
 
-  info "推送 develop 分支..."
-  git push origin develop
-  info "推送 develop 分支...OK!\n"
+  info "推送 2.x 分支..."
+  git push origin 2.x
+  info "推送 2.x 分支...OK!\n"
 
   echo "进行下一版本的开发,请设置新版本version..."
 fi

@@ -12,26 +12,22 @@
 
 package net.wenzuo.atom.core.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author Catch
  * @since 2023-05-30
  */
-public class ForbiddenException extends HttpStatusException {
+public class ForbiddenException extends HttpException {
 
-    public ForbiddenException(String message) {
-        super(403, message);
-    }
+	private static final int STATUS = HttpStatus.FORBIDDEN.value();
 
-    public ForbiddenException(String format, Object... args) {
-        super(403, String.format(format, args));
-    }
+	public ForbiddenException(String message) {
+		super(STATUS, message);
+	}
 
-    public ForbiddenException(Throwable t) {
-        super(403, t);
-    }
-
-    public ForbiddenException(String message, Throwable t) {
-        super(403, message, t);
-    }
+	public ForbiddenException(Throwable t, String message) {
+		super(t, STATUS, message);
+	}
 
 }

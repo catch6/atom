@@ -12,26 +12,22 @@
 
 package net.wenzuo.atom.core.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author Catch
  * @since 2023-05-30
  */
-public class BadGatewayException extends HttpStatusException {
+public class BadGatewayException extends HttpException {
 
-    public BadGatewayException(String message) {
-        super(502, message);
-    }
+	private static final int STATUS = HttpStatus.BAD_GATEWAY.value();
 
-    public BadGatewayException(String format, Object... args) {
-        super(502, String.format(format, args));
-    }
+	public BadGatewayException(String message) {
+		super(STATUS, message);
+	}
 
-    public BadGatewayException(Throwable t) {
-        super(502, t);
-    }
-
-    public BadGatewayException(String message, Throwable t) {
-        super(502, message, t);
-    }
+	public BadGatewayException(Throwable t, String message) {
+		super(t, STATUS, message);
+	}
 
 }

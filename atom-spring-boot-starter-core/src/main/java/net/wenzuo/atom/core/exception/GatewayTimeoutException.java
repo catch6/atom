@@ -12,26 +12,22 @@
 
 package net.wenzuo.atom.core.exception;
 
+import org.springframework.http.HttpStatus;
+
 /**
  * @author Catch
  * @since 2023-05-30
  */
-public class GatewayTimeoutException extends HttpStatusException {
+public class GatewayTimeoutException extends HttpException {
 
-    public GatewayTimeoutException(String message) {
-        super(504, message);
-    }
+	private static final int STATUS = HttpStatus.GATEWAY_TIMEOUT.value();
 
-    public GatewayTimeoutException(String format, Object... args) {
-        super(504, String.format(format, args));
-    }
+	public GatewayTimeoutException(String message) {
+		super(STATUS, message);
+	}
 
-    public GatewayTimeoutException(Throwable t) {
-        super(504, t);
-    }
-
-    public GatewayTimeoutException(String message, Throwable t) {
-        super(504, message, t);
-    }
+	public GatewayTimeoutException(Throwable t, String message) {
+		super(t, STATUS, message);
+	}
 
 }

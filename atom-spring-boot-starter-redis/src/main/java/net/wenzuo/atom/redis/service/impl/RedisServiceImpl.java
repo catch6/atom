@@ -14,7 +14,7 @@ package net.wenzuo.atom.redis.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.utils.JsonUtils;
+import net.wenzuo.atom.core.util.JsonUtils;
 import net.wenzuo.atom.redis.service.RedisService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.StringRedisTemplate;

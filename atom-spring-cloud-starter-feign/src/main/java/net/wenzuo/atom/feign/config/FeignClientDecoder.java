@@ -15,7 +15,7 @@ package net.wenzuo.atom.feign.config;
 import feign.FeignException;
 import feign.Response;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.utils.JsonUtils;
+import net.wenzuo.atom.core.util.JsonUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

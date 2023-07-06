@@ -10,30 +10,31 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.validator;
+package net.wenzuo.atom.core.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Catch
  * @since 2022-10-27
  */
-public class AnyOfIntValidator implements ConstraintValidator<AnyOfInt, Integer> {
+public class AnyOfEnumValidator implements ConstraintValidator<AnyOfEnum, Enum<?>> {
 
-	private Set<Integer> accepts;
+	private Set<Enum<?>> accepts;
 
 	@Override
-	public void initialize(AnyOfInt annotation) {
-		accepts = Arrays.stream(annotation.value()).boxed().collect(Collectors.toSet());
+	public void initialize(AnyOfEnum annotation) {
+		Enum<?>[] enums = annotation.value().getEnumConstants();
+		accepts = Stream.of(enums).collect(Collectors.toSet());
 	}
 
 	@Override
-	public boolean isValid(Integer value, ConstraintValidatorContext context) {
+	public boolean isValid(Enum<?> value, ConstraintValidatorContext context) {
 		return value == null || accepts.contains(value);
 	}
 

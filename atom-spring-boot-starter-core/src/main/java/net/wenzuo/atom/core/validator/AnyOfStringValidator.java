@@ -10,31 +10,32 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.validator;
+package net.wenzuo.atom.core.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-import java.util.regex.Pattern;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Catch
- * @since 2021-04-29
+ * @since 2022-10-27
  */
-public class PhoneValidator implements ConstraintValidator<Phone, CharSequence> {
+public class AnyOfStringValidator implements ConstraintValidator<AnyOfString, CharSequence> {
 
-	private Pattern pattern;
+	private Set<String> accepts = new HashSet<>();
 
 	@Override
-	public void initialize(Phone constraintAnnotation) {
-		pattern = Pattern.compile("^1[3-9]\\d{9}$");
+	public void initialize(AnyOfString annotation) {
+		accepts = Arrays.stream(annotation.value()).collect(Collectors.toSet());
 	}
 
 	@Override
 	public boolean isValid(CharSequence value, ConstraintValidatorContext context) {
-		return value == null || pattern.matcher(value).matches();
+		return value == null || accepts.contains(value.toString());
 	}
 
 }
-
-

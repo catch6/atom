@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.utils;
+package net.wenzuo.atom.core.util;
 
 import java.time.Clock;
 import java.time.LocalTime;
@@ -23,19 +23,19 @@ import java.time.temporal.ChronoUnit;
  */
 public abstract class LocalTimeUtils {
 
-    public static LocalTime now() {
-        return LocalTime.now()
-                        .truncatedTo(ChronoUnit.SECONDS);
-    }
+	public static LocalTime now() {
+		return LocalTime.now()
+						.truncatedTo(ChronoUnit.SECONDS);
+	}
 
-    public static LocalTime now(ZoneId zone) {
-        return LocalTime.now(zone)
-                        .truncatedTo(ChronoUnit.SECONDS);
-    }
+	public static LocalTime now(ZoneId zone) {
+		return LocalTime.now(zone)
+						.truncatedTo(ChronoUnit.SECONDS);
+	}
 
-    public static LocalTime now(Clock clock) {
-        return LocalTime.now(clock)
-                        .truncatedTo(ChronoUnit.SECONDS);
-    }
+	public static LocalTime now(Clock clock) {
+		return LocalTime.now(clock)
+						.truncatedTo(ChronoUnit.SECONDS);
+	}
 
 }

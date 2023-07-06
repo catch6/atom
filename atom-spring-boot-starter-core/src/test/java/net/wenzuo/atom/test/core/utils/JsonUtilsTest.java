@@ -14,7 +14,7 @@ package net.wenzuo.atom.test.core.utils;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.utils.JsonUtils;
+import net.wenzuo.atom.core.util.JsonUtils;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -31,53 +31,53 @@ import java.util.Set;
 @Slf4j
 class JsonUtilsTest {
 
-    @Test
-    void toJson() {
-        VO vo = new VO();
-        vo.setDateTime(LocalDateTime.now());
-        vo.setDate(LocalDate.now());
-        vo.setTime(LocalTime.now());
-        String result = JsonUtils.toJson(vo);
-        log.info("result: {}", result);
-    }
+	@Test
+	void toJson() {
+		VO vo = new VO();
+		vo.setDateTime(LocalDateTime.now());
+		vo.setDate(LocalDate.now());
+		vo.setTime(LocalTime.now());
+		String result = JsonUtils.toJson(vo);
+		log.info("result: {}", result);
+	}
 
-    @Test
-    void toObject() {
-        List<VO> list = new ArrayList<>();
-        VO vo1 = new VO();
-        vo1.setDateTime(LocalDateTime.now());
-        vo1.setDate(LocalDate.now());
-        vo1.setTime(LocalTime.now());
-        list.add(vo1);
-        VO vo2 = new VO();
-        vo2.setDateTime(LocalDateTime.now());
-        vo2.setDate(LocalDate.now());
-        vo2.setTime(LocalTime.now());
-        list.add(vo2);
-        String jsonString = JsonUtils.toJson(list);
-        List<VO> vos = JsonUtils.toObject(jsonString, List.class, VO.class);
-        Set<VO> voSet = JsonUtils.toObject(jsonString, Set.class, VO.class);
-        log.info("vos: {}", vos);
-        log.info("voSet: {}", voSet);
-    }
+	@Test
+	void toObject() {
+		List<VO> list = new ArrayList<>();
+		VO vo1 = new VO();
+		vo1.setDateTime(LocalDateTime.now());
+		vo1.setDate(LocalDate.now());
+		vo1.setTime(LocalTime.now());
+		list.add(vo1);
+		VO vo2 = new VO();
+		vo2.setDateTime(LocalDateTime.now());
+		vo2.setDate(LocalDate.now());
+		vo2.setTime(LocalTime.now());
+		list.add(vo2);
+		String jsonString = JsonUtils.toJson(list);
+		List<VO> vos = JsonUtils.toObject(jsonString, List.class, VO.class);
+		Set<VO> voSet = JsonUtils.toObject(jsonString, Set.class, VO.class);
+		log.info("vos: {}", vos);
+		log.info("voSet: {}", voSet);
+	}
 
-    @Test
-    void toPrettyJson() {
-        VO vo = new VO();
-        vo.setDateTime(LocalDateTime.now());
-        vo.setDate(LocalDate.now());
-        vo.setTime(LocalTime.now());
-        String result = JsonUtils.toPrettyJson(vo);
-        log.info("result: {}", result);
-    }
+	@Test
+	void toPrettyJson() {
+		VO vo = new VO();
+		vo.setDateTime(LocalDateTime.now());
+		vo.setDate(LocalDate.now());
+		vo.setTime(LocalTime.now());
+		String result = JsonUtils.toPrettyJson(vo);
+		log.info("result: {}", result);
+	}
 
-    @Data
-    static class VO {
+	@Data
+	static class VO {
 
-        private LocalDateTime dateTime;
-        private LocalDate date;
-        private LocalTime time;
+		private LocalDateTime dateTime;
+		private LocalDate date;
+		private LocalTime time;
 
-    }
+	}
 
 }

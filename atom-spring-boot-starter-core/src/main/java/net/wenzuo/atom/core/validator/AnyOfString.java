@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.validator;
+package net.wenzuo.atom.core.validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

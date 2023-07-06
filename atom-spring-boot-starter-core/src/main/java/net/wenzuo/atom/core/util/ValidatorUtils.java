@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.utils;
+package net.wenzuo.atom.core.util;
 
 import jakarta.validation.*;
 import org.hibernate.validator.HibernateValidator;
@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Spring Bean 字段验证工具类
  * <p>
- * 可通过 {@code @Autowired} 注入 Spring 管理的 {@code javax.validation.Validator}
+ * 可通过 {@code @Autowired} 注入 Spring 管理的 {@code jakarta.validation.Validator}
  *
  * @author Catch
  * @since 2022-02-15
@@ -48,7 +48,7 @@ public class ValidatorUtils {
 	}
 
 	/**
-	 * 校验对象,可通过 {@code @Autowired} 注入 Spring 管理的 {@code javax.validation.Validator}
+	 * 校验对象,可通过 {@code @Autowired} 注入 Spring 管理的 {@code jakarta.validation.Validator}
 	 */
 	public static void validate(Validator validator, Object object, Class<?>... groups) {
 		Set<ConstraintViolation<Object>> constraintViolations = validator.validate(object, groups);

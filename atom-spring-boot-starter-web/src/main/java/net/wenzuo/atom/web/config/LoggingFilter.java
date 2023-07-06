@@ -19,7 +19,7 @@ import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.utils.NanoIdUtils;
+import net.wenzuo.atom.core.util.NanoIdUtils;
 import net.wenzuo.atom.web.properties.LoggingProperties;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;

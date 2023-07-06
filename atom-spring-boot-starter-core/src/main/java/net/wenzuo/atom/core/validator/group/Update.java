@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.validator.group;
+package net.wenzuo.atom.core.validator.group;
 
 import javax.validation.groups.Default;
 
@@ -18,6 +18,6 @@ import javax.validation.groups.Default;
  * @author Catch
  * @since 2022-10-29
  */
-public interface Create extends Default {
+public interface Update extends Default {
 
 }

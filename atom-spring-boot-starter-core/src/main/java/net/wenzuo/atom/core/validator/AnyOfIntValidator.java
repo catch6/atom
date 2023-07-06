@@ -10,12 +10,11 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.validator;
+package net.wenzuo.atom.core.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,18 +22,18 @@ import java.util.stream.Collectors;
  * @author Catch
  * @since 2022-10-27
  */
-public class AnyOfStringValidator implements ConstraintValidator<AnyOfString, CharSequence> {
+public class AnyOfIntValidator implements ConstraintValidator<AnyOfInt, Integer> {
 
-	private Set<String> accepts = new HashSet<>();
+	private Set<Integer> accepts;
 
 	@Override
-	public void initialize(AnyOfString annotation) {
-		accepts = Arrays.stream(annotation.value()).collect(Collectors.toSet());
+	public void initialize(AnyOfInt annotation) {
+		accepts = Arrays.stream(annotation.value()).boxed().collect(Collectors.toSet());
 	}
 
 	@Override
-	public boolean isValid(CharSequence value, ConstraintValidatorContext context) {
-		return value == null || accepts.contains(value.toString());
+	public boolean isValid(Integer value, ConstraintValidatorContext context) {
+		return value == null || accepts.contains(value);
 	}
 
 }

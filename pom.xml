@@ -65,7 +65,9 @@
 	</developers>
 
 	<properties>
-		<revision>1.0.2</revision>
+		<java.version>8</java.version>
+
+		<revision>1.0.4</revision>
 		<spring-cloud-dependencies.version>2021.0.5</spring-cloud-dependencies.version>
 		<spring-cloud-alibaba-dependencies.version>2021.0.5.0</spring-cloud-alibaba-dependencies.version>
 
@@ -76,6 +78,7 @@
 		<springdoc-openapi-starter-webmvc-ui.version>2.1.0</springdoc-openapi-starter-webmvc-ui.version>
 		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
 		<easyexcel.version>3.3.2</easyexcel.version>
+		<swagger-annotations.version>2.2.9</swagger-annotations.version>
 
 		<nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
 		<maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
@@ -173,6 +176,11 @@
 				<groupId>com.alibaba</groupId>
 				<artifactId>easyexcel</artifactId>
 				<version>${easyexcel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.swagger.core.v3</groupId>
+				<artifactId>swagger-annotations</artifactId>
+				<version>${swagger-annotations.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

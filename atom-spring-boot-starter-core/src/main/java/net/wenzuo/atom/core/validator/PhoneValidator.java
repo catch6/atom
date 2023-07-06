@@ -10,31 +10,30 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.validator;
+package net.wenzuo.atom.core.validator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.regex.Pattern;
 
 /**
  * @author Catch
- * @since 2022-10-27
+ * @since 2021-04-29
  */
-public class AnyOfEnumValidator implements ConstraintValidator<AnyOfEnum, Enum<?>> {
+public class PhoneValidator implements ConstraintValidator<Phone, CharSequence> {
 
-	private Set<Enum<?>> accepts;
+	private Pattern pattern;
 
 	@Override
-	public void initialize(AnyOfEnum annotation) {
-		Enum<?>[] enums = annotation.value().getEnumConstants();
-		accepts = Stream.of(enums).collect(Collectors.toSet());
+	public void initialize(Phone constraintAnnotation) {
+		pattern = Pattern.compile("^1[3-9]\\d{9}$");
 	}
 
 	@Override
-	public boolean isValid(Enum<?> value, ConstraintValidatorContext context) {
-		return value == null || accepts.contains(value);
+	public boolean isValid(CharSequence value, ConstraintValidatorContext context) {
+		return value == null || pattern.matcher(value).matches();
 	}
 
 }
+
+

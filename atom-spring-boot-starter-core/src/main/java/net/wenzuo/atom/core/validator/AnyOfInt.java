@@ -10,23 +10,30 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.validator;
+package net.wenzuo.atom.core.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * @author Catch
- * @since 2021-07-01
+ * @since 2022-10-27
  */
+@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+@Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = {PhoneValidator.class})
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Phone {
+@Constraint(validatedBy = {AnyOfIntValidator.class})
+public @interface AnyOfInt {
 
-	String message() default "手机号格式不正确";
+	int[] value();
+
+	String message() default "must be any of {value}";
 
 	Class<?>[] groups() default {};
 

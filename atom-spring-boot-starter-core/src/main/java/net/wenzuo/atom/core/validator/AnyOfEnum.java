@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.validator;
+package net.wenzuo.atom.core.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -28,12 +28,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = {AnyOfLongValidator.class})
-public @interface AnyOfLong {
+@Constraint(validatedBy = {AnyOfEnumValidator.class})
+public @interface AnyOfEnum {
 
-	long[] value();
+	Class<? extends Enum<?>> value();
 
-	String message() default "must be any of {value}";
+	String message() default "must be any of enum {value}";
 
 	Class<?>[] groups() default {};
 

@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.utils;
+package net.wenzuo.atom.core.utils;
 
 import org.hibernate.validator.HibernateValidator;
 

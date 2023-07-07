@@ -30,12 +30,12 @@ public class PageRequest {
 	 */
 	@Schema(description = "页码", example = "1", defaultValue = "1")
 	@Min(value = 1, message = "页码最小为 1")
-	private int pageNumber = 1;
+	private long pageNumber = 1;
 	/**
 	 * 每页结果数
 	 */
 	@Schema(description = "每页结果数", example = "20", defaultValue = "20")
 	@Min(value = 1, message = "每页结果数最小为 1")
-	private int pageSize = 20;
+	private long pageSize = 20;
 
 }

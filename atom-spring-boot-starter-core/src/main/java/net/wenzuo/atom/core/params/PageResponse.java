@@ -30,22 +30,22 @@ public class PageResponse<T> {
 	 * 页码
 	 */
 	@Schema(description = "页码", example = "1")
-	private int pageNumber = 1;
+	private long pageNumber = 1;
 	/**
 	 * 每页结果数
 	 */
 	@Schema(description = "每页结果数", example = "20")
-	private int pageSize = 20;
+	private long pageSize = 20;
 	/**
 	 * 总页数
 	 */
 	@Schema(description = "总页数", example = "0")
-	private int totalPage = 0;
+	private long totalPage = 0;
 	/**
 	 * 总结果数
 	 */
 	@Schema(description = "总结果数", example = "0")
-	private int totalRows = 0;
+	private long totalRow = 0;
 	/**
 	 * 数据
 	 */

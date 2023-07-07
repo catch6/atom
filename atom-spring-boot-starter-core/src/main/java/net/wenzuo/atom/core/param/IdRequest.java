@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2022-2023 Catch
- * [Atom] is licensed under Mulan PSL v2.
+ * Copyright (c) 2022-2023 Catch (catchlife6@163.com)
+ * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
  *          http://license.coscl.org.cn/MulanPSL2
@@ -13,9 +13,8 @@
 package net.wenzuo.atom.core.param;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * @author Catch

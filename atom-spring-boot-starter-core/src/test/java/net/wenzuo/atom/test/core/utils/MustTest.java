@@ -13,7 +13,7 @@
 package net.wenzuo.atom.test.core.utils;
 
 import net.wenzuo.atom.core.exception.ServerErrorException;
-import net.wenzuo.atom.core.utils.Must;
+import net.wenzuo.atom.core.util.Must;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;

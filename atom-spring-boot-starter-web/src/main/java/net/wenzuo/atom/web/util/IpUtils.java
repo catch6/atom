@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.utils;
+package net.wenzuo.atom.web.util;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;

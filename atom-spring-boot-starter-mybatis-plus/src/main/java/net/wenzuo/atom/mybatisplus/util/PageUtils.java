@@ -1,8 +1,8 @@
-package net.wenzuo.atom.mybatisplus.utils;
+package net.wenzuo.atom.mybatisplus.util;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.wenzuo.atom.core.params.PageRequest;
-import net.wenzuo.atom.core.params.PageResponse;
+import net.wenzuo.atom.core.param.PageRequest;
+import net.wenzuo.atom.core.param.PageResponse;
 import org.springframework.lang.Nullable;
 
 import java.util.function.Function;

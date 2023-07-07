@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.utils;
+package net.wenzuo.atom.core.util;
 
 import net.wenzuo.atom.core.exception.ServerErrorException;
 import org.springframework.lang.NonNull;

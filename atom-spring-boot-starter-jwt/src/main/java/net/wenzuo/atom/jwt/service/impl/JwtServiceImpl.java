@@ -15,7 +15,7 @@ package net.wenzuo.atom.jwt.service.impl;
 import com.nimbusds.jose.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.utils.JsonUtils;
+import net.wenzuo.atom.core.util.JsonUtils;
 import net.wenzuo.atom.jwt.service.JwtService;
 import org.springframework.stereotype.Service;
 

@@ -12,7 +12,7 @@
 
 package net.wenzuo.atom.test.web;
 
-import net.wenzuo.atom.core.utils.JsonUtils;
+import net.wenzuo.atom.core.util.JsonUtils;
 import net.wenzuo.atom.test.web.params.TestReq;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

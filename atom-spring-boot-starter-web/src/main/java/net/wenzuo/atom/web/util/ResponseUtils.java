@@ -10,11 +10,11 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.utils;
+package net.wenzuo.atom.web.util;
 
 import com.alibaba.excel.EasyExcel;
 import lombok.SneakyThrows;
-import net.wenzuo.atom.core.utils.JsonUtils;
+import net.wenzuo.atom.core.util.JsonUtils;
 import org.springframework.http.HttpHeaders;
 
 import javax.servlet.ServletOutputStream;

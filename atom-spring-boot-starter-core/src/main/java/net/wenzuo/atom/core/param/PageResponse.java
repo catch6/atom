@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.params;
+package net.wenzuo.atom.core.param;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

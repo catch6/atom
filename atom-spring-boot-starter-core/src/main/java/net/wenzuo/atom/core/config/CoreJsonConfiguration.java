@@ -12,7 +12,7 @@
 
 package net.wenzuo.atom.core.config;
 
-import net.wenzuo.atom.core.utils.JsonUtils;
+import net.wenzuo.atom.core.util.JsonUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -27,10 +27,10 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(value = "atom.core.json", matchIfMissing = true)
 public class CoreJsonConfiguration {
 
-    @ConditionalOnMissingBean
-    @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
-        return JsonUtils.customize();
-    }
+	@ConditionalOnMissingBean
+	@Bean
+	public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
+		return JsonUtils.customize();
+	}
 
 }

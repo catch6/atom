@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.utils;
+package net.wenzuo.atom.core.util;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -27,25 +27,25 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public abstract class NanoIdUtils {
 
-    private static final char[] ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_".toCharArray();
+	private static final char[] ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_".toCharArray();
 
-    private static final int MASK = ALPHABET.length - 1;
+	private static final int MASK = ALPHABET.length - 1;
 
-    private static final int DEFAULT_LENGTH = 15;
+	private static final int DEFAULT_LENGTH = 15;
 
-    public static String nanoId() {
-        return nanoId(DEFAULT_LENGTH);
-    }
+	public static String nanoId() {
+		return nanoId(DEFAULT_LENGTH);
+	}
 
-    public static String nanoId(int size) {
-        final StringBuilder id = new StringBuilder();
-        final byte[] bytes = new byte[size];
-        ThreadLocalRandom.current()
-                         .nextBytes(bytes);
-        for (int i = 0; i < size; ++i) {
-            id.append(ALPHABET[bytes[i] & MASK]);
-        }
-        return id.toString();
-    }
+	public static String nanoId(int size) {
+		final StringBuilder id = new StringBuilder();
+		final byte[] bytes = new byte[size];
+		ThreadLocalRandom.current()
+						 .nextBytes(bytes);
+		for (int i = 0; i < size; ++i) {
+			id.append(ALPHABET[bytes[i] & MASK]);
+		}
+		return id.toString();
+	}
 
 }

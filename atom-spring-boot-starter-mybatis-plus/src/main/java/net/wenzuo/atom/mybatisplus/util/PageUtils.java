@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public abstract class PageUtils {
 
 	@Nullable
-	public static <T> Page<T> convert(@Nullable PageRequest source) {
+	public static <T> Page<T> toPage(@Nullable PageRequest source) {
 		if (source == null) {
 			return null;
 		}
@@ -23,7 +23,7 @@ public abstract class PageUtils {
 	}
 
 	@Nullable
-	public static <T> PageResponse<T> convert(@Nullable Page<T> source) {
+	public static <T> PageResponse<T> toPageResponse(@Nullable Page<T> source) {
 		if (source == null) {
 			return null;
 		}
@@ -37,7 +37,7 @@ public abstract class PageUtils {
 	}
 
 	@Nullable
-	public static <T, R> PageResponse<R> convert(@Nullable Page<T> source, Function<T, R> function) {
+	public static <T, R> PageResponse<R> toPageResponse(@Nullable Page<T> source, Function<T, R> function) {
 		if (source == null) {
 			return null;
 		}

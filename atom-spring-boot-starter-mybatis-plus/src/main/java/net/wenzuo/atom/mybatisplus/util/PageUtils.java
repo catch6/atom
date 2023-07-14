@@ -15,7 +15,7 @@ package net.wenzuo.atom.mybatisplus.util;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.wenzuo.atom.core.param.PageRequest;
 import net.wenzuo.atom.core.param.PageResponse;
-import org.springframework.lang.Nullable;
+import org.springframework.lang.NonNull;
 
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,39 +26,30 @@ import java.util.stream.Collectors;
  */
 public abstract class PageUtils {
 
-	@Nullable
-	public static <T> Page<T> convert(@Nullable PageRequest source) {
-		if (source == null) {
-			return null;
-		}
-		return new Page<>(source.getPageNumber(), source.getPageSize());
+	@NonNull
+	public static <T> Page<T> toPage(@NonNull PageRequest request) {
+		return new Page<>(request.getPageNumber(), request.getPageSize());
 	}
 
-	@Nullable
-	public static <T> PageResponse<T> convert(@Nullable Page<T> source) {
-		if (source == null) {
-			return null;
-		}
+	@NonNull
+	public static <T> PageResponse<T> toPageResponse(@NonNull Page<T> page) {
 		PageResponse<T> pageResponse = new PageResponse<>();
-		pageResponse.setPageNumber(source.getCurrent());
-		pageResponse.setPageSize(source.getSize());
-		pageResponse.setTotalRow(source.getTotal());
-		pageResponse.setTotalPage(source.getPages());
-		pageResponse.setItems(source.getRecords());
+		pageResponse.setPageNumber(page.getCurrent());
+		pageResponse.setPageSize(page.getSize());
+		pageResponse.setTotalRow(page.getTotal());
+		pageResponse.setTotalPage(page.getPages());
+		pageResponse.setItems(page.getRecords());
 		return pageResponse;
 	}
 
-	@Nullable
-	public static <T, R> PageResponse<R> convert(@Nullable Page<T> source, Function<T, R> function) {
-		if (source == null) {
-			return null;
-		}
+	@NonNull
+	public static <T, R> PageResponse<R> toPageResponse(@NonNull Page<T> page, Function<T, R> function) {
 		PageResponse<R> pageResponse = new PageResponse<>();
-		pageResponse.setPageNumber(source.getCurrent());
-		pageResponse.setPageSize(source.getSize());
-		pageResponse.setTotalRow(source.getTotal());
-		pageResponse.setTotalPage(source.getPages());
-		pageResponse.setItems(source.getRecords().stream().map(function).collect(Collectors.toList()));
+		pageResponse.setPageNumber(page.getCurrent());
+		pageResponse.setPageSize(page.getSize());
+		pageResponse.setTotalRow(page.getTotal());
+		pageResponse.setTotalPage(page.getPages());
+		pageResponse.setItems(page.getRecords().stream().map(function).collect(Collectors.toList()));
 		return pageResponse;
 	}
 

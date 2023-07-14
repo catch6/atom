@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2022-2023 Catch
- * [Atom] is licensed under Mulan PSL v2.
+ * Copyright (c) 2022-2023 Catch (catchlife6@163.com)
+ * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
  *          http://license.coscl.org.cn/MulanPSL2
@@ -13,22 +13,17 @@
 package net.wenzuo.atom.redis.service;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Catch
  * @since 2023-06-15
  */
 public interface RedisService {
-
-	/**
-	 * 保存 value 及过期时间
-	 *
-	 * @param key      键
-	 * @param value    值
-	 * @param duration 超时时间
-	 */
-	void set(String key, Object value, Duration duration);
 
 	/**
 	 * 保存 value
@@ -39,46 +34,366 @@ public interface RedisService {
 	void set(String key, Object value);
 
 	/**
+	 * 保存 value 并设置过期时间
+	 *
+	 * @param key     键
+	 * @param value   值
+	 * @param timeout 超时时间
+	 * @param unit    时间单位
+	 */
+	void set(String key, Object value, long timeout, TimeUnit unit);
+
+	/**
+	 * 保存 value 并设置过期时间
+	 *
+	 * @param key     键
+	 * @param value   值
+	 * @param timeout 超时时间
+	 */
+	void set(String key, Object value, Duration timeout);
+
+	/**
+	 * 如果 key 不存在则保存 value, 反之不保存
+	 *
+	 * @param key   键
+	 * @param value 值
+	 * @return 是否保存成功
+	 */
+	Boolean setIfAbsent(String key, Object value);
+
+	/**
+	 * 如果 key 不存在则保存 value 并设置过期时间, 反之不保存
+	 *
+	 * @param key     键
+	 * @param value   值
+	 * @param timeout 超时时间
+	 * @param unit    时间单位
+	 * @return 是否保存成功
+	 */
+	Boolean setIfAbsent(String key, Object value, long timeout, TimeUnit unit);
+
+	/**
+	 * 如果 key 不存在则保存 value 并设置过期时间, 反之不保存
+	 *
+	 * @param key     键
+	 * @param value   值
+	 * @param timeout 超时时间
+	 * @return 是否保存成功
+	 */
+	Boolean setIfAbsent(String key, Object value, Duration timeout);
+
+	/**
+	 * 如果 key 存在则保存 value, 反之不保存
+	 *
+	 * @param key   键
+	 * @param value 值
+	 * @return 是否保存成功
+	 */
+	Boolean setIfPresent(String key, Object value);
+
+	/**
+	 * 如果 key 存在则保存 value 并设置过期时间, 反之不保存
+	 *
+	 * @param key     键
+	 * @param value   值
+	 * @param timeout 超时时间
+	 * @param unit    时间单位
+	 * @return 是否保存成功
+	 */
+	Boolean setIfPresent(String key, Object value, long timeout, TimeUnit unit);
+
+	/**
+	 * 如果 key 存在则保存 value 并设置过期时间, 反之不保存
+	 *
+	 * @param key     键
+	 * @param value   值
+	 * @param timeout 超时时间
+	 * @return 是否保存成功
+	 */
+	Boolean setIfPresent(String key, Object value, Duration timeout);
+
+	/**
 	 * 获取 value
 	 *
 	 * @param key   键
 	 * @param clazz 类型
 	 * @param <T>   泛型
-	 * @return 属性值
+	 * @return 值
 	 */
 	<T> T get(String key, Class<T> clazz);
 
 	/**
 	 * 获取泛型 value
 	 * <p>
-	 * 如：{@code List<Object> dtos = get("key", List.class, Object.class)}
+	 * 如：{@code List<Object> list = redisService.get(key, List.class, Object.class)}
 	 *
 	 * @param key     键
 	 * @param wrapper 包装类
 	 * @param inners  内部类
 	 * @param <T>     泛型
-	 * @return 对象
+	 * @return 值
 	 */
 	<T> T get(String key, Class<?> wrapper, Class<?>... inners);
 
 	/**
-	 * 删除 key-value
+	 * 获取 value 并删除 key
+	 *
+	 * @param key   键
+	 * @param clazz 类型
+	 * @param <T>   泛型
+	 * @return 值
+	 */
+	<T> T getAndDelete(String key, Class<T> clazz);
+
+	/**
+	 * 获取泛型 value 并删除 key
+	 * <p>
+	 * 如：{@code List<Object> list = redisService.getAndDelete(key, List.class, Object.class)}
+	 *
+	 * @param key     键
+	 * @param wrapper 包装类
+	 * @param inners  内部类
+	 * @param <T>     泛型
+	 * @return 值
+	 */
+	<T> T getAndDelete(String key, Class<?> wrapper, Class<?>... inners);
+
+	/**
+	 * 获取 value 并设置过期时间
+	 *
+	 * @param key     键
+	 * @param timeout 超时时间
+	 * @param unit    时间单位
+	 * @param clazz   类型
+	 * @param <T>     泛型
+	 * @return 值
+	 */
+	<T> T getAndExpire(String key, long timeout, TimeUnit unit, Class<T> clazz);
+
+	/**
+	 * 获取泛型 value 并设置过期时间
+	 * <p>
+	 * 如：{@code List<Object> list = redisService.getAndExpire(key, 1, TimeUnit.MINUTES, List.class, Object.class)}
+	 *
+	 * @param key     键
+	 * @param timeout 超时时间
+	 * @param unit    时间单位
+	 * @param wrapper 包装类
+	 * @param inners  内部类
+	 * @param <T>     泛型
+	 * @return 值
+	 */
+	<T> T getAndExpire(String key, long timeout, TimeUnit unit, Class<?> wrapper, Class<?>... inners);
+
+	/**
+	 * 获取 value 并设置过期时间
+	 *
+	 * @param key     键
+	 * @param timeout 超时时间
+	 * @param clazz   类型
+	 * @return 值
+	 */
+	<T> T getAndExpire(String key, Duration timeout, Class<T> clazz);
+
+	/**
+	 * 获取泛型 value 并设置过期时间
+	 * <p>
+	 * 如：{@code List<Object> list = redisService.getAndExpire(key, Duration.ofMinutes(1), List.class, Object.class)}
+	 *
+	 * @param key     键
+	 * @param timeout 超时时间
+	 * @param wrapper 包装类
+	 * @param inners  内部类
+	 * @param <T>     泛型
+	 * @return 值
+	 */
+	<T> T getAndExpire(String key, Duration timeout, Class<?> wrapper, Class<?>... inners);
+
+	/**
+	 * 获取 value 并持久化 key, 此操作会移除 key 的过期时间
+	 *
+	 * @param key   键
+	 * @param clazz 类型
+	 * @param <T>   泛型
+	 * @return 值
+	 */
+	<T> T getAndPersist(String key, Class<T> clazz);
+
+	/**
+	 * 获取泛型 value 并持久化 key, 此操作会移除 key 的过期时间
+	 * <p>
+	 * 如：{@code List<Object> list = redisService.getAndPersist(key, List.class, Object.class)}
+	 *
+	 * @param key     键
+	 * @param wrapper 包装类
+	 * @param inners  内部类
+	 * @param <T>     泛型
+	 * @return 值
+	 */
+	<T> T getAndPersist(String key, Class<?> wrapper, Class<?>... inners);
+
+	/**
+	 * 保存 value 并返回旧的 value
+	 *
+	 * @param key   键
+	 * @param value 新值
+	 * @param clazz 类型
+	 * @param <T>   泛型
+	 * @return 旧值
+	 */
+	<T> T getAndSet(String key, Object value, Class<T> clazz);
+
+	/**
+	 * 保存泛型 value 并返回旧的 value
+	 * <p>
+	 * 如：{@code List<Object> list = redisService.getAndSet(key, value, List.class, Object.class)}
+	 *
+	 * @param key     键
+	 * @param value   新值
+	 * @param wrapper 包装类
+	 * @param inners  内部类
+	 * @param <T>     泛型
+	 * @return 旧值
+	 */
+	<T> T getAndSet(String key, Object value, Class<?> wrapper, Class<?>... inners);
+
+	/**
+	 * 按步长为 1 递增 value
+	 *
+	 * @param key 键
+	 * @return 递增后的值
+	 */
+	Long increment(String key);
+
+	/**
+	 * 按步长为 delta 递增 value
+	 *
+	 * @param key 键
+	 * @return 递增后的值
+	 */
+	Long increment(String key, long delta);
+
+	/**
+	 * 按步长为 delta 递增 value
+	 *
+	 * @param key 键
+	 * @return 递增后的值
+	 */
+	Double increment(String key, double delta);
+
+	/**
+	 * 按步长为 delta 递减 value
+	 *
+	 * @param key 键
+	 * @return 递减后的值
+	 */
+	Long decrement(String key);
+
+	/**
+	 * 按步长为 delta 递减 value
+	 *
+	 * @param key 键
+	 * @return 递减后的值
+	 */
+	Long decrement(String key, long delta);
+
+	/**
+	 * 是否存在 key
+	 *
+	 * @param key 键
+	 * @return 是否存在
+	 */
+	Boolean hasKey(String key);
+
+	/**
+	 * 获取 key 集合中存在的 key 数量
+	 *
+	 * @param keys 键集合
+	 * @return 存在的 key 数量
+	 */
+	Long countExistingKeys(Collection<String> keys);
+
+	/**
+	 * 删除 key
 	 *
 	 * @param key 键
 	 * @return 是否删除成功
 	 */
-	Boolean del(String key);
+	Boolean delete(String key);
 
 	/**
-	 * 批量删除 key-value
+	 * 批量删除 key
 	 *
 	 * @param keys 键集合
 	 * @return 删除的数量
 	 */
-	Long del(Collection<String> keys);
+	Long delete(Collection<String> keys);
 
 	/**
-	 * 设置过期时间
+	 * 从 key 空间中取消链接. 与 delete 不同，这里的内存回收是异步发生的
+	 *
+	 * @param key 键
+	 * @return 是否成功
+	 */
+	Boolean unlink(String key);
+
+	/**
+	 * 批量从 key 空间中取消链接. 与 delete 不同，这里的内存回收是异步发生的
+	 *
+	 * @param keys 键集合
+	 * @return 取消链接的数量
+	 */
+	Long unlink(Collection<String> keys);
+
+	/**
+	 * 找到与模式匹配的所有键
+	 * <p>
+	 * 匹配示例:
+	 * <p>
+	 * h?llo matches hello, hallo and hxllo
+	 * <p>
+	 * h*llo matches hllo and heeeello
+	 * <p>
+	 * h[ae]llo matches hello and hallo, but not hillo
+	 * <p>
+	 * h[^e]llo matches hallo, hbllo, ... but not hello
+	 * <p>
+	 * h[a-b]llo matches hallo and hbllo
+	 *
+	 * @param pattern 模式
+	 * @return 匹配的所有键
+	 */
+	Set<String> keys(String pattern);
+
+	/**
+	 * 将 key 重命名为 newKey
+	 *
+	 * @param oldKey 旧键
+	 * @param newKey 新键
+	 */
+	void rename(String oldKey, String newKey);
+
+	/**
+	 * 当 newKey 不存在时，将 key 重命名为 newKey
+	 *
+	 * @param oldKey 旧键
+	 * @param newKey 新键
+	 * @return 是否重命名成功
+	 */
+	Boolean renameIfAbsent(String oldKey, String newKey);
+
+	/**
+	 * 设置 key 过期时间
+	 *
+	 * @param key     键
+	 * @param timeout 超时时间
+	 * @param unit    时间单位
+	 * @return 是否设置成功
+	 */
+	Boolean expire(String key, long timeout, TimeUnit unit);
+
+	/**
+	 * 设置 key 过期时间
 	 *
 	 * @param key      键
 	 * @param duration 超时时间
@@ -87,37 +402,46 @@ public interface RedisService {
 	Boolean expire(String key, Duration duration);
 
 	/**
-	 * 获取过期时间
+	 * 设置 key 在指定的时间过期
+	 *
+	 * @param key  键
+	 * @param date 指定的时间过期
+	 * @return 是否设置成功
+	 */
+	Boolean expireAt(String key, Date date);
+
+	/**
+	 * 设置 key 在指定的时间过期
+	 *
+	 * @param key      键
+	 * @param expireAt 指定的时间过期
+	 * @return 是否设置成功
+	 */
+	Boolean expireAt(String key, Instant expireAt);
+
+	/**
+	 * 设置 key 永不过期
 	 *
 	 * @param key 键
-	 * @return 过期时间
+	 * @return 是否设置成功
+	 */
+	Boolean persist(String key);
+
+	/**
+	 * 获取过期时间, 单位: 秒
+	 *
+	 * @param key 键
+	 * @return 过期时间, 单位: 秒
 	 */
 	Long getExpire(String key);
 
 	/**
-	 * 判断是否有该属性
+	 * 获取过期时间
 	 *
-	 * @param key 键
-	 * @return 是否存在
+	 * @param key      键
+	 * @param timeUnit 时间单位
+	 * @return 过期时间
 	 */
-	Boolean hasKey(String key);
-
-	/**
-	 * 按delta递增
-	 *
-	 * @param key   键
-	 * @param delta 递增步长
-	 * @return 递增后的值
-	 */
-	Long incr(String key, long delta);
-
-	/**
-	 * 按delta递减
-	 *
-	 * @param key   键
-	 * @param delta 递减步长
-	 * @return 递减后的值
-	 */
-	Long decr(String key, long delta);
+	Long getExpire(String key, TimeUnit timeUnit);
 
 }

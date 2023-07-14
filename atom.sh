@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2022-2023 Catch
-# [Atom] is licensed under Mulan PSL v2.
+# Copyright (c) 2022-2023 Catch (catchlife6@163.com)
+# Atom is licensed under Mulan PSL v2.
 # You can use this software according to the terms and conditions of the Mulan PSL v2.
 # You may obtain a copy of Mulan PSL v2 at:
 #          http://license.coscl.org.cn/MulanPSL2
@@ -60,18 +60,6 @@ elif [ "${ACTION}" == "deploy" ]; then
   fi
   info "检查本地是否有代码未提交...OK!\n"
 
-  info "切换到 main 分支..."
-  git checkout main
-  info "切换到 main 分支...OK!\n"
-
-  info "拉取 main 分支..."
-  git pull origin main
-  info "拉取 main 分支...OK!\n"
-
-  info "合并 develop 分支到 main 分支..."
-  git merge develop
-  info "合并 develop 分支到 main 分支...OK!\n"
-
   info "修改 README.md 版本号..."
   sed -i '' "s/<version>.*<\/version>/<version>${VERSION}<\/version>/g" README.md
   info "修改 README.md 版本号...OK!\n"
@@ -81,7 +69,7 @@ elif [ "${ACTION}" == "deploy" ]; then
   info "更新 pom.xml 中 revision 版本号...OK!\n"
 
   info "发布到 maven..."
-  mvn clean deploy -DskipTests
+  mvn -Possrh -Prelease clean deploy -U -DskipTests
   info "发布到 maven...OK!\n"
 
   info "提交代码并推送..."
@@ -90,7 +78,7 @@ elif [ "${ACTION}" == "deploy" ]; then
   info "提交代码并推送...OK!\n"
 
   info "推送分支..."
-  git push origin main
+  git push origin 1.x
   info "推送分支...OK!\n"
 
   info "检查tag是否存在..."
@@ -112,18 +100,6 @@ elif [ "${ACTION}" == "deploy" ]; then
   info "推送 tag..."
   git push origin "${VERSION}"
   info "推送 tag...OK!\n"
-
-  info "切换到 develop 分支..."
-  git checkout develop
-  info "切换到 develop 分支...OK!\n"
-
-  info "将 main 分支合并到 develop 分支..."
-  git merge main
-  info "将 main 分支合并到 develop 分支...OK!\n"
-
-  info "推送 develop 分支..."
-  git push origin develop
-  info "推送 develop 分支...OK!\n"
 
   echo "进行下一版本的开发,请设置新版本version..."
 fi

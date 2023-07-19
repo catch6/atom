@@ -78,8 +78,8 @@ public abstract class JsonUtils {
 		if (object == null) {
 			return null;
 		}
-		if (object instanceof String) {
-			return (String) object;
+		if (object instanceof CharSequence) {
+			return object.toString();
 		}
 		try {
 			return objectMapper.writeValueAsString(object);
@@ -99,8 +99,8 @@ public abstract class JsonUtils {
 		if (object == null) {
 			return null;
 		}
-		if (object instanceof String) {
-			return (String) object;
+		if (object instanceof CharSequence) {
+			return object.toString();
 		}
 		try {
 			return objectMapper.writerWithDefaultPrettyPrinter()
@@ -121,7 +121,7 @@ public abstract class JsonUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T toObject(String json, Class<T> clazz) {
 		try {
-			if (clazz == String.class) {
+			if (CharSequence.class.isAssignableFrom(clazz)) {
 				return (T) json;
 			}
 			return (json == null || json.isEmpty()) ? null : objectMapper.readValue(json, clazz);
@@ -141,7 +141,7 @@ public abstract class JsonUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T toObject(InputStream inputStream, Class<T> clazz) {
 		try {
-			if (clazz == String.class) {
+			if (CharSequence.class.isAssignableFrom(clazz)) {
 				return (T) IoUtil.readUtf8(inputStream);
 			}
 			return (inputStream == null) ? null : objectMapper.readValue(inputStream, clazz);

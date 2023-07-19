@@ -12,6 +12,7 @@
 
 package net.wenzuo.atom.core.util;
 
+import cn.hutool.core.io.IoUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -117,8 +118,12 @@ public abstract class JsonUtils {
 	 * @param clazz 要转换的 java 类型
 	 * @return 接收 java 对象
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T toObject(String json, Class<T> clazz) {
 		try {
+			if (clazz == String.class) {
+				return (T) json;
+			}
 			return (json == null || json.isEmpty()) ? null : objectMapper.readValue(json, clazz);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
@@ -133,8 +138,12 @@ public abstract class JsonUtils {
 	 * @param clazz       要转换的 java 类型
 	 * @return 接收 java 对象
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T toObject(InputStream inputStream, Class<T> clazz) {
 		try {
+			if (clazz == String.class) {
+				return (T) IoUtil.readUtf8(inputStream);
+			}
 			return (inputStream == null) ? null : objectMapper.readValue(inputStream, clazz);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

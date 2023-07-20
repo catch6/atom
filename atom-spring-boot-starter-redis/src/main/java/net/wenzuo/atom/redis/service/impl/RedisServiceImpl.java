@@ -84,7 +84,7 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
-	public void multiSet(Map<String, Object> map) {
+	public void multiSet(Map<String, ?> map) {
 		Map<String, String> stringMap = new HashMap<>();
 		map.forEach((k, v) -> stringMap.put(k, JsonUtils.toJson(v)));
 		stringRedisTemplate.opsForValue().multiSet(stringMap);

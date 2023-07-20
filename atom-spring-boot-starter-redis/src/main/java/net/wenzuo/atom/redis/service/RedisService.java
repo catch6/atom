@@ -115,7 +115,7 @@ public interface RedisService {
 	 *
 	 * @param map key-value
 	 */
-	void multiSet(Map<String, Object> map);
+	void multiSet(Map<String, ?> map);
 
 	/**
 	 * 批量设置 key-value ,使用 redis mset 命令, 如果 key 不存在则保存 value, 反之不保存

@@ -22,10 +22,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author Catch
@@ -82,6 +81,20 @@ public class RedisServiceImpl implements RedisService {
 	@Override
 	public Boolean setIfPresent(String key, Object value, Duration timeout) {
 		return stringRedisTemplate.opsForValue().setIfPresent(key, JsonUtils.toJson(value), timeout);
+	}
+
+	@Override
+	public void multiSet(Map<String, Object> map) {
+		Map<String, String> stringMap = new HashMap<>();
+		map.forEach((k, v) -> stringMap.put(k, JsonUtils.toJson(v)));
+		stringRedisTemplate.opsForValue().multiSet(stringMap);
+	}
+
+	@Override
+	public Boolean multiSetIfAbsent(Map<String, Object> map) {
+		Map<String, String> stringMap = new HashMap<>();
+		map.forEach((k, v) -> stringMap.put(k, JsonUtils.toJson(v)));
+		return stringRedisTemplate.opsForValue().multiSetIfAbsent(stringMap);
 	}
 
 	@Override
@@ -142,6 +155,15 @@ public class RedisServiceImpl implements RedisService {
 	@Override
 	public <T> T getAndSet(String key, Object value, Class<?> wrapper, Class<?>... inners) {
 		return JsonUtils.toObject(stringRedisTemplate.opsForValue().getAndSet(key, JsonUtils.toJson(value)), wrapper, inners);
+	}
+
+	@Override
+	public <T> List<T> multiGet(Collection<String> keys, Class<T> clazz) {
+		List<String> list = stringRedisTemplate.opsForValue().multiGet(keys);
+		if (list == null) {
+			return null;
+		}
+		return list.stream().map(v -> JsonUtils.toObject(v, clazz)).collect(Collectors.toList());
 	}
 
 	@Override

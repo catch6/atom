@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2022-2023 Catch
- * [Atom] is licensed under Mulan PSL v2.
+ * Copyright (c) 2022-2023 Catch (catchlife6@163.com)
+ * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
  *          http://license.coscl.org.cn/MulanPSL2
@@ -12,6 +12,7 @@
 
 package net.wenzuo.atom.core.util;
 
+import cn.hutool.core.io.IoUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -51,8 +52,9 @@ import java.util.TimeZone;
 @Slf4j
 public abstract class JsonUtils {
 
-	private static PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategies.LOWER_CAMEL_CASE;
 	public static ObjectMapper objectMapper = objectMapper();
+
+	private static PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategies.LOWER_CAMEL_CASE;
 
 	/**
 	 * 更改属性序列化和反序列化命名策略, 默认为 LOWER_CAMEL_CASE
@@ -76,8 +78,8 @@ public abstract class JsonUtils {
 		if (object == null) {
 			return null;
 		}
-		if (object instanceof String) {
-			return (String) object;
+		if (object instanceof CharSequence) {
+			return object.toString();
 		}
 		try {
 			return objectMapper.writeValueAsString(object);
@@ -97,8 +99,8 @@ public abstract class JsonUtils {
 		if (object == null) {
 			return null;
 		}
-		if (object instanceof String) {
-			return (String) object;
+		if (object instanceof CharSequence) {
+			return object.toString();
 		}
 		try {
 			return objectMapper.writerWithDefaultPrettyPrinter()
@@ -116,8 +118,12 @@ public abstract class JsonUtils {
 	 * @param clazz 要转换的 java 类型
 	 * @return 接收 java 对象
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T toObject(String json, Class<T> clazz) {
 		try {
+			if (CharSequence.class.isAssignableFrom(clazz)) {
+				return (T) json;
+			}
 			return (json == null || json.isEmpty()) ? null : objectMapper.readValue(json, clazz);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
@@ -132,8 +138,12 @@ public abstract class JsonUtils {
 	 * @param clazz       要转换的 java 类型
 	 * @return 接收 java 对象
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T toObject(InputStream inputStream, Class<T> clazz) {
 		try {
+			if (CharSequence.class.isAssignableFrom(clazz)) {
+				return (T) IoUtil.readUtf8(inputStream);
+			}
 			return (inputStream == null) ? null : objectMapper.readValue(inputStream, clazz);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

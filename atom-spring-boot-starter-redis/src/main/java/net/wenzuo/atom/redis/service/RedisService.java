@@ -14,9 +14,7 @@ package net.wenzuo.atom.redis.service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -111,6 +109,20 @@ public interface RedisService {
 	 * @return 是否保存成功
 	 */
 	Boolean setIfPresent(String key, Object value, Duration timeout);
+
+	/**
+	 * 批量设置 key-value ,使用 redis mset 命令
+	 *
+	 * @param map key-value
+	 */
+	void multiSet(Map<String, Object> map);
+
+	/**
+	 * 批量设置 key-value ,使用 redis mset 命令, 如果 key 不存在则保存 value, 反之不保存
+	 *
+	 * @param map key-value
+	 */
+	Boolean multiSetIfAbsent(Map<String, Object> map);
 
 	/**
 	 * 获取 value
@@ -256,6 +268,14 @@ public interface RedisService {
 	 * @return 旧值
 	 */
 	<T> T getAndSet(String key, Object value, Class<?> wrapper, Class<?>... inners);
+
+	/**
+	 * 批量获取 value, 按键的顺序排列,不存在则用 null 填充
+	 *
+	 * @param keys 键集合
+	 * @return 值集合
+	 */
+	<T> List<T> multiGet(Collection<String> keys, Class<T> clazz);
 
 	/**
 	 * 按步长为 1 递增 value

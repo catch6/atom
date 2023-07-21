@@ -91,7 +91,7 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
-	public Boolean multiSetIfAbsent(Map<String, Object> map) {
+	public Boolean multiSetIfAbsent(Map<String, ?> map) {
 		Map<String, String> stringMap = new HashMap<>();
 		map.forEach((k, v) -> stringMap.put(k, JsonUtils.toJson(v)));
 		return stringRedisTemplate.opsForValue().multiSetIfAbsent(stringMap);

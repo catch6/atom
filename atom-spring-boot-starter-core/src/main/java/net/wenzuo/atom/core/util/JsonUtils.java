@@ -81,6 +81,9 @@ public abstract class JsonUtils {
 		if (object instanceof CharSequence) {
 			return object.toString();
 		}
+		if (object instanceof Number) {
+			return object.toString();
+		}
 		try {
 			return objectMapper.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
@@ -100,6 +103,9 @@ public abstract class JsonUtils {
 			return null;
 		}
 		if (object instanceof CharSequence) {
+			return object.toString();
+		}
+		if (object instanceof Number) {
 			return object.toString();
 		}
 		try {

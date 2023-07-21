@@ -122,7 +122,7 @@ public interface RedisService {
 	 *
 	 * @param map key-value
 	 */
-	Boolean multiSetIfAbsent(Map<String, Object> map);
+	Boolean multiSetIfAbsent(Map<String, ?> map);
 
 	/**
 	 * 获取 value

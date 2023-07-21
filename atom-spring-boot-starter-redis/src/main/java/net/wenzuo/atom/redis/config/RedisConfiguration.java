@@ -12,10 +12,6 @@
 
 package net.wenzuo.atom.redis.config;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import net.wenzuo.atom.core.util.JsonUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -70,10 +66,7 @@ public class RedisConfiguration {
 	}
 
 	private RedisSerializer<Object> redisSerializer() {
-		ObjectMapper objectMapper = JsonUtils.objectMapper();
-		objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-		objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
-		return new GenericJackson2JsonRedisSerializer(objectMapper);
+		return new GenericJackson2JsonRedisSerializer(JsonUtils.objectMapper);
 	}
 
 }

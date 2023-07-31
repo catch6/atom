@@ -69,7 +69,7 @@
 
 		<revision>2.0.12</revision>
 		<spring-cloud-dependencies.version>2022.0.0</spring-cloud-dependencies.version>
-		<spring-cloud-alibaba-dependencies.version>2022.0.0.0-RC2</spring-cloud-alibaba-dependencies.version>
+		<spring-cloud-alibaba-dependencies.version>2022.0.0.0</spring-cloud-alibaba-dependencies.version>
 
 		<nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
 		<hutool-all.version>5.8.19</hutool-all.version>

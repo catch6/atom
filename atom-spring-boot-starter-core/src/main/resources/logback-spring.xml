@@ -13,90 +13,91 @@
 
 <configuration debug="false" scan="false">
 
-    <springProperty scop="context" name="user.home" source="user.home"
-                    defaultValue=""/>
-    <springProperty scop="context" name="spring.application.name" source="spring.application.name"
-                    defaultValue="application"/>
+	<springProperty scop="context" name="user.home" source="user.home"
+					defaultValue=""/>
+	<springProperty scop="context" name="spring.application.name" source="spring.application.name"
+					defaultValue="application"/>
 
-    <property name="LOG_PATH" value="${LOG_PATH:-${user.dir}/logs}"/>
+	<property name="LOG_PATH" value="${LOG_PATH:-${user.dir}/logs}"/>
 
-    <property name="APP_LOG_FILE" value="${LOG_PATH}/app.log"/>
-    <property name="ERROR_LOG_FILE" value="${LOG_PATH}/error.log"/>
+	<property name="APP_LOG_FILE" value="${LOG_PATH}/app.log"/>
+	<property name="ERROR_LOG_FILE" value="${LOG_PATH}/error.log"/>
 
-    <!-- 日志渲染格式 -->
-    <property name="CONSOLE_LOG_PATTERN"
-              value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr([%-15.15X{Req-Id}]){magenta} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
-    <property name="FILE_LOG_PATTERN"
-              value="${FILE_LOG_PATTERN:-%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} [%-15.15X{Req-Id}] ${LOG_LEVEL_PATTERN:-%5p} [%15.15t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+	<!-- 日志渲染格式 -->
+	<property name="CONSOLE_LOG_PATTERN"
+			  value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr([%-15.15X{Req-Id}]){magenta} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+	<property name="FILE_LOG_PATTERN"
+			  value="${FILE_LOG_PATTERN:-%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} [%-15.15X{Req-Id}] ${LOG_LEVEL_PATTERN:-%5p} [%15.15t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
 
-    <!-- SpringBoot 提供的彩色日志 -->
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+	<!-- SpringBoot 提供的彩色日志 -->
+	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-        </encoder>
-    </appender>
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
 
-    <appender name="FILE_APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 日志名称 -->
-        <File>${APP_LOG_FILE}</File>
-        <!-- 滚动策略，按照时间滚动 TimeBasedRollingPolicy -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中 -->
-            <FileNamePattern>${APP_LOG_FILE}.%d{yyyy-MM-dd}.log</FileNamePattern>
-            <!-- 默认保留最近30天的日志 -->
-            <maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-30}</maxHistory>
-        </rollingPolicy>
-        <!-- 日志输出编码格式化 -->
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-        </encoder>
-    </appender>
+	<appender name="FILE_APP" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- 日志名称 -->
+		<File>${APP_LOG_FILE}</File>
+		<!-- 滚动策略，按照时间滚动 TimeBasedRollingPolicy -->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中 -->
+			<FileNamePattern>${APP_LOG_FILE}.%d{yyyy-MM-dd}.log</FileNamePattern>
+			<!-- 默认保留最近30天的日志 -->
+			<maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-30}</maxHistory>
+		</rollingPolicy>
+		<!-- 日志输出编码格式化 -->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
 
-    <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 如果只是想要 ERROR 级别的日志，那么需要过滤一下，默认是 info 级别的，ThresholdFilter -->
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
-        <!-- 日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则
-            如果同时有<File>和<FileNamePattern>，那么当天日志是<File>，明天会自动把今天
-            的日志改名为今天的日期。即，<File> 的日志都是当天的。 -->
-        <File>${ERROR_LOG_FILE}</File>
-        <!-- 滚动策略，按照时间滚动 TimeBasedRollingPolicy -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中 -->
-            <FileNamePattern>${ERROR_LOG_FILE}.%d{yyyy-MM-dd}.log</FileNamePattern>
-            <!-- 默认保留最近30天的日志 -->
-            <maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-30}</maxHistory>
-        </rollingPolicy>
-        <!-- 日志输出编码格式化 -->
-        <encoder>
-            <charset>UTF-8</charset>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
-        </encoder>
-    </appender>
+	<appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- 如果只是想要 ERROR 级别的日志，那么需要过滤一下，默认是 info 级别的，ThresholdFilter -->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<!-- 日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则
+			如果同时有<File>和<FileNamePattern>，那么当天日志是<File>，明天会自动把今天
+			的日志改名为今天的日期。即，<File> 的日志都是当天的。 -->
+		<File>${ERROR_LOG_FILE}</File>
+		<!-- 滚动策略，按照时间滚动 TimeBasedRollingPolicy -->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中 -->
+			<FileNamePattern>${ERROR_LOG_FILE}.%d{yyyy-MM-dd}.log</FileNamePattern>
+			<!-- 默认保留最近30天的日志 -->
+			<maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-30}</maxHistory>
+		</rollingPolicy>
+		<!-- 日志输出编码格式化 -->
+		<encoder>
+			<charset>UTF-8</charset>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
 
-    <!--net.wenzuo.atom.web.handler.WebExceptionHandler 已打印错误日志,避免重复打印-->
-    <logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="OFF"/>
-    <!-- 屏蔽 nacos 大量心跳日志 -->
-    <logger name="com.alibaba.nacos" level="WARN"/>
+	<!--net.wenzuo.atom.web.handler.WebExceptionHandler 已打印错误日志,避免重复打印-->
+	<logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="OFF"/>
+	<!-- 屏蔽 nacos 大量心跳日志 -->
+	<logger name="com.alibaba.nacos" level="WARN"/>
 
-    <springProfile name="prod">
-        <root level="INFO">
-            <appender-ref ref="FILE_APP"/>
-            <appender-ref ref="FILE_ERROR"/>
-        </root>
-    </springProfile>
+	<springProfile name="prod">
+		<root level="INFO">
+			<appender-ref ref="CONSOLE"/>
+			<appender-ref ref="FILE_APP"/>
+			<appender-ref ref="FILE_ERROR"/>
+		</root>
+	</springProfile>
 
-    <springProfile name="!prod">
-        <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="FILE_APP"/>
-            <appender-ref ref="FILE_ERROR"/>
-        </root>
-    </springProfile>
+	<springProfile name="!prod">
+		<root level="INFO">
+			<appender-ref ref="CONSOLE"/>
+			<appender-ref ref="FILE_APP"/>
+			<appender-ref ref="FILE_ERROR"/>
+		</root>
+	</springProfile>
 
 </configuration>

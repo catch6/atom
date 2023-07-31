@@ -22,7 +22,7 @@ import java.util.List;
  * @since 2023-07-07
  */
 @Data
-public class OptionResponse {
+public class IdNamesResponse {
 
 	@Schema(description = "选项列表")
 	private List<IdName> items;

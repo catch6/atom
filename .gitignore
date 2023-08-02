@@ -41,3 +41,4 @@ build/
 ### Project ###
 .flattened-pom.xml
 logs/
+tmp.sh

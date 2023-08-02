@@ -34,6 +34,8 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 - [atom-spring-boot-starter-web](atom-spring-boot-starter-web) Web 模块
 - [atom-spring-cloud-starter-consul](atom-spring-cloud-starter-consul) Consul 模块
 - [atom-spring-cloud-starter-feign](atom-spring-cloud-starter-feign) Feign 模块
+- [atom-spring-cloud-starter-nacos-discovery](atom-spring-cloud-starter-nacos-discovery) Nacos Discovery 模块
+- [atom-spring-cloud-starter-nacos-config](atom-spring-cloud-starter-nacos-config) Nacos Config 模块
 
 ## 快速开始
 
@@ -44,7 +46,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 <parent>
 	<groupId>net.wenzuo</groupId>
 	<artifactId>atom</artifactId>
-	<version>2.0.13</version>
+	<version>2.1.0</version>
 	<relativePath/>
 </parent>
 ```

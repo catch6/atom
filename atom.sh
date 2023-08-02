@@ -79,9 +79,11 @@ elif [ "${ACTION}" == "deploy" ]; then
     info "发布到 maven...OK!\n"
 
     info "提交代码并推送..."
+    set +e
     git add .
     git commit -m "发布 ${VERSION}"
     git push origin main
+    set -e
     info "提交代码并推送...OK!\n"
 
     info "检查tag是否存在..."

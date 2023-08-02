@@ -143,6 +143,16 @@
 				<artifactId>atom-spring-cloud-starter-feign</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-cloud-starter-nacos-config</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-cloud-starter-nacos-discovery</artifactId>
+				<version>${revision}</version>
+			</dependency>
 
 			<!-- 第三方依赖 -->
 			<dependency>

@@ -130,7 +130,7 @@ elif [ "${ACTION}" == "deploy" ]; then
 
     info "提交代码并推送..."
     git add .
-    git commit -m "新版本: ${NEW_VERSION}"
+    git commit -m "版本: ${NEW_VERSION}"
     git push origin 2.x
     info "提交代码并推送...OK!\n"
 

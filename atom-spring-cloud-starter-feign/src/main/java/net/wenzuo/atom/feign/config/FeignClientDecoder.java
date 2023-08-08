@@ -16,6 +16,7 @@ import feign.FeignException;
 import feign.Response;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.util.JsonUtils;
+import net.wenzuo.atom.core.util.ResultProvider;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -46,12 +47,15 @@ public class FeignClientDecoder extends SpringDecoder {
 		FeignClientEncoder.TIMER.remove();
 		int status = response.status();
 		Object result = super.decode(response, type);
-		String data = JsonUtils.toJson(result);
-		log.info("THIRD-RESPONSE: {}ms {} {}", time, status, data);
+		String json = JsonUtils.toJson(result);
+		log.info("THIRD-RESPONSE: {}ms {} {}", time, status, json);
 		if (status == 200) {
 			return result;
 		}
-		throw new ThirdException(status, data, response.request());
+		if (result instanceof ResultProvider provider) {
+			throw new ThirdException(status, provider, response.request());
+		}
+		throw new ThirdException(status, response.request());
 	}
 
 }

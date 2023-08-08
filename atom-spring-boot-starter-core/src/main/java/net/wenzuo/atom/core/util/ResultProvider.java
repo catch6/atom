@@ -10,24 +10,16 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.exception;
-
-import org.springframework.http.HttpStatus;
+package net.wenzuo.atom.core.util;
 
 /**
  * @author Catch
- * @since 2023-05-30
+ * @since 2023-08-08
  */
-public class BadRequestException extends HttpException {
+public interface ResultProvider {
 
-	private static final int STATUS = HttpStatus.BAD_REQUEST.value();
+	int getCode();
 
-	public BadRequestException(String message) {
-		super(STATUS, message);
-	}
-
-	public BadRequestException(Throwable t, String message) {
-		super(t, STATUS, message);
-	}
+	String getMessage();
 
 }

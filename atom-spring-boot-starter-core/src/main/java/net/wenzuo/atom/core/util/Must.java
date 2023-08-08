@@ -12,7 +12,6 @@
 
 package net.wenzuo.atom.core.util;
 
-import net.wenzuo.atom.core.exception.ServerException;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
@@ -24,7 +23,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * <p>服务数据校验断言，此断言抛出 ServerException, 报 error 日志，异常应该报警</p>
+ * <p>服务数据校验断言，此断言抛出 ServiceException, 报 error 日志，异常应该报警</p>
  * <p>如：手机号发送短信失败，服务链路调用失败</p>
  *
  * @author Catch
@@ -32,171 +31,435 @@ import java.util.function.Supplier;
  */
 public abstract class Must {
 
+	private static void throwException(String message) {
+		throw new ServiceException(message);
+	}
+
+	private static void throwException(int code, String message) {
+		throw new ServiceException(code, message);
+	}
+
+	private static void throwException(ResultProvider provider) {
+		throw new ServiceException(provider);
+	}
+
 	public static void isEquals(Object a, Object b, String message) {
 		if (!Objects.equals(a, b)) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void isEquals(Object a, Object b, int code, String message) {
+		if (!Objects.equals(a, b)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isEquals(Object a, Object b, ResultProvider provider) {
+		if (!Objects.equals(a, b)) {
+			throwException(provider);
 		}
 	}
 
 	public static void isEquals(Object a, Object b, Supplier<String> messageSupplier) {
 		if (!Objects.equals(a, b)) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isEquals(Object a, Object b, int code, Supplier<String> messageSupplier) {
+		if (!Objects.equals(a, b)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void notEquals(Object a, Object b, String message) {
 		if (Objects.equals(a, b)) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void notEquals(Object a, Object b, int code, String message) {
+		if (Objects.equals(a, b)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void notEquals(Object a, Object b, ResultProvider provider) {
+		if (Objects.equals(a, b)) {
+			throwException(provider);
 		}
 	}
 
 	public static void notEquals(Object a, Object b, Supplier<String> messageSupplier) {
 		if (Objects.equals(a, b)) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void notEquals(Object a, Object b, int code, Supplier<String> messageSupplier) {
+		if (Objects.equals(a, b)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void isTrue(boolean expression, String message) {
 		if (!expression) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void isTrue(boolean expression, int code, String message) {
+		if (!expression) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isTrue(boolean expression, ResultProvider provider) {
+		if (!expression) {
+			throwException(provider);
 		}
 	}
 
 	public static void isTrue(boolean expression, Supplier<String> messageSupplier) {
 		if (!expression) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isTrue(boolean expression, int code, Supplier<String> messageSupplier) {
+		if (!expression) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void isFalse(boolean expression, String message) {
 		if (expression) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void isFalse(boolean expression, int code, String message) {
+		if (expression) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isFalse(boolean expression, ResultProvider provider) {
+		if (expression) {
+			throwException(provider);
 		}
 	}
 
 	public static void isFalse(boolean expression, Supplier<String> messageSupplier) {
 		if (expression) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isFalse(boolean expression, int code, Supplier<String> messageSupplier) {
+		if (expression) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void isNull(@Nullable Object object, String message) {
 		if (object != null) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void isNull(@Nullable Object object, int code, String message) {
+		if (object != null) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isNull(@Nullable Object object, ResultProvider provider) {
+		if (object != null) {
+			throwException(provider);
 		}
 	}
 
 	public static void isNull(@Nullable Object object, Supplier<String> messageSupplier) {
 		if (object != null) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isNull(@Nullable Object object, int code, Supplier<String> messageSupplier) {
+		if (object != null) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void notNull(@Nullable Object object, String message) {
 		if (object == null) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void notNull(@Nullable Object object, int code, String message) {
+		if (object == null) {
+			throwException(code, message);
+		}
+	}
+
+	public static void notNull(@Nullable Object object, ResultProvider provider) {
+		if (object == null) {
+			throwException(provider);
 		}
 	}
 
 	public static void notNull(@Nullable Object object, Supplier<String> messageSupplier) {
 		if (object == null) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void notNull(@Nullable Object object, int code, Supplier<String> messageSupplier) {
+		if (object == null) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void isEmpty(@Nullable String text, String message) {
 		if (text != null && text.length() > 0) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void isEmpty(@Nullable String text, int code, String message) {
+		if (text != null && text.length() > 0) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isEmpty(@Nullable String text, ResultProvider provider) {
+		if (text != null && text.length() > 0) {
+			throwException(provider);
 		}
 	}
 
 	public static void isEmpty(@Nullable String text, Supplier<String> messageSupplier) {
 		if (text != null && text.length() > 0) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isEmpty(@Nullable String text, int code, Supplier<String> messageSupplier) {
+		if (text != null && text.length() > 0) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void notEmpty(@Nullable String text, String message) {
 		if (text == null || text.length() == 0) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void notEmpty(@Nullable String text, int code, String message) {
+		if (text == null || text.length() == 0) {
+			throwException(code, message);
+		}
+	}
+
+	public static void notEmpty(@Nullable String text, ResultProvider provider) {
+		if (text == null || text.length() == 0) {
+			throwException(provider);
 		}
 	}
 
 	public static void notEmpty(@Nullable String text, Supplier<String> messageSupplier) {
 		if (text == null || text.length() == 0) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void notEmpty(@Nullable String text, int code, Supplier<String> messageSupplier) {
+		if (text == null || text.length() == 0) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void isBlank(@Nullable String text, String message) {
 		if (StringUtils.hasText(text)) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void isBlank(@Nullable String text, int code, String message) {
+		if (StringUtils.hasText(text)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isBlank(@Nullable String text, ResultProvider provider) {
+		if (StringUtils.hasText(text)) {
+			throwException(provider);
 		}
 	}
 
 	public static void isBlank(@Nullable String text, Supplier<String> messageSupplier) {
 		if (StringUtils.hasText(text)) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isBlank(@Nullable String text, int code, Supplier<String> messageSupplier) {
+		if (StringUtils.hasText(text)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void notBlank(@Nullable String text, String message) {
 		if (!StringUtils.hasText(text)) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void notBlank(@Nullable String text, int code, String message) {
+		if (!StringUtils.hasText(text)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void notBlank(@Nullable String text, ResultProvider provider) {
+		if (!StringUtils.hasText(text)) {
+			throwException(provider);
 		}
 	}
 
 	public static void notBlank(@Nullable String text, Supplier<String> messageSupplier) {
 		if (!StringUtils.hasText(text)) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void notBlank(@Nullable String text, int code, Supplier<String> messageSupplier) {
+		if (!StringUtils.hasText(text)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void isContains(@Nullable String textToSearch, String substring, String message) {
 		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && !textToSearch.contains(substring)) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void isContains(@Nullable String textToSearch, String substring, int code, String message) {
+		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && !textToSearch.contains(substring)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isContains(@Nullable String textToSearch, String substring, ResultProvider provider) {
+		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && !textToSearch.contains(substring)) {
+			throwException(provider);
 		}
 	}
 
 	public static void isContains(@Nullable String textToSearch, String substring, Supplier<String> messageSupplier) {
 		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && !textToSearch.contains(substring)) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isContains(@Nullable String textToSearch, String substring, int code, Supplier<String> messageSupplier) {
+		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && !textToSearch.contains(substring)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void notContains(@Nullable String textToSearch, String substring, String message) {
 		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && textToSearch.contains(substring)) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void notContains(@Nullable String textToSearch, String substring, int code, String message) {
+		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && textToSearch.contains(substring)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void notContains(@Nullable String textToSearch, String substring, ResultProvider provider) {
+		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && textToSearch.contains(substring)) {
+			throwException(provider);
 		}
 	}
 
 	public static void notContains(@Nullable String textToSearch, String substring, Supplier<String> messageSupplier) {
 		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && textToSearch.contains(substring)) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void notContains(@Nullable String textToSearch, String substring, int code, Supplier<String> messageSupplier) {
+		if (StringUtils.hasLength(textToSearch) && StringUtils.hasLength(substring) && textToSearch.contains(substring)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void isEmpty(@Nullable Object[] array, String message) {
 		if (array != null && array.length > 0) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void isEmpty(@Nullable Object[] array, int code, String message) {
+		if (array != null && array.length > 0) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isEmpty(@Nullable Object[] array, ResultProvider provider) {
+		if (array != null && array.length > 0) {
+			throwException(provider);
 		}
 	}
 
 	public static void isEmpty(@Nullable Object[] array, Supplier<String> messageSupplier) {
 		if (array != null && array.length > 0) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isEmpty(@Nullable Object[] array, int code, Supplier<String> messageSupplier) {
+		if (array != null && array.length > 0) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void notEmpty(@Nullable Object[] array, String message) {
 		if (array == null || array.length == 0) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void notEmpty(@Nullable Object[] array, int code, String message) {
+		if (array == null || array.length == 0) {
+			throwException(code, message);
+		}
+	}
+
+	public static void notEmpty(@Nullable Object[] array, ResultProvider provider) {
+		if (array == null || array.length == 0) {
+			throwException(provider);
 		}
 	}
 
 	public static void notEmpty(@Nullable Object[] array, Supplier<String> messageSupplier) {
 		if (array == null || array.length == 0) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void notEmpty(@Nullable Object[] array, int code, Supplier<String> messageSupplier) {
+		if (array == null || array.length == 0) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
@@ -204,7 +467,27 @@ public abstract class Must {
 		if (array != null) {
 			for (Object element : array) {
 				if (element == null) {
-					throw new ServerException(message);
+					throwException(message);
+				}
+			}
+		}
+	}
+
+	public static void noNullElements(@Nullable Object[] array, int code, String message) {
+		if (array != null) {
+			for (Object element : array) {
+				if (element == null) {
+					throwException(code, message);
+				}
+			}
+		}
+	}
+
+	public static void noNullElements(@Nullable Object[] array, ResultProvider provider) {
+		if (array != null) {
+			for (Object element : array) {
+				if (element == null) {
+					throwException(provider);
 				}
 			}
 		}
@@ -214,7 +497,17 @@ public abstract class Must {
 		if (array != null) {
 			for (Object element : array) {
 				if (element == null) {
-					throw new ServerException(nullSafeGet(messageSupplier));
+					throwException(nullSafeGet(messageSupplier));
+				}
+			}
+		}
+	}
+
+	public static void noNullElements(@Nullable Object[] array, int code, Supplier<String> messageSupplier) {
+		if (array != null) {
+			for (Object element : array) {
+				if (element == null) {
+					throwException(code, nullSafeGet(messageSupplier));
 				}
 			}
 		}
@@ -222,25 +515,61 @@ public abstract class Must {
 
 	public static void isEmpty(@Nullable Collection<?> collection, String message) {
 		if (!CollectionUtils.isEmpty(collection)) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void isEmpty(@Nullable Collection<?> collection, int code, String message) {
+		if (!CollectionUtils.isEmpty(collection)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isEmpty(@Nullable Collection<?> collection, ResultProvider provider) {
+		if (!CollectionUtils.isEmpty(collection)) {
+			throwException(provider);
 		}
 	}
 
 	public static void isEmpty(@Nullable Collection<?> collection, Supplier<String> messageSupplier) {
 		if (!CollectionUtils.isEmpty(collection)) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isEmpty(@Nullable Collection<?> collection, int code, Supplier<String> messageSupplier) {
+		if (!CollectionUtils.isEmpty(collection)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void notEmpty(@Nullable Collection<?> collection, String message) {
 		if (CollectionUtils.isEmpty(collection)) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void notEmpty(@Nullable Collection<?> collection, int code, String message) {
+		if (CollectionUtils.isEmpty(collection)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void notEmpty(@Nullable Collection<?> collection, ResultProvider provider) {
+		if (CollectionUtils.isEmpty(collection)) {
+			throwException(provider);
 		}
 	}
 
 	public static void notEmpty(@Nullable Collection<?> collection, Supplier<String> messageSupplier) {
 		if (CollectionUtils.isEmpty(collection)) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void notEmpty(@Nullable Collection<?> collection, int code, Supplier<String> messageSupplier) {
+		if (CollectionUtils.isEmpty(collection)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
@@ -248,7 +577,27 @@ public abstract class Must {
 		if (collection != null) {
 			for (Object element : collection) {
 				if (element == null) {
-					throw new ServerException(message);
+					throwException(message);
+				}
+			}
+		}
+	}
+
+	public static void noNullElements(@Nullable Collection<?> collection, int code, String message) {
+		if (collection != null) {
+			for (Object element : collection) {
+				if (element == null) {
+					throwException(code, message);
+				}
+			}
+		}
+	}
+
+	public static void noNullElements(@Nullable Collection<?> collection, ResultProvider provider) {
+		if (collection != null) {
+			for (Object element : collection) {
+				if (element == null) {
+					throwException(provider);
 				}
 			}
 		}
@@ -258,7 +607,17 @@ public abstract class Must {
 		if (collection != null) {
 			for (Object element : collection) {
 				if (element == null) {
-					throw new ServerException(nullSafeGet(messageSupplier));
+					throwException(nullSafeGet(messageSupplier));
+				}
+			}
+		}
+	}
+
+	public static void noNullElements(@Nullable Collection<?> collection, int code, Supplier<String> messageSupplier) {
+		if (collection != null) {
+			for (Object element : collection) {
+				if (element == null) {
+					throwException(code, nullSafeGet(messageSupplier));
 				}
 			}
 		}
@@ -266,106 +625,182 @@ public abstract class Must {
 
 	public static void isEmpty(@Nullable Map<?, ?> map, String message) {
 		if (!CollectionUtils.isEmpty(map)) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void isEmpty(@Nullable Map<?, ?> map, int code, String message) {
+		if (!CollectionUtils.isEmpty(map)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isEmpty(@Nullable Map<?, ?> map, ResultProvider provider) {
+		if (!CollectionUtils.isEmpty(map)) {
+			throwException(provider);
 		}
 	}
 
 	public static void isEmpty(@Nullable Map<?, ?> map, Supplier<String> messageSupplier) {
 		if (!CollectionUtils.isEmpty(map)) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isEmpty(@Nullable Map<?, ?> map, int code, Supplier<String> messageSupplier) {
+		if (!CollectionUtils.isEmpty(map)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void notEmpty(@Nullable Map<?, ?> map, String message) {
 		if (CollectionUtils.isEmpty(map)) {
-			throw new ServerException(message);
+			throwException(message);
+		}
+	}
+
+	public static void notEmpty(@Nullable Map<?, ?> map, int code, String message) {
+		if (CollectionUtils.isEmpty(map)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void notEmpty(@Nullable Map<?, ?> map, ResultProvider provider) {
+		if (CollectionUtils.isEmpty(map)) {
+			throwException(provider);
 		}
 	}
 
 	public static void notEmpty(@Nullable Map<?, ?> map, Supplier<String> messageSupplier) {
 		if (CollectionUtils.isEmpty(map)) {
-			throw new ServerException(nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void notEmpty(@Nullable Map<?, ?> map, int code, Supplier<String> messageSupplier) {
+		if (CollectionUtils.isEmpty(map)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void isInstanceOf(@NonNull Class<?> type, @Nullable Object obj, String message) {
 		if (!type.isInstance(obj)) {
-			instanceCheckFailed(type, obj, message);
+			throwException(message);
+		}
+	}
+
+	public static void isInstanceOf(@NonNull Class<?> type, @Nullable Object obj, int code, String message) {
+		if (!type.isInstance(obj)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isInstanceOf(@NonNull Class<?> type, @Nullable Object obj, ResultProvider provider) {
+		if (!type.isInstance(obj)) {
+			throwException(provider);
 		}
 	}
 
 	public static void isInstanceOf(@NonNull Class<?> type, @Nullable Object obj, Supplier<String> messageSupplier) {
 		if (!type.isInstance(obj)) {
-			instanceCheckFailed(type, obj, nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void isInstanceOf(@NonNull Class<?> type, @Nullable Object obj, int code, Supplier<String> messageSupplier) {
+		if (!type.isInstance(obj)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void notInstanceOf(@NonNull Class<?> type, @Nullable Object obj, String message) {
 		if (type.isInstance(obj)) {
-			instanceCheckFailed(type, obj, message);
+			throwException(message);
+		}
+	}
+
+	public static void notInstanceOf(@NonNull Class<?> type, @Nullable Object obj, int code, String message) {
+		if (type.isInstance(obj)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void notInstanceOf(@NonNull Class<?> type, @Nullable Object obj, ResultProvider provider) {
+		if (type.isInstance(obj)) {
+			throwException(provider);
 		}
 	}
 
 	public static void notInstanceOf(@NonNull Class<?> type, @Nullable Object obj, Supplier<String> messageSupplier) {
 		if (type.isInstance(obj)) {
-			instanceCheckFailed(type, obj, nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void notInstanceOf(@NonNull Class<?> type, @Nullable Object obj, int code, Supplier<String> messageSupplier) {
+		if (type.isInstance(obj)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
 	}
 
 	public static void isAssignable(@NonNull Class<?> superType, @Nullable Class<?> subType, String message) {
 		if (subType == null || !superType.isAssignableFrom(subType)) {
-			assignableCheckFailed(superType, subType, message);
+			throwException(message);
+		}
+	}
+
+	public static void isAssignable(@NonNull Class<?> superType, @Nullable Class<?> subType, int code, String message) {
+		if (subType == null || !superType.isAssignableFrom(subType)) {
+			throwException(code, message);
+		}
+	}
+
+	public static void isAssignable(@NonNull Class<?> superType, @Nullable Class<?> subType, ResultProvider provider) {
+		if (subType == null || !superType.isAssignableFrom(subType)) {
+			throwException(provider);
 		}
 	}
 
 	public static void isAssignable(@NonNull Class<?> superType, @Nullable Class<?> subType, Supplier<String> messageSupplier) {
 		if (subType == null || !superType.isAssignableFrom(subType)) {
-			assignableCheckFailed(superType, subType, nullSafeGet(messageSupplier));
+			throwException(nullSafeGet(messageSupplier));
 		}
 	}
 
-	private static void instanceCheckFailed(Class<?> type, @Nullable Object obj, @Nullable String message) {
-		String className = (obj != null ? obj.getClass()
-											 .getName() : "null");
-		String result = "";
-		boolean defaultMessage = true;
-		if (StringUtils.hasLength(message)) {
-			if (endsWithSeparator(message)) {
-				result = message + " ";
-			} else {
-				result = messageWithTypeName(message, className);
-				defaultMessage = false;
-			}
+	public static void isAssignable(@NonNull Class<?> superType, @Nullable Class<?> subType, int code, Supplier<String> messageSupplier) {
+		if (subType == null || !superType.isAssignableFrom(subType)) {
+			throwException(code, nullSafeGet(messageSupplier));
 		}
-		if (defaultMessage) {
-			result = result + ("Object of class [" + className + "] must be an instance of " + type);
-		}
-		throw new ServerException(result);
 	}
 
-	private static void assignableCheckFailed(Class<?> superType, @Nullable Class<?> subType, @Nullable String message) {
-		String result = "";
-		boolean defaultMessage = true;
-		if (StringUtils.hasLength(message)) {
-			if (endsWithSeparator(message)) {
-				result = message + " ";
-			} else {
-				result = messageWithTypeName(message, subType);
-				defaultMessage = false;
-			}
+	public static void notAssignable(@NonNull Class<?> superType, @Nullable Class<?> subType, String message) {
+		if (subType != null && superType.isAssignableFrom(subType)) {
+			throwException(message);
 		}
-		if (defaultMessage) {
-			result = result + (subType + " is not assignable to " + superType);
-		}
-		throw new ServerException(result);
 	}
 
-	private static boolean endsWithSeparator(String message) {
-		return (message.endsWith(":") || message.endsWith(";") || message.endsWith(",") || message.endsWith("."));
+	public static void notAssignable(@NonNull Class<?> superType, @Nullable Class<?> subType, int code, String message) {
+		if (subType != null && superType.isAssignableFrom(subType)) {
+			throwException(code, message);
+		}
 	}
 
-	private static String messageWithTypeName(String message, @Nullable Object typeName) {
-		return message + (message.endsWith(" ") ? "" : ": ") + typeName;
+	public static void notAssignable(@NonNull Class<?> superType, @Nullable Class<?> subType, ResultProvider provider) {
+		if (subType != null && superType.isAssignableFrom(subType)) {
+			throwException(provider);
+		}
+	}
+
+	public static void notAssignable(@NonNull Class<?> superType, @Nullable Class<?> subType, Supplier<String> messageSupplier) {
+		if (subType != null && superType.isAssignableFrom(subType)) {
+			throwException(nullSafeGet(messageSupplier));
+		}
+	}
+
+	public static void notAssignable(@NonNull Class<?> superType, @Nullable Class<?> subType, int code, Supplier<String> messageSupplier) {
+		if (subType != null && superType.isAssignableFrom(subType)) {
+			throwException(code, nullSafeGet(messageSupplier));
+		}
 	}
 
 	@Nullable

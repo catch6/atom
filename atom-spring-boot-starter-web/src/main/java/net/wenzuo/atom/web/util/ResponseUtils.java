@@ -33,7 +33,8 @@ import java.util.function.Supplier;
 public class ResponseUtils {
 
 	private static final String TYPE_JSON = "application/json";
-	private static final String TYPE_EXCEL = "application/vnd.ms-excel";
+	private static final String TYPE_XLS = "application/vnd.ms-excel";
+	private static final String TYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 	@SneakyThrows
 	public static void renderJson(ServletResponse response, Object object) {
@@ -47,12 +48,12 @@ public class ResponseUtils {
 	}
 
 	@SneakyThrows
-	public static void renderJson(ServletResponse response, String jsonString) {
+	public static void renderJson(ServletResponse response, String json) {
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		response.setContentType(TYPE_JSON);
 		try (PrintWriter writer = response.getWriter()) {
-			response.setContentLength(jsonString.length());
-			writer.print(jsonString);
+			response.setContentLength(json.length());
+			writer.print(json);
 		}
 	}
 
@@ -62,7 +63,7 @@ public class ResponseUtils {
 		filename = (filename == null ? "表格" : filename) + ".xlsx";
 		filename = URLEncoder.encode(filename, StandardCharsets.UTF_8);
 		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		response.setContentType(TYPE_EXCEL);
+		response.setContentType(TYPE_XLSX);
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + filename + ";filename*=UTF-8''" + filename);
 		Collection data = supplier.get();
 		try (ServletOutputStream out = response.getOutputStream()) {

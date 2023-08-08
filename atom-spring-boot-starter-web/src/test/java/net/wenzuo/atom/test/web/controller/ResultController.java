@@ -10,24 +10,24 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.exception;
+package net.wenzuo.atom.test.web.controller;
 
-import org.springframework.http.HttpStatus;
+import net.wenzuo.atom.core.util.Result;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Catch
- * @since 2023-05-30
+ * @since 2023-08-08
  */
-public class ServerException extends HttpException {
+@RequestMapping("/result")
+@RestController
+public class ResultController {
 
-	private static final int STATUS = HttpStatus.INTERNAL_SERVER_ERROR.value();
-
-	public ServerException(String message) {
-		super(STATUS, message);
-	}
-
-	public ServerException(Throwable t, String message) {
-		super(t, STATUS, message);
+	@PostMapping("/ok")
+	public Result<Void> ok() {
+		return Result.OK;
 	}
 
 }

@@ -62,11 +62,9 @@ public class JwtServiceImpl implements JwtService {
 				return null;
 			}
 			if (clazz == String.class) {
-				return (T) jwsObject.getPayload()
-									.toString();
+				return (T) jwsObject.getPayload().toString();
 			}
-			return JsonUtils.toObject(jwsObject.getPayload()
-											   .toString(), clazz);
+			return JsonUtils.toObject(jwsObject.getPayload().toString(), clazz);
 		} catch (ParseException | JOSEException e) {
 			return null;
 		}

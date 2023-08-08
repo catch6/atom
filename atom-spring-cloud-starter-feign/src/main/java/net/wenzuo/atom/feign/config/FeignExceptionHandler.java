@@ -14,10 +14,11 @@ package net.wenzuo.atom.feign.config;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
+import net.wenzuo.atom.core.util.Result;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
@@ -30,35 +31,29 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class FeignExceptionHandler {
 
 	/**
-	 * openfeign 异常处理,
+	 * 第三方服务调用异常处理
 	 *
 	 * @param e 异常对象
 	 * @return Result
 	 */
+	@ResponseStatus(HttpStatus.BAD_GATEWAY)
 	@ExceptionHandler(ThirdException.class)
-	public ResponseEntity<String> handler(ThirdException e) {
-		if (e.status() < 500) {
-			log.warn(e.getMessage(), e);
-		} else {
-			log.error(e.getMessage(), e);
-		}
-		return ResponseEntity.status(e.status()).contentType(MediaType.TEXT_PLAIN).body(e.getMessage());
+	public Result<?> handler(ThirdException e) {
+		log.error(e.getMessage(), e);
+		return Result.fail(e);
 	}
 
 	/**
-	 * openfeign 异常处理,
+	 * 第三方服务调用异常处理
 	 *
 	 * @param e 异常对象
 	 * @return Result
 	 */
+	@ResponseStatus(HttpStatus.BAD_GATEWAY)
 	@ExceptionHandler(FeignException.class)
-	public ResponseEntity<String> handler(FeignException e) {
-		if (e.status() < 500) {
-			log.warn(e.getMessage(), e);
-		} else {
-			log.error(e.getMessage(), e);
-		}
-		return ResponseEntity.status(e.status()).contentType(MediaType.TEXT_PLAIN).body("第三方服务异常");
+	public Result<?> handler(FeignException e) {
+		log.error(e.getMessage(), e);
+		return Result.fail(ThirdException.DEFAULT_CODE, ThirdException.DEFAULT_MESSAGE);
 	}
 
 }

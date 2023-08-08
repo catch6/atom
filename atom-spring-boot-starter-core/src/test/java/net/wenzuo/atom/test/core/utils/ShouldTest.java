@@ -10,24 +10,20 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.exception;
+package net.wenzuo.atom.test.core.utils;
 
-import org.springframework.http.HttpStatus;
+import net.wenzuo.atom.core.util.Should;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Catch
- * @since 2023-05-30
+ * @since 2023-08-08
  */
-public class GatewayTimeoutException extends HttpException {
+class ShouldTest {
 
-	private static final int STATUS = HttpStatus.GATEWAY_TIMEOUT.value();
-
-	public GatewayTimeoutException(String message) {
-		super(STATUS, message);
-	}
-
-	public GatewayTimeoutException(Throwable t, String message) {
-		super(t, STATUS, message);
+	@Test
+	void test() {
+		Should.isTrue(false, "true");
 	}
 
 }

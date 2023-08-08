@@ -118,7 +118,9 @@ elif [ "${ACTION}" == "deploy" ]; then
     MAJOR=$(cut -d. -f1 <<< "${VERSION}")
     MINOR=$(cut -d. -f2 <<< "${VERSION}")
     PATCH=$(cut -d. -f3 <<< "${VERSION}")
+    set +e
     ((PATCH++))
+    set -e
     NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
     info "新版本 ${NEW_VERSION} ...OK!\n"
 

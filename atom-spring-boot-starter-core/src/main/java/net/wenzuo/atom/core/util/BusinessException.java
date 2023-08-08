@@ -24,18 +24,6 @@ public class BusinessException extends RuntimeException implements ResultProvide
 	private final int code;
 	private final String message;
 
-	public BusinessException(int code, String message, Throwable cause) {
-		super(message, cause);
-		this.code = code;
-		this.message = message;
-	}
-
-	public BusinessException(int code, String message) {
-		super(message);
-		this.code = code;
-		this.message = message;
-	}
-
 	public BusinessException() {
 		this(DEFAULT_CODE, DEFAULT_MESSAGE);
 	}
@@ -44,16 +32,32 @@ public class BusinessException extends RuntimeException implements ResultProvide
 		this(DEFAULT_CODE, message);
 	}
 
-	public BusinessException(String message, Throwable cause) {
-		this(DEFAULT_CODE, message, cause);
+	public BusinessException(int code, String message) {
+		super(message);
+		this.code = code;
+		this.message = message;
+	}
+
+	public BusinessException(ResultProvider provider) {
+		this(provider.getCode(), provider.getMessage());
 	}
 
 	public BusinessException(Throwable cause) {
 		this(DEFAULT_CODE, DEFAULT_MESSAGE, cause);
 	}
 
-	public BusinessException(ResultProvider provider) {
-		this(provider.getCode(), provider.getMessage());
+	public BusinessException(String message, Throwable cause) {
+		this(DEFAULT_CODE, message, cause);
+	}
+
+	public BusinessException(int code, String message, Throwable cause) {
+		super(message, cause);
+		this.code = code;
+		this.message = message;
+	}
+
+	public BusinessException(ResultProvider provider, Throwable cause) {
+		this(provider.getCode(), provider.getMessage(), cause);
 	}
 
 	@Override

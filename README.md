@@ -87,6 +87,7 @@ atom:
   web:
     enabled: true # 是否启用web模块
     exception-handler: true # 是否启用异常拦截
+    result-wrapper: true # 是否启用结果包装
     cors:
       enabled: true # 是否启用CORS
       configs: # CORS配置, 可配置多个

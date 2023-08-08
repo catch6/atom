@@ -14,8 +14,11 @@ package net.wenzuo.atom.feign.config;
 
 import feign.FeignException;
 import feign.Response;
+import feign.Util;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.util.JsonUtils;
+import net.wenzuo.atom.core.util.NonResultWrapper;
+import net.wenzuo.atom.core.util.Result;
 import net.wenzuo.atom.core.util.ResultProvider;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -26,6 +29,7 @@ import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
@@ -46,16 +50,37 @@ public class FeignClientDecoder extends SpringDecoder {
 		long time = System.currentTimeMillis() - FeignClientEncoder.TIMER.get();
 		FeignClientEncoder.TIMER.remove();
 		int status = response.status();
-		Object result = super.decode(response, type);
+		Object result = doDecode(response, type);
 		String json = JsonUtils.toJson(result);
 		log.info("THIRD-RESPONSE: {}ms {} {}", time, status, json);
 		if (status == 200) {
+			if (result instanceof Result<?> r) {
+				return r.getData();
+			}
 			return result;
 		}
 		if (result instanceof ResultProvider provider) {
 			throw new ThirdException(status, provider, response.request());
 		}
 		throw new ThirdException(status, response.request());
+	}
+
+	private Object doDecode(Response response, Type type) throws IOException {
+		Object result;
+		Method method = response.request().requestTemplate().methodMetadata().method();
+		if (method.getDeclaringClass().isAnnotationPresent(NonResultWrapper.class)
+			|| method.isAnnotationPresent(NonResultWrapper.class)) {
+			return super.decode(response, type);
+		}
+
+		Response.Body body = response.body();
+		if (body == null) {
+			return super.decode(response, type);
+		}
+		String bodyStr = Util.toString(body.asReader(Util.UTF_8));
+		Class<?> returnType = method.getReturnType();
+		result = JsonUtils.toObject(bodyStr, Result.class, returnType);
+		return result;
 	}
 
 }

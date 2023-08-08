@@ -10,32 +10,18 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.properties;
+package net.wenzuo.atom.core.util;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import java.lang.annotation.*;
 
 /**
  * @author Catch
- * @since 2023-06-06
+ * @since 2023-08-08
  */
-@Data
-@ConfigurationProperties(prefix = "atom.web")
-public class WebProperties {
-
-	/**
-	 * 是否启用 web 模块
-	 */
-	private Boolean enabled = true;
-
-	/**
-	 * 是否启用全局异常处理
-	 */
-	private Boolean exceptionHandler = true;
-
-	/**
-	 * 是否启用结果包装
-	 */
-	private Boolean resultWrapper = true;
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+public @interface NonResultWrapper {
 
 }

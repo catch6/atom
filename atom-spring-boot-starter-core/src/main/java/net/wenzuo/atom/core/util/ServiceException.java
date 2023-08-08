@@ -24,18 +24,6 @@ public class ServiceException extends RuntimeException implements ResultProvider
 	private final int code;
 	private final String message;
 
-	public ServiceException(int code, String message, Throwable cause) {
-		super(message, cause);
-		this.code = code;
-		this.message = message;
-	}
-
-	public ServiceException(int code, String message) {
-		super(message);
-		this.code = code;
-		this.message = message;
-	}
-
 	public ServiceException() {
 		this(DEFAULT_CODE, DEFAULT_MESSAGE);
 	}
@@ -44,16 +32,32 @@ public class ServiceException extends RuntimeException implements ResultProvider
 		this(DEFAULT_CODE, message);
 	}
 
-	public ServiceException(String message, Throwable cause) {
-		this(DEFAULT_CODE, message, cause);
+	public ServiceException(int code, String message) {
+		super(message);
+		this.code = code;
+		this.message = message;
+	}
+
+	public ServiceException(ResultProvider provider) {
+		this(provider.getCode(), provider.getMessage());
 	}
 
 	public ServiceException(Throwable cause) {
 		this(DEFAULT_CODE, DEFAULT_MESSAGE, cause);
 	}
 
-	public ServiceException(ResultProvider provider) {
-		this(provider.getCode(), provider.getMessage());
+	public ServiceException(String message, Throwable cause) {
+		this(DEFAULT_CODE, message, cause);
+	}
+
+	public ServiceException(int code, String message, Throwable cause) {
+		super(message, cause);
+		this.code = code;
+		this.message = message;
+	}
+
+	public ServiceException(ResultProvider provider, Throwable cause) {
+		this(provider.getCode(), provider.getMessage(), cause);
 	}
 
 	@Override

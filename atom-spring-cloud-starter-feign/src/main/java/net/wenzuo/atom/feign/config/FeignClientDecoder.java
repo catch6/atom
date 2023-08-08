@@ -72,7 +72,6 @@ public class FeignClientDecoder extends SpringDecoder {
 			|| method.isAnnotationPresent(NonResultWrapper.class)) {
 			return super.decode(response, type);
 		}
-
 		Response.Body body = response.body();
 		if (body == null) {
 			return super.decode(response, type);

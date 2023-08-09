@@ -16,10 +16,8 @@ import feign.RequestTemplate;
 import feign.codec.EncodeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.support.SpringEncoder;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 
@@ -28,8 +26,8 @@ import java.lang.reflect.Type;
  * @since 2021-06-29
  */
 @Slf4j
-@Component
-@ConditionalOnProperty(value = "atom.feign.logging", matchIfMissing = true)
+// @Component
+// @ConditionalOnProperty(value = "atom.feign.logging", matchIfMissing = true)
 public class FeignClientEncoder extends SpringEncoder {
 
 	static final ThreadLocal<Long> TIMER = new ThreadLocal<>();

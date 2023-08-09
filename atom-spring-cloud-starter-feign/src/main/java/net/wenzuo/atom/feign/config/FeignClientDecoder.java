@@ -14,12 +14,10 @@ package net.wenzuo.atom.feign.config;
 
 import feign.FeignException;
 import feign.Response;
-import feign.Util;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.util.JsonUtils;
 import net.wenzuo.atom.core.util.NonResultWrapper;
 import net.wenzuo.atom.core.util.Result;
-import net.wenzuo.atom.core.util.ResultProvider;
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -38,7 +36,7 @@ import java.lang.reflect.Type;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(value = "atom.feign.logging", matchIfMissing = true)
+@ConditionalOnProperty(value = "atom.feign.result-wrapper", matchIfMissing = true)
 public class FeignClientDecoder extends SpringDecoder {
 
 	public FeignClientDecoder(ObjectFactory<HttpMessageConverters> messageConverters, ObjectProvider<HttpMessageConverterCustomizer> customizers) {
@@ -47,39 +45,25 @@ public class FeignClientDecoder extends SpringDecoder {
 
 	@Override
 	public Object decode(Response response, Type type) throws IOException, FeignException {
-		long time = System.currentTimeMillis() - FeignClientEncoder.TIMER.get();
-		FeignClientEncoder.TIMER.remove();
-		int status = response.status();
-		Object result = doDecode(response, type);
-		String json = JsonUtils.toJson(result);
-		log.info("THIRD-RESPONSE: {}ms {} {}", time, status, json);
-		if (status == 200) {
-			if (result instanceof Result<?> r) {
-				return r.getData();
-			}
-			return result;
+		Method method = response.request().requestTemplate().methodMetadata().method();
+		boolean resultWrapper = !method.isAnnotationPresent(NonResultWrapper.class)
+			&& !method.getDeclaringClass().isAnnotationPresent(NonResultWrapper.class);
+		if (resultWrapper) {
+			type = TypeUtils.parameterize(Result.class, type);
 		}
-		if (result instanceof ResultProvider provider) {
-			throw new ThirdException(status, provider, response.request());
+		int status = response.status();
+		Object object = super.decode(response, type);
+		if (resultWrapper) {
+			Result<?> result = (Result<?>) object;
+			if (status < 400) {
+				return result.getData();
+			}
+			throw new ThirdException(status, result, response.request());
+		}
+		if (status < 400) {
+			return object;
 		}
 		throw new ThirdException(status, response.request());
-	}
-
-	private Object doDecode(Response response, Type type) throws IOException {
-		Object result;
-		Method method = response.request().requestTemplate().methodMetadata().method();
-		if (method.getDeclaringClass().isAnnotationPresent(NonResultWrapper.class)
-			|| method.isAnnotationPresent(NonResultWrapper.class)) {
-			return super.decode(response, type);
-		}
-		Response.Body body = response.body();
-		if (body == null) {
-			return super.decode(response, type);
-		}
-		String bodyStr = Util.toString(body.asReader(Util.UTF_8));
-		Class<?> returnType = method.getReturnType();
-		result = JsonUtils.toObject(bodyStr, Result.class, returnType);
-		return result;
 	}
 
 }

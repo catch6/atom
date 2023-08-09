@@ -35,5 +35,9 @@ public class FeignProperties {
 	 * 是否启用 Feign 第三方响应结果异常处理
 	 */
 	private Boolean exceptionHandler = true;
+	/**
+	 * 是否启用结果包装
+	 */
+	private Boolean resultWrapper = true;
 
 }

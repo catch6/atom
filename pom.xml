@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2022-2023 Catch
-  ~ [Atom] is licensed under Mulan PSL v2.
+  ~ Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+  ~ Atom is licensed under Mulan PSL v2.
   ~ You can use this software according to the terms and conditions of the Mulan PSL v2.
   ~ You may obtain a copy of Mulan PSL v2 at:
   ~          http://license.coscl.org.cn/MulanPSL2
@@ -10,6 +10,7 @@
   ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
   ~ See the Mulan PSL v2 for more details.
   -->
+
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xmlns="http://maven.apache.org/POM/4.0.0"
@@ -42,6 +43,8 @@
 		<module>atom-spring-boot-starter-web</module>
 		<module>atom-spring-cloud-starter-consul</module>
 		<module>atom-spring-cloud-starter-feign</module>
+		<module>atom-spring-cloud-starter-nacos-config</module>
+		<module>atom-spring-cloud-starter-nacos-discovery</module>
 	</modules>
 
 	<scm>
@@ -79,6 +82,8 @@
 		<springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
 		<easyexcel.version>3.3.2</easyexcel.version>
 		<swagger-annotations.version>2.2.9</swagger-annotations.version>
+		<nacos-client.version>2.2.3</nacos-client.version>
+		<logback-adapter.version>1.0.0</logback-adapter.version>
 
 		<nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
 		<maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
@@ -140,6 +145,16 @@
 				<artifactId>atom-spring-cloud-starter-feign</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-cloud-starter-nacos-config</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-cloud-starter-nacos-discovery</artifactId>
+				<version>${revision}</version>
+			</dependency>
 
 			<!-- 第三方依赖 -->
 			<dependency>
@@ -181,6 +196,16 @@
 				<groupId>io.swagger.core.v3</groupId>
 				<artifactId>swagger-annotations</artifactId>
 				<version>${swagger-annotations.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.nacos</groupId>
+				<artifactId>nacos-client</artifactId>
+				<version>${nacos-client.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.nacos</groupId>
+				<artifactId>logback-adapter</artifactId>
+				<version>${logback-adapter.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

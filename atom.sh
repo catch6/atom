@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2022-2023 Catch (catchlife6@163.com)
+# Copyright (c) 2022-2023 Catch(catchlife6@163.com).
 # Atom is licensed under Mulan PSL v2.
 # You can use this software according to the terms and conditions of the Mulan PSL v2.
 # You may obtain a copy of Mulan PSL v2 at:
@@ -96,7 +96,9 @@ elif [ "${ACTION}" == "deploy" ]; then
     MAJOR=$(cut -d. -f1 <<< "${VERSION}")
     MINOR=$(cut -d. -f2 <<< "${VERSION}")
     PATCH=$(cut -d. -f3 <<< "${VERSION}")
+    set +e
     ((PATCH++))
+    set -e
     NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
     info "新版本 ${NEW_VERSION} ...OK!\n"
 
@@ -110,7 +112,7 @@ elif [ "${ACTION}" == "deploy" ]; then
 
     info "提交代码并推送..."
     git add .
-    git commit -m "新版本: ${NEW_VERSION}"
+    git commit -m "版本: ${NEW_VERSION}"
     git push origin 1.x
     info "提交代码并推送...OK!\n"
 

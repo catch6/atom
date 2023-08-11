@@ -28,14 +28,14 @@ import org.springframework.context.ApplicationContext;
 @SpringBootTest
 class ApplicationTests {
 
-    @Resource
-    private ApplicationContext applicationContext;
+	@Resource
+	private ApplicationContext applicationContext;
 
-    @Test
-    void contextLoads() {
-        Assertions.assertNotNull(applicationContext.getBean(CoreAutoConfiguration.class));
-        Assertions.assertNotNull(applicationContext.getBean(CoreAsyncConfiguration.class));
-        Assertions.assertNotNull(applicationContext.getBean(CoreJsonConfiguration.class));
-    }
+	@Test
+	void contextLoads() {
+		Assertions.assertNotNull(applicationContext.getBean(CoreAutoConfiguration.class));
+		Assertions.assertNotNull(applicationContext.getBean(CoreAsyncConfiguration.class));
+		Assertions.assertNotNull(applicationContext.getBean(CoreJsonConfiguration.class));
+	}
 
 }

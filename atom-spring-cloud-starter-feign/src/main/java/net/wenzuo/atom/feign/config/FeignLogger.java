@@ -69,7 +69,7 @@ public class FeignLogger extends Logger {
 		this.logger.info("THIRD-REQUEST: {} {} {}", request.httpMethod().name(), request.url(), bodyText);
 	}
 
-	protected Response logAndRebufferResponse(String configKey, Logger.Level logLevel, Response response, long elapsedTime) throws IOException {
+	protected Response logAndRebufferResponse(String configKey, Level logLevel, Response response, long elapsedTime) throws IOException {
 		int status = response.status();
 		long time = System.currentTimeMillis() - TIMER.get();
 		TIMER.remove();

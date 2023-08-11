@@ -26,21 +26,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class JwtServiceTest {
 
-    @Resource
-    private JwtService jwtService;
+	@Resource
+	private JwtService jwtService;
 
-    @Test
-    void sign() {
-        String signed = jwtService.sign("test");
-        log.info("signed: {}", signed);
-    }
+	@Test
+	void sign() {
+		String signed = jwtService.sign("test");
+		log.info("signed: {}", signed);
+	}
 
-    @Test
-    void parse() {
-        String signed = jwtService.sign("test");
-        log.info("signed: {}", signed);
-        String parsed = jwtService.parse(signed, String.class);
-        log.info("parsed: {}", parsed);
-    }
+	@Test
+	void parse() {
+		String signed = jwtService.sign("test");
+		log.info("signed: {}", signed);
+		String parsed = jwtService.parse(signed, String.class);
+		log.info("parsed: {}", parsed);
+	}
 
 }

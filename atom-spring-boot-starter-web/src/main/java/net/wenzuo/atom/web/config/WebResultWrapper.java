@@ -45,8 +45,8 @@ public class WebResultWrapper implements ResponseBodyAdvice<Object> {
 	@Override
 	public Object beforeBodyWrite(Object body, @NonNull MethodParameter returnType, @NonNull MediaType selectedContentType, @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType, @NonNull ServerHttpRequest request, @NonNull ServerHttpResponse response) {
 		// 如果已经包装了 Result, 则不再包装
-		if (body instanceof Result<?> result) {
-			return result;
+		if (body instanceof Result<?>) {
+			return body;
 		}
 		// fix: java.lang.ClassCastException: class net.wenzuo.atom.core.util.Result cannot be cast to class java.lang.String (net.wenzuo.atom.core.util.Result is in unnamed module of loader 'app'; java.lang.String is in module java.base of loader 'bootstrap')
 		if (body instanceof String) {

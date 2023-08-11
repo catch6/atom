@@ -37,4 +37,5 @@
 			<artifactId>logback-adapter</artifactId>
 		</dependency>
 	</dependencies>
+
 </project>

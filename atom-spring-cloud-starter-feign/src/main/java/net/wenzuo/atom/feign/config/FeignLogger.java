@@ -54,7 +54,6 @@ public class FeignLogger extends Logger {
 	}
 
 	protected void logRequest(String configKey, Logger.Level logLevel, Request request) {
-		this.logger.info("logLevel" + logLevel);
 		TIMER.set(System.currentTimeMillis());
 		String bodyText = null;
 		if (request.body() != null) {
@@ -88,7 +87,6 @@ public class FeignLogger extends Logger {
 		if (this.logger.isDebugEnabled()) {
 			this.logger.debug(String.format(methodTag(configKey) + format, args));
 		}
-
 	}
 
 }

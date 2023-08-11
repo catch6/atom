@@ -18,6 +18,8 @@ import net.wenzuo.atom.redis.service.RedisService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +41,12 @@ class RedisTemplateTest {
 		redisService.set("long2", 1000000000000000L);
 		redisService.set("string", "test");
 		redisService.set("object", new IdName(1L, "test"));
-		redisService.set("list", List.of(new IdName(1L, "test"), new IdName(2L, "test2")));
-		redisService.set("map", Map.of(1L, new IdName(1L, "test"), 2L, new IdName(2L, "test2")));
+		List<IdName> list = Arrays.asList(new IdName(1L, "test"), new IdName(2L, "test2"));
+		redisService.set("list", list);
+		Map<Long, IdName> map = new HashMap<>();
+		map.put(1L, new IdName(1L, "test"));
+		map.put(2L, new IdName(2L, "test2"));
+		redisService.set("map", map);
 
 		Integer i = redisService.get("int", Integer.class);
 		System.out.println(i);
@@ -57,10 +63,10 @@ class RedisTemplateTest {
 		IdName o = redisService.get("object", IdName.class);
 		System.out.println(o);
 
-		List<IdName> list = redisService.get("list", List.class, IdName.class);
+		list = redisService.get("list", List.class, IdName.class);
 		System.out.println(list);
 
-		Map<Long, IdName> map = redisService.get("map", Map.class, Long.class, IdName.class);
+		map = redisService.get("map", Map.class, Long.class, IdName.class);
 		System.out.println(map);
 
 	}

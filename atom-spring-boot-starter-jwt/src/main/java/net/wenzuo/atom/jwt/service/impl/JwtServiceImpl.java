@@ -16,6 +16,7 @@ import com.nimbusds.jose.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.util.JsonUtils;
+import net.wenzuo.atom.core.util.ServiceException;
 import net.wenzuo.atom.jwt.service.JwtService;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class JwtServiceImpl implements JwtService {
 													   .stream()
 													   .findFirst();
 		if (jwsAlgorithm.isEmpty()) {
-			throw new RuntimeException("JWSAlgorithm is empty");
+			throw new ServiceException("未知签名算法");
 		}
 		JWSHeader jwsHeader = new JWSHeader(jwsAlgorithm.get());
 		JWSObject jwsObject = new JWSObject(jwsHeader, new Payload(JsonUtils.toJson(payload)));

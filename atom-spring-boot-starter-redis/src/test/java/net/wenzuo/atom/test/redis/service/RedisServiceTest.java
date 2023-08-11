@@ -20,6 +20,7 @@ import net.wenzuo.atom.redis.service.RedisService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,9 @@ class RedisServiceTest {
 
 	@Test
 	void set() {
-		List<Item> items = List.of(new Item("test", 1), new Item("test", 2));
+		List<Item> items = new ArrayList<>();
+		items.add(new Item("test", 1));
+		items.add(new Item("test", 2));
 		redisService.set("items", items);
 		List<Item> list = redisService.get("items", List.class, Item.class);
 		list.forEach(item -> log.info("item:{}", item));

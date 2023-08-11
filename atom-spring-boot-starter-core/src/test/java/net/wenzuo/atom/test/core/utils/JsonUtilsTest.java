@@ -71,15 +71,6 @@ class JsonUtilsTest {
 		log.info("result: {}", result);
 	}
 
-	@Data
-	static class VO {
-
-		private LocalDateTime dateTime;
-		private LocalDate date;
-		private LocalTime time;
-
-	}
-
 	@Test
 	void test() {
 		String str = "hello";
@@ -89,6 +80,15 @@ class JsonUtilsTest {
 		log.info("json: {}", json);
 		String prettyJson = JsonUtils.toPrettyJson(str);
 		log.info("prettyJson: {}", prettyJson);
+	}
+
+	@Data
+	static class VO {
+
+		private LocalDateTime dateTime;
+		private LocalDate date;
+		private LocalTime time;
+
 	}
 
 }

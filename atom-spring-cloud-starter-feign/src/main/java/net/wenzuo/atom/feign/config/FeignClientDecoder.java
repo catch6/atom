@@ -46,14 +46,16 @@ public class FeignClientDecoder extends SpringDecoder {
 	@Override
 	public Object decode(Response response, Type type) throws IOException, FeignException {
 		Method method = response.request().requestTemplate().methodMetadata().method();
-		boolean resultWrapper = !method.isAnnotationPresent(NonResultWrapper.class)
+		Class<?> returnType = method.getReturnType();
+		boolean unWrapper = returnType != Result.class
+			&& !method.isAnnotationPresent(NonResultWrapper.class)
 			&& !method.getDeclaringClass().isAnnotationPresent(NonResultWrapper.class);
-		if (resultWrapper) {
+		if (unWrapper) {
 			type = TypeUtils.parameterize(Result.class, type);
 		}
 		int status = response.status();
 		Object object = super.decode(response, type);
-		if (resultWrapper) {
+		if (unWrapper) {
 			Result<?> result = (Result<?>) object;
 			if (status < 400) {
 				return result.getData();

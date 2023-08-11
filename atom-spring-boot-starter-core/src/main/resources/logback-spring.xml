@@ -86,6 +86,7 @@
 
 	<springProfile name="prod">
 		<root level="INFO">
+			<appender-ref ref="CONSOLE"/>
 			<appender-ref ref="FILE_APP"/>
 			<appender-ref ref="FILE_ERROR"/>
 		</root>

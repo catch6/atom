@@ -33,4 +33,9 @@ public class WebProperties {
 	 */
 	private Boolean exceptionHandler = true;
 
+	/**
+	 * 是否启用结果包装
+	 */
+	private Boolean resultWrapper = true;
+
 }

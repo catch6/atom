@@ -18,8 +18,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -34,7 +32,6 @@ public class CorsConfiguration {
 
 	private final CorsProperties corsProperties;
 
-	@Order(Ordered.HIGHEST_PRECEDENCE + 100)
 	@Bean
 	@ConditionalOnMissingBean
 	public CorsFilter corsFilter() {

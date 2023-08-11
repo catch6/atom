@@ -71,6 +71,17 @@ class JsonUtilsTest {
 		log.info("result: {}", result);
 	}
 
+	@Test
+	void test() {
+		String str = "hello";
+		String object = JsonUtils.toObject(str, String.class);
+		log.info("object: {}", object);
+		String json = JsonUtils.toJson(str);
+		log.info("json: {}", json);
+		String prettyJson = JsonUtils.toPrettyJson(str);
+		log.info("prettyJson: {}", prettyJson);
+	}
+
 	@Data
 	static class VO {
 

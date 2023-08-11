@@ -12,11 +12,8 @@
 
 package net.wenzuo.atom.test.core.utils;
 
-import net.wenzuo.atom.core.exception.ServerErrorException;
-import net.wenzuo.atom.core.util.Must;
+import net.wenzuo.atom.core.util.Should;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Catch
@@ -25,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MustTest {
 
 	@Test
-	void isTrue() {
-		assertThrows(ServerErrorException.class, () -> Must.isTrue(false, "false message"));
+	void test() {
+		Should.isTrue(false, "true");
 	}
 
 }

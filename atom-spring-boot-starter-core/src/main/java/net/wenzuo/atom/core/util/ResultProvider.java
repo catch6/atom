@@ -10,30 +10,16 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.exception;
-
-import lombok.Getter;
+package net.wenzuo.atom.core.util;
 
 /**
  * @author Catch
- * @since 2023-07-03
+ * @since 2023-08-08
  */
-@Getter
-public class HttpException extends RuntimeException {
+public interface ResultProvider {
 
-	private final int status;
-	private final String message;
+	int getCode();
 
-	public HttpException(int status, String message) {
-		super(message);
-		this.status = status;
-		this.message = message;
-	}
-
-	public HttpException(Throwable t, int status, String message) {
-		super(t);
-		this.status = status;
-		this.message = message;
-	}
+	String getMessage();
 
 }

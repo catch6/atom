@@ -10,24 +10,25 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.exception;
+package net.wenzuo.atom.core.param;
 
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.List;
 
 /**
  * @author Catch
- * @since 2023-05-30
+ * @since 2023-07-25
  */
-public class BadRequestException extends HttpException {
+@Data
+public class IdsRequest {
 
-	private static final int STATUS = HttpStatus.BAD_REQUEST.value();
-
-	public BadRequestException(String message) {
-		super(STATUS, message);
-	}
-
-	public BadRequestException(Throwable t, String message) {
-		super(t, STATUS, message);
-	}
+	@Schema(description = "ID列表")
+	@NotNull(message = "ID列表不能为空")
+	@Size(min = 1, message = "ID列表不能为空")
+	private List<Long> id;
 
 }

@@ -10,24 +10,21 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.exception;
+package net.wenzuo.atom.core.param;
 
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import java.util.List;
 
 /**
  * @author Catch
- * @since 2023-05-30
+ * @since 2023-07-07
  */
-public class ForbiddenException extends HttpException {
+@Data
+public class IdNamesResponse {
 
-	private static final int STATUS = HttpStatus.FORBIDDEN.value();
-
-	public ForbiddenException(String message) {
-		super(STATUS, message);
-	}
-
-	public ForbiddenException(Throwable t, String message) {
-		super(t, STATUS, message);
-	}
+	@Schema(description = "选项列表")
+	private List<IdName> items;
 
 }

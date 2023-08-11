@@ -15,7 +15,9 @@ package net.wenzuo.atom.feign.config;
 import feign.FeignException;
 import feign.Response;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.util.JsonUtils;
+import net.wenzuo.atom.core.util.NonResultWrapper;
+import net.wenzuo.atom.core.util.Result;
+import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -25,6 +27,7 @@ import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
@@ -33,7 +36,7 @@ import java.lang.reflect.Type;
  */
 @Slf4j
 @Component
-@ConditionalOnProperty(value = "atom.feign.logging", matchIfMissing = true)
+@ConditionalOnProperty(value = "atom.feign.result-wrapper", matchIfMissing = true)
 public class FeignClientDecoder extends SpringDecoder {
 
 	public FeignClientDecoder(ObjectFactory<HttpMessageConverters> messageConverters, ObjectProvider<HttpMessageConverterCustomizer> customizers) {
@@ -42,16 +45,25 @@ public class FeignClientDecoder extends SpringDecoder {
 
 	@Override
 	public Object decode(Response response, Type type) throws IOException, FeignException {
-		long time = System.currentTimeMillis() - FeignClientEncoder.TIMER.get();
-		FeignClientEncoder.TIMER.remove();
-		int status = response.status();
-		Object result = super.decode(response, type);
-		String jsonString = JsonUtils.toJson(result);
-		log.info("THIRD-RESPONSE: {}ms {} {}", time, status, jsonString);
-		if (status == 200) {
-			return result;
+		Method method = response.request().requestTemplate().methodMetadata().method();
+		boolean resultWrapper = !method.isAnnotationPresent(NonResultWrapper.class)
+			&& !method.getDeclaringClass().isAnnotationPresent(NonResultWrapper.class);
+		if (resultWrapper) {
+			type = TypeUtils.parameterize(Result.class, type);
 		}
-		throw new ThirdException(status, jsonString, response.request());
+		int status = response.status();
+		Object object = super.decode(response, type);
+		if (resultWrapper) {
+			Result<?> result = (Result<?>) object;
+			if (status < 400) {
+				return result.getData();
+			}
+			throw new ThirdException(status, result, response.request());
+		}
+		if (status < 400) {
+			return object;
+		}
+		throw new ThirdException(status, response.request());
 	}
 
 }

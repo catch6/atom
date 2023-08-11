@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test;
 
 /**
  * @author Catch
- * @since 2023-06-19
+ * @since 2023-08-08
  */
-class MustTest {
+class ShouldTest {
 
 	@Test
 	void test() {

@@ -66,12 +66,6 @@ elif [ "${ACTION}" == "deploy" ]; then
     mvn -Possrh -Prelease clean deploy -U -DskipTests
     info "发布到 maven...OK!\n"
 
-    info "提交代码并推送..."
-    git add .
-    git commit -m "发布 ${VERSION}"
-    git push origin 1.x
-    info "提交代码并推送...OK!\n"
-
     info "检查tag是否存在..."
     if git rev-parse "${VERSION}" >/dev/null 2>&1; then
         info "tag存在!"

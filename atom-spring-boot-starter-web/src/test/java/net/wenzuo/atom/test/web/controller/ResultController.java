@@ -10,20 +10,24 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.test.core.utils;
+package net.wenzuo.atom.test.web.controller;
 
-import net.wenzuo.atom.core.util.Should;
-import org.junit.jupiter.api.Test;
+import net.wenzuo.atom.core.util.Result;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Catch
  * @since 2023-08-08
  */
-class ShouldTest {
+@RequestMapping("/result")
+@RestController
+public class ResultController {
 
-	@Test
-	void test() {
-		Should.isTrue(false, "true");
+	@PostMapping("/ok")
+	public Result<Void> ok() {
+		return Result.OK;
 	}
 
 }

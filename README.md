@@ -108,11 +108,15 @@ atom:
       include-path: # 包含路径
         - /**
       exclude-path: # 排除路径
+  consul:
+    enabled: true # 是否启用Consul模块
   feign:
     enabled: true # 是否启用Feign模块
     logging: true # 是否启用Feign的请求响应日志记录
     exception-handler: true # 是否启用Feign的异常处理,拦截第三方响应结果异常
     result-wrapper: true # 是否启用 Result 拆箱
+  kafka:
+    enabled: true # 是否启用Kafka模块
 ```
 
 ## 一些建议

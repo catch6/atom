@@ -147,6 +147,11 @@
 			</dependency>
 			<dependency>
 				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-cloud-starter-kafka</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.wenzuo</groupId>
 				<artifactId>atom-spring-cloud-starter-nacos-config</artifactId>
 				<version>${revision}</version>
 			</dependency>

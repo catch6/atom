@@ -53,7 +53,7 @@ public class FeignLogger extends Logger {
 		this.logger = logger;
 	}
 
-	protected void logRequest(String configKey, Logger.Level logLevel, Request request) {
+	protected void logRequest(String configKey, Level logLevel, Request request) {
 		TIMER.set(System.currentTimeMillis());
 		String bodyText = null;
 		if (request.body() != null) {

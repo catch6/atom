@@ -36,7 +36,7 @@ public class FeignProperties {
 	 */
 	private Boolean exceptionHandler = true;
 	/**
-	 * 是否启用结果包装
+	 * 是否启用Feign的解码器, 解码响应结果,针对小于 400 的状态码抛出异常
 	 */
 	private Boolean decode = true;
 

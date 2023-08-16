@@ -88,7 +88,6 @@ atom:
   web:
     enabled: true # 是否启用web模块
     exception-handler: true # 是否启用异常拦截
-    result-wrapper: true # 是否启用 Result 装箱
     cors:
       enabled: true # 是否启用CORS
       configs: # CORS配置, 可配置多个
@@ -114,7 +113,7 @@ atom:
     enabled: true # 是否启用Feign模块
     logging: true # 是否启用Feign的请求响应日志记录
     exception-handler: true # 是否启用Feign的异常处理,拦截第三方响应结果异常
-    result-wrapper: true # 是否启用 Result 拆箱
+    decode: true # 是否启用Feign的解码器, 解码响应结果,针对小于 400 的状态码抛出异常
   kafka:
     enabled: true # 是否启用Kafka模块
 ```

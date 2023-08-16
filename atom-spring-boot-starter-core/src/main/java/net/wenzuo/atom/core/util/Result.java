@@ -27,14 +27,15 @@ import lombok.NoArgsConstructor;
 @Data
 public class Result<T> implements ResultProvider {
 
+	private static final int OK_CODE = 200;
+	private static final String OK_MESSAGE = "成功";
 	private int code;
 	private String message;
 	private T data;
 
-	private static final int OK_CODE = 200;
-	private static final String OK_MESSAGE = "成功";
-
-	public static final Result<Void> OK = ok(null);
+	public static <T> Result<T> ok() {
+		return new Result<>(OK_CODE, OK_MESSAGE, null);
+	}
 
 	public static <T> Result<T> ok(T data) {
 		return new Result<>(OK_CODE, OK_MESSAGE, data);

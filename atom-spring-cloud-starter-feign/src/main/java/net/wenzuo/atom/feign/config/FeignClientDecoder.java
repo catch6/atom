@@ -15,9 +15,7 @@ package net.wenzuo.atom.feign.config;
 import feign.FeignException;
 import feign.Response;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.util.NonResultWrapper;
 import net.wenzuo.atom.core.util.Result;
-import org.apache.commons.lang3.reflect.TypeUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,7 +25,6 @@ import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
@@ -35,8 +32,8 @@ import java.lang.reflect.Type;
  * @since 2021-06-29
  */
 @Slf4j
+@ConditionalOnProperty(value = "atom.feign.decode", matchIfMissing = true)
 @Component
-@ConditionalOnProperty(value = "atom.feign.result-wrapper", matchIfMissing = true)
 public class FeignClientDecoder extends SpringDecoder {
 
 	public FeignClientDecoder(ObjectFactory<HttpMessageConverters> messageConverters, ObjectProvider<HttpMessageConverterCustomizer> customizers) {
@@ -45,20 +42,11 @@ public class FeignClientDecoder extends SpringDecoder {
 
 	@Override
 	public Object decode(Response response, Type type) throws IOException, FeignException {
-		Method method = response.request().requestTemplate().methodMetadata().method();
-		Class<?> returnType = method.getReturnType();
-		boolean unWrapper = returnType != Result.class
-			&& !method.isAnnotationPresent(NonResultWrapper.class)
-			&& !method.getDeclaringClass().isAnnotationPresent(NonResultWrapper.class);
-		if (unWrapper) {
-			type = TypeUtils.parameterize(Result.class, type);
-		}
 		int status = response.status();
 		Object object = super.decode(response, type);
-		if (unWrapper) {
-			Result<?> result = (Result<?>) object;
+		if (object instanceof Result<?> result) {
 			if (status < 400) {
-				return result.getData();
+				return result;
 			}
 			throw new ThirdException(status, result, response.request());
 		}

@@ -38,6 +38,6 @@ public class FeignProperties {
 	/**
 	 * 是否启用结果包装
 	 */
-	private Boolean resultWrapper = true;
+	private Boolean decode = true;
 
 }

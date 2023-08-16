@@ -27,7 +27,7 @@ public class ResultController {
 
 	@PostMapping("/ok")
 	public Result<Void> ok() {
-		return Result.OK;
+		return Result.ok();
 	}
 
 }

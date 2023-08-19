@@ -45,12 +45,9 @@ public class KafkaServiceImpl implements KafkaService {
 		ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topic, null, System.currentTimeMillis(), key, json);
 		ListenableFuture<SendResult<String, String>> future = kafkaTemplate.send(producerRecord);
 		future.addCallback(
-			result -> {
-				log.info("Kafka 消息发送成功, TOPIC:{}, DATA:{}", topic, json);
-			},
-			ex -> {
-				log.error("Kafka 消息发送失败, {}", ex.getMessage());
-			});
+			result -> log.info("Kafka 消息发送成功, TOPIC:{}, DATA:{}", topic, json),
+			ex -> log.error("Kafka 消息发送失败, {}", ex.getMessage())
+		);
 	}
 
 }

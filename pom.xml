@@ -70,7 +70,7 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<revision>2.3.3</revision>
+		<revision>2.3.4</revision>
 		<spring-cloud-dependencies.version>2022.0.0</spring-cloud-dependencies.version>
 		<spring-cloud-alibaba-dependencies.version>2022.0.0.0</spring-cloud-alibaba-dependencies.version>
 

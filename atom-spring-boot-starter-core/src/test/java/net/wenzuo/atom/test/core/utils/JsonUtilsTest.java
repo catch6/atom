@@ -104,7 +104,9 @@ class JsonUtilsTest {
 	static class VO2 {
 
 		@Desensitization(type = DesensitizationType.USER_ID)
-		private String id = "111";
+		private Long idl = 1111L;
+		@Desensitization(type = DesensitizationType.USER_ID)
+		private String ids = "111";
 		@Desensitization(type = DesensitizationType.CUSTOM, start = 1, end = 2)
 		private String custom = "hello";
 		@Desensitization(type = DesensitizationType.ADDRESS)

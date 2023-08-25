@@ -24,18 +24,15 @@ import java.time.temporal.ChronoUnit;
 public abstract class LocalTimeUtils {
 
 	public static LocalTime now() {
-		return LocalTime.now()
-						.truncatedTo(ChronoUnit.SECONDS);
+		return LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
 	}
 
 	public static LocalTime now(ZoneId zone) {
-		return LocalTime.now(zone)
-						.truncatedTo(ChronoUnit.SECONDS);
+		return LocalTime.now(zone).truncatedTo(ChronoUnit.SECONDS);
 	}
 
 	public static LocalTime now(Clock clock) {
-		return LocalTime.now(clock)
-						.truncatedTo(ChronoUnit.SECONDS);
+		return LocalTime.now(clock).truncatedTo(ChronoUnit.SECONDS);
 	}
 
 }

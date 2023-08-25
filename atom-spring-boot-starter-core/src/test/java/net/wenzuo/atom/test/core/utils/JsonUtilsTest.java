@@ -14,6 +14,8 @@ package net.wenzuo.atom.test.core.utils;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import net.wenzuo.atom.core.util.Desensitization;
+import net.wenzuo.atom.core.util.DesensitizationType;
 import net.wenzuo.atom.core.util.JsonUtils;
 import org.junit.jupiter.api.Test;
 
@@ -82,12 +84,31 @@ class JsonUtilsTest {
 		log.info("prettyJson: {}", prettyJson);
 	}
 
+	@Test
+	void testDesensitization() {
+		VO2 vo = new VO2();
+		String result = JsonUtils.toJson(vo);
+		log.info("result: {}", result);
+	}
+
 	@Data
 	static class VO {
 
 		private LocalDateTime dateTime;
 		private LocalDate date;
 		private LocalTime time;
+
+	}
+
+	@Data
+	static class VO2 {
+
+		@Desensitization(type = DesensitizationType.USER_ID)
+		private String id = "111";
+		@Desensitization(type = DesensitizationType.CUSTOM, start = 1, end = 2)
+		private String custom = "hello";
+		@Desensitization(type = DesensitizationType.ADDRESS)
+		private String address = "北京市朝阳区";
 
 	}
 

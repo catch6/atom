@@ -22,7 +22,6 @@ import java.util.List;
  * @author Catch
  * @since 2022-09-08
  */
-@Schema(description = "分页响应")
 @Data
 public class PageResponse<T> {
 

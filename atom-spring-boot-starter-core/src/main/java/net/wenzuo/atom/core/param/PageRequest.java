@@ -20,7 +20,6 @@ import lombok.Data;
  * @author Catch
  * @since 2022-09-08
  */
-@Schema(description = "分页请求")
 @Data
 public class PageRequest {
 

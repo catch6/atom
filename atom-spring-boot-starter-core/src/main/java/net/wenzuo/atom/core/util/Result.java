@@ -12,7 +12,6 @@
 
 package net.wenzuo.atom.core.util;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +20,6 @@ import lombok.NoArgsConstructor;
  * @author Catch
  * @since 2023-08-08
  */
-@Schema(name = "Result", description = "返回结果")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

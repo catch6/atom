@@ -24,7 +24,6 @@ import net.wenzuo.atom.web.properties.LoggingProperties;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,7 +49,7 @@ import java.util.Map;
  */
 @Slf4j
 @ConditionalOnProperty(value = "atom.web.logging.enabled", matchIfMissing = true)
-@Order(value = Ordered.HIGHEST_PRECEDENCE + 100)
+@Order(value = -50)
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
 

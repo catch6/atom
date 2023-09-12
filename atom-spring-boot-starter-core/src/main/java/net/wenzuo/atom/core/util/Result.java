@@ -13,17 +13,13 @@
 package net.wenzuo.atom.core.util;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author Catch
  * @since 2023-08-08
  */
 @Schema(name = "Result", description = "返回结果")
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 public class Result<T> implements ResultProvider {
 
@@ -32,6 +28,15 @@ public class Result<T> implements ResultProvider {
 	private int code;
 	private String message;
 	private T data;
+
+	public Result() {
+	}
+
+	public Result(int code, String message, T data) {
+		this.code = code;
+		this.message = message;
+		this.data = data;
+	}
 
 	public static <T> Result<T> ok() {
 		return new Result<>(OK_CODE, OK_MESSAGE, null);

@@ -464,4 +464,199 @@ public interface RedisService {
 	 */
 	Long getExpire(String key, TimeUnit timeUnit);
 
+	/**
+	 * Hash 操作, 批量删除 hashKey
+	 *
+	 * @param key      键
+	 * @param hashKeys hash 键集合
+	 * @return 删除的数量
+	 */
+	Long hDelete(String key, String... hashKeys);
+
+	/**
+	 * Hash 操作, 判断 hash 键, 是否存在
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 * @return 是否存在
+	 */
+	Boolean hHasKey(String key, String hashKey);
+
+	/**
+	 * Hash 操作, 获取 value
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 * @param clazz   值类型
+	 * @param <T>     泛型
+	 * @return 值
+	 */
+	<T> T hGet(String key, String hashKey, Class<T> clazz);
+
+	/**
+	 * Hash 操作, 批量获取 value
+	 * 返回的 value 顺序与 hashKeys 顺序一致, 不存在则用 null 填充, 存在则返回的是 JsonUtils.toJson() 的结果, 需要自行转换
+	 *
+	 * @param key      键
+	 * @param hashKeys hash 键集合
+	 * @return 值集合
+	 */
+	List<String> hMultiGet(String key, Collection<String> hashKeys);
+
+	/**
+	 * Hash 操作, value + 1
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 */
+	void hIncrement(String key, String hashKey);
+
+	/**
+	 * Hash 操作, value + delta
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 * @param delta   步长
+	 */
+	void hIncrement(String key, String hashKey, long delta);
+
+	/**
+	 * Hash 操作, value + delta
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 * @param delta   步长
+	 */
+	void hIncrement(String key, String hashKey, double delta);
+
+	/**
+	 * Hash 操作, value - 1
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 */
+	void hDecrement(String key, String hashKey);
+
+	/**
+	 * Hash 操作, value - delta
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 * @param delta   步长
+	 */
+	void hDecrement(String key, String hashKey, long delta);
+
+	/**
+	 * Hash 操作, value - delta
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 * @param delta   步长
+	 */
+	void hDecrement(String key, String hashKey, double delta);
+
+	/**
+	 * Hash 操作, 随机获取 hash 键
+	 *
+	 * @param key 键
+	 * @return 随机 hash 键
+	 */
+	String hRandomKey(String key);
+
+	/**
+	 * Hash 操作, 随机获取 hash 键值对, hash 值返回的是 JsonUtils.toJson() 的结果, 需要自行转换
+	 *
+	 * @param key 键
+	 * @return 随机 hash 键值对
+	 */
+	Map.Entry<String, String> hRandomEntry(String key);
+
+	/**
+	 * Hash 操作, 随机获取指定数量的 hash 键
+	 *
+	 * @param key   键
+	 * @param count hash 键数量
+	 * @return hash 键集合
+	 */
+	List<String> hRandomKeys(String key, long count);
+
+	/**
+	 * Hash 操作, 随机获取指定数量的 hash 键值对, hash 值返回的是 JsonUtils.toJson() 的结果, 需要自行转换
+	 *
+	 * @param key   键
+	 * @param count hash 键值对数量
+	 * @return hash 键值对集合
+	 */
+	Map<String, String> hRandomEntries(String key, long count);
+
+	/**
+	 * Hash 操作, 获取 hash 键集合
+	 *
+	 * @param key 键
+	 * @return hash 键集合
+	 */
+	Set<String> hKeys(String key);
+
+	/**
+	 * Hash 操作, 获取 value 长度
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 * @return value 长度
+	 */
+	Long hLengthOfValue(String key, String hashKey);
+
+	/**
+	 * Hash 操作, 获取 hash 键数量
+	 *
+	 * @param key 键
+	 * @return hash 键数量
+	 */
+	Long hSize(String key);
+
+	/**
+	 * Hash 操作, 批量保存 hash 键值对
+	 *
+	 * @param key 键
+	 * @param kv  hash 键值对
+	 */
+	void hPutAll(String key, Map<String, Object> kv);
+
+	/**
+	 * Hash 操作, 保存 value
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 * @param value   值
+	 * @param <T>     泛型
+	 */
+	<T> void hPut(String key, String hashKey, Object value);
+
+	/**
+	 * Hash 操作, 仅当 hashKey 不存在时，才设置 hashKey 的值
+	 *
+	 * @param key     键
+	 * @param hashKey hash 键
+	 * @param value   值
+	 * @return 是否保存成功
+	 */
+	Boolean hPutIfAbsent(String key, String hashKey, Object value);
+
+	/**
+	 * Hash 操作, 获取所有 hash 值, hash 值返回的是 JsonUtils.toJson() 的结果, 需要自行转换
+	 *
+	 * @param key 键
+	 * @return hash 值集合
+	 */
+	List<String> hValues(String key);
+
+	/**
+	 * Hash 操作, 获取所有 hash 键值对
+	 * 返回的 Map 的 value 是 JsonUtils.toJson() 的结果, 需要自行转换
+	 *
+	 * @param key 键
+	 * @return hash 键值对
+	 */
+	Map<String, String> hEntries(String key);
+
 }

@@ -271,4 +271,137 @@ public class RedisServiceImpl implements RedisService {
 		return stringRedisTemplate.getExpire(key, timeUnit);
 	}
 
+	@Override
+	public Long hDelete(String key, String... hashKeys) {
+		return stringRedisTemplate.opsForHash().delete(key, (Object) hashKeys);
+	}
+
+	@Override
+	public Boolean hHasKey(String key, String hashKey) {
+		return stringRedisTemplate.opsForHash().hasKey(key, hashKey);
+	}
+
+	@Override
+	public <T> T hGet(String key, String hashKey, Class<T> clazz) {
+		String valueStr = (String) stringRedisTemplate.opsForHash().get(key, hashKey);
+		return JsonUtils.toObject(valueStr, clazz);
+	}
+
+	@Override
+	public List<String> hMultiGet(String key, Collection<String> hashKeys) {
+		Collection<Object> hKeys = new ArrayList<>(hashKeys);
+		List<Object> objects = stringRedisTemplate.opsForHash().multiGet(key, hKeys);
+		return objects.stream().map(o -> (String) o).collect(Collectors.toList());
+	}
+
+	@Override
+	public void hIncrement(String key, String hashKey) {
+		stringRedisTemplate.opsForHash().increment(key, hashKey, 1);
+	}
+
+	@Override
+	public void hIncrement(String key, String hashKey, long delta) {
+		stringRedisTemplate.opsForHash().increment(key, hashKey, delta);
+	}
+
+	@Override
+	public void hIncrement(String key, String hashKey, double delta) {
+		stringRedisTemplate.opsForHash().increment(key, hashKey, delta);
+	}
+
+	@Override
+	public void hDecrement(String key, String hashKey) {
+		stringRedisTemplate.opsForHash().increment(key, hashKey, -1);
+	}
+
+	@Override
+	public void hDecrement(String key, String hashKey, long delta) {
+		stringRedisTemplate.opsForHash().increment(key, hashKey, -delta);
+	}
+
+	@Override
+	public void hDecrement(String key, String hashKey, double delta) {
+		stringRedisTemplate.opsForHash().increment(key, hashKey, -delta);
+	}
+
+	@Override
+	public String hRandomKey(String key) {
+		return (String) stringRedisTemplate.opsForHash().randomKey(key);
+	}
+
+	@Override
+	public Map.Entry<String, String> hRandomEntry(String key) {
+		Map.Entry<Object, Object> entry = stringRedisTemplate.opsForHash().randomEntry(key);
+		if (entry != null) {
+			return new AbstractMap.SimpleEntry<>((String) entry.getKey(), (String) entry.getValue());
+		}
+		return null;
+	}
+
+	@Override
+	public List<String> hRandomKeys(String key, long count) {
+		List<Object> objects = stringRedisTemplate.opsForHash().randomKeys(key, count);
+		if (objects != null) {
+			return objects.stream().map(o -> (String) o).collect(Collectors.toList());
+		}
+		return null;
+	}
+
+	@Override
+	public Map<String, String> hRandomEntries(String key, long count) {
+		Map<Object, Object> entries = stringRedisTemplate.opsForHash().randomEntries(key, count);
+		if (entries != null) {
+			Map<String, String> map = new HashMap<>();
+			entries.forEach((k, v) -> map.put((String) k, (String) v));
+			return map;
+		}
+		return null;
+	}
+
+	@Override
+	public Set<String> hKeys(String key) {
+		return stringRedisTemplate.opsForHash().keys(key).stream().map(o -> (String) o).collect(Collectors.toSet());
+	}
+
+	@Override
+	public Long hLengthOfValue(String key, String hashKey) {
+		return stringRedisTemplate.opsForHash().lengthOfValue(key, hashKey);
+	}
+
+	@Override
+	public Long hSize(String key) {
+		return stringRedisTemplate.opsForHash().size(key);
+	}
+
+	@Override
+	public void hPutAll(String key, Map<String, Object> kv) {
+		Map<String, String> stringMap = new HashMap<>();
+		kv.forEach((k, v) -> stringMap.put(k, JsonUtils.toJson(v)));
+		stringRedisTemplate.opsForHash().putAll(key, stringMap);
+	}
+
+	@Override
+	public <T> void hPut(String key, String hashKey, Object value) {
+		stringRedisTemplate.opsForHash().put(key, hashKey, JsonUtils.toJson(value));
+	}
+
+	@Override
+	public Boolean hPutIfAbsent(String key, String hashKey, Object value) {
+		return stringRedisTemplate.opsForHash().putIfAbsent(key, hashKey, JsonUtils.toJson(value));
+	}
+
+	@Override
+	public List<String> hValues(String key) {
+		List<Object> objects = stringRedisTemplate.opsForHash().values(key);
+		return objects.stream().map(o -> (String) o).collect(Collectors.toList());
+	}
+
+	@Override
+	public Map<String, String> hEntries(String key) {
+		Map<Object, Object> entries = stringRedisTemplate.opsForHash().entries(key);
+		Map<String, String> map = new HashMap<>();
+		entries.forEach((k, v) -> map.put((String) k, (String) v));
+		return map;
+	}
+
 }

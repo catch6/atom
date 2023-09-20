@@ -74,6 +74,13 @@ public class LoggingFilter extends OncePerRequestFilter {
 		if (!log.isInfoEnabled()) {
 			return true;
 		}
+
+		// 排除 Server-Sent Events (SSE) 的请求
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains(MediaType.TEXT_EVENT_STREAM_VALUE)) {
+			return true;
+		}
+
 		String uri = request.getRequestURI().substring(contextPath.length() + servletPath.length());
 		for (String path : loggingProperties.getInternalExcludePath()) {
 			if (PATH_MATCHER.match(path, uri)) {
@@ -95,36 +102,26 @@ public class LoggingFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+		HttpServletRequest requestToUse = request;
+		HttpServletResponse responseToUse = response;
 		TIMER.set(System.currentTimeMillis());
-
 		String reqId = NanoIdUtils.nanoId();
 		response.setHeader(REQ_ID, reqId);
 		MDC.put(REQ_ID, reqId);
-
-		CachedRequestWrapper requestToUse;
-		if (request instanceof CachedRequestWrapper) {
-			requestToUse = (CachedRequestWrapper) request;
-		} else {
+		if (!(requestToUse instanceof CachedRequestWrapper)) {
 			requestToUse = new CachedRequestWrapper(request);
 		}
-
-		CachedResponseWrapper responseToUse;
-		if (response instanceof CachedResponseWrapper) {
-			responseToUse = (CachedResponseWrapper) response;
-		} else {
+		if (!(responseToUse instanceof CachedResponseWrapper)) {
 			responseToUse = new CachedResponseWrapper(response);
 		}
-
-		loggingRequest(requestToUse);
-
+		loggingRequest((CachedRequestWrapper) requestToUse);
 		try {
 			filterChain.doFilter(requestToUse, responseToUse);
 		} finally {
-			loggingResponse(responseToUse);
+			loggingResponse((CachedResponseWrapper) responseToUse);
 			TIMER.remove();
 			MDC.remove(REQ_ID);
 		}
-
 	}
 
 	private void loggingRequest(CachedRequestWrapper wrapper) throws IOException {

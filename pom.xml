@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.3</version>
+		<version>3.0.10</version>
 		<relativePath/>
 	</parent>
 
@@ -71,7 +71,7 @@
 		<java.version>17</java.version>
 
 		<revision>2.3.9</revision>
-		<spring-cloud-dependencies.version>2022.0.0</spring-cloud-dependencies.version>
+		<spring-cloud-dependencies.version>2022.0.4</spring-cloud-dependencies.version>
 		<spring-cloud-alibaba-dependencies.version>2022.0.0.0</spring-cloud-alibaba-dependencies.version>
 
 		<nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
@@ -85,10 +85,14 @@
 		<logback-adapter.version>1.0.0</logback-adapter.version>
 		<jsr305.version>3.0.2</jsr305.version>
 
-		<nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-		<maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
-		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
 		<lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
+		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
+		<nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+		<maven-source-plugin.version>3.3.0</maven-source-plugin.version>
+		<maven-javadoc-plugin.version>3.6.0</maven-javadoc-plugin.version>
+		<maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
+		<maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -276,6 +280,16 @@
 			</distributionManagement>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>${maven-compiler-plugin.version}</version>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${maven-surefire-plugin.version}</version>
+					</plugin>
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>flatten-maven-plugin</artifactId>

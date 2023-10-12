@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.10</version>
+		<version>3.0.11</version>
 		<relativePath/>
 	</parent>
 
@@ -74,16 +74,15 @@
 		<spring-cloud-dependencies.version>2022.0.4</spring-cloud-dependencies.version>
 		<spring-cloud-alibaba-dependencies.version>2022.0.0.0</spring-cloud-alibaba-dependencies.version>
 
-		<nimbus-jose-jwt.version>9.31</nimbus-jose-jwt.version>
-		<hutool-all.version>5.8.19</hutool-all.version>
-		<guava.version>32.0.1-jre</guava.version>
-		<mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
-		<springdoc-openapi-starter-webmvc-ui.version>2.1.0</springdoc-openapi-starter-webmvc-ui.version>
-		<swagger-annotations-jakarta.version>2.2.9</swagger-annotations-jakarta.version>
+		<nimbus-jose-jwt.version>9.36</nimbus-jose-jwt.version>
+		<hutool-all.version>5.8.22</hutool-all.version>
+		<guava.version>32.1.2-jre</guava.version>
+		<mybatis-plus-boot-starter.version>3.5.3.2</mybatis-plus-boot-starter.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
+		<swagger-annotations-jakarta.version>2.2.16</swagger-annotations-jakarta.version>
 		<easyexcel.version>3.3.2</easyexcel.version>
 		<nacos-client.version>2.2.3</nacos-client.version>
 		<logback-adapter.version>1.0.0</logback-adapter.version>
-		<jsr305.version>3.0.2</jsr305.version>
 
 		<lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
 		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
@@ -211,11 +210,6 @@
 				<groupId>com.alibaba.nacos</groupId>
 				<artifactId>logback-adapter</artifactId>
 				<version>${logback-adapter.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google.code.findbugs</groupId>
-				<artifactId>jsr305</artifactId>
-				<version>${jsr305.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -47,7 +47,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 <parent>
 	<groupId>net.wenzuo</groupId>
 	<artifactId>atom</artifactId>
-	<version>2.3.11</version>
+	<version>2.3.12</version>
 	<relativePath/>
 </parent>
 ```

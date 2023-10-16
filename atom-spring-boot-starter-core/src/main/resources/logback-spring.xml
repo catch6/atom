@@ -13,12 +13,11 @@
 
 <configuration debug="false" scan="false">
 
-	<springProperty scop="context" name="user.home" source="user.home"
-					defaultValue=""/>
-	<springProperty scop="context" name="spring.application.name" source="spring.application.name"
-					defaultValue="application"/>
+	<springProperty scop="context" name="user.home" source="user.home"/>
+	<springProperty scop="context" name="spring.application.name" source="spring.application.name" defaultValue="unknown"/>
 
-	<property name="LOG_PATH" value="${LOG_PATH:-${user.dir}/logs}"/>
+	<property name="LOG_PATH" value="${LOG_PATH:-${user.home}/logs/${spring.application.name}}"/>
+
 
 	<property name="APP_LOG_FILE" value="${LOG_PATH}/app.log"/>
 	<property name="ERROR_LOG_FILE" value="${LOG_PATH}/error.log"/>

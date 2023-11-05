@@ -29,6 +29,6 @@ public class IdsRequest {
 	@Schema(description = "ID列表")
 	@NotNull(message = "ID列表不能为空")
 	@Size(min = 1, message = "ID列表不能为空")
-	private List<Long> id;
+	private List<Long> ids;
 
 }

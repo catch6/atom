@@ -45,6 +45,7 @@
 		<module>atom-spring-cloud-starter-nacos-config</module>
 		<module>atom-spring-cloud-starter-nacos-discovery</module>
 		<module>atom-spring-cloud-starter-kafka</module>
+		<module>atom-spring-boot-starter-doc</module>
 	</modules>
 
 	<scm>
@@ -83,6 +84,7 @@
 		<easyexcel.version>3.3.2</easyexcel.version>
 		<nacos-client.version>2.2.3</nacos-client.version>
 		<logback-adapter.version>1.0.0</logback-adapter.version>
+		<knife4j-openapi3-jakarta-spring-boot-starter.version>4.3.0</knife4j-openapi3-jakarta-spring-boot-starter.version>
 
 		<lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
 		<flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
@@ -117,6 +119,11 @@
 			<dependency>
 				<groupId>net.wenzuo</groupId>
 				<artifactId>atom-spring-boot-starter-core</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-boot-starter-doc</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>
@@ -210,6 +217,11 @@
 				<groupId>com.alibaba.nacos</groupId>
 				<artifactId>logback-adapter</artifactId>
 				<version>${logback-adapter.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.github.xiaoymin</groupId>
+				<artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+				<version>${knife4j-openapi3-jakarta-spring-boot-starter.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -28,6 +28,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 ## 模块
 
 - [atom-spring-boot-starter-core](atom-spring-boot-starter-core) 核心模块
+- [atom-spring-boot-starter-doc](atom-spring-boot-starter-doc) API 文档模块
 - [atom-spring-boot-starter-jwt](atom-spring-boot-starter-jwt) JWT 模块
 - [atom-spring-boot-starter-mybatis-plus](atom-spring-boot-starter-mybatis-plus) Mybatis Plus 模块
 - [atom-spring-boot-starter-redis](atom-spring-boot-starter-redis) Redis 模块
@@ -72,6 +73,8 @@ atom:
     enabled: true # 是否启用core模块
     async: true # 是否启用异步处理
     json: true # 是否启用jackson处理
+  doc:
+    enabled: true # 是否启用doc模块
   jwt:
     enabled: true # 是否启用jwt模块
     secret: # JWT密钥, 可通过 net.wenzuo.atom.jwt.GenerateKey 生成随机密钥
@@ -121,17 +124,14 @@ atom:
 ## 一些建议
 
 - 生产环境中在网关侧如果配置了CORS,建议关闭服务的CORS配置
-- 建议在生产环境关闭Swagger及其相关配置
+- 建议在生产环境关闭 doc 及其相关配置
 
 ```yaml
+knife4j:
+  production: true
 springdoc:
   api-docs:
     enabled: false
   swagger-ui:
     enabled: false
-
-atom:
-  web:
-    cors:
-      enabled: false
 ```

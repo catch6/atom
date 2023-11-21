@@ -38,3 +38,4 @@ build/
 .flattened-pom.xml
 logs/
 tmp.sh
+*-local.yml

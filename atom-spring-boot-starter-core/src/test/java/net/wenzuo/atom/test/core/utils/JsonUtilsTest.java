@@ -19,6 +19,7 @@ import net.wenzuo.atom.core.util.DesensitizationType;
 import net.wenzuo.atom.core.util.JsonUtils;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -91,12 +92,44 @@ class JsonUtilsTest {
 		log.info("result: {}", result);
 	}
 
+	@Test
+	void testLong() {
+		VO vo = new VO();
+		vo.setId(1111L);
+		String result = JsonUtils.toJson(vo);
+		log.info("result: {}", result);
+		VO vo1 = JsonUtils.toObject(result, VO.class);
+		log.info("vo1: {}", vo1);
+	}
+
+	@Test
+	void testBigDecimal() {
+		VO vo = new VO();
+		vo.setPrice(new BigDecimal("1234E+4"));
+		String plainString = vo.getPrice().toPlainString();
+		log.info("plainString: {}", plainString);
+		String string = vo.getPrice().toString();
+		log.info("string: {}", string);
+		String result = JsonUtils.toJson(vo);
+		log.info("result: {}", result);
+		VO vo1 = JsonUtils.toObject(result, VO.class);
+		log.info("vo1: {}", vo1);
+
+		VO vo2 = new VO();
+		String json = JsonUtils.toJson(vo2);
+		log.info("json: {}", json);
+		VO vo3 = JsonUtils.toObject(json, VO.class);
+		log.info("vo3: {}", vo3);
+	}
+
 	@Data
 	static class VO {
 
+		private Long id;
 		private LocalDateTime dateTime;
 		private LocalDate date;
 		private LocalTime time;
+		private BigDecimal price;
 
 	}
 

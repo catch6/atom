@@ -14,10 +14,13 @@ package net.wenzuo.atom.core.util;
 
 import cn.hutool.core.io.IoUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -35,6 +38,7 @@ import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -52,9 +56,8 @@ import java.util.TimeZone;
 @Slf4j
 public abstract class JsonUtils {
 
-	public static ObjectMapper objectMapper = objectMapper();
-
 	private static PropertyNamingStrategy propertyNamingStrategy = PropertyNamingStrategies.LOWER_CAMEL_CASE;
+	public static ObjectMapper objectMapper = objectMapper();
 
 	/**
 	 * 更改属性序列化和反序列化命名策略, 默认为 LOWER_CAMEL_CASE
@@ -320,6 +323,7 @@ public abstract class JsonUtils {
 		SimpleModule simpleModule = new SimpleModule();
 		simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
 		simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+		simpleModule.addSerializer(BigDecimal.class, BigDecimalSerializer.instance);
 
 		JavaTimeModule javaTimeModule = new JavaTimeModule();
 		javaTimeModule.addSerializer(LocalDate.class, localDateSerializer)
@@ -340,7 +344,6 @@ public abstract class JsonUtils {
 								 .propertyNamingStrategy(propertyNamingStrategy)
 								 // 若对象的属性值为null，序列化时不显示
 								 .serializationInclusion(JsonInclude.Include.ALWAYS)
-								 .featuresToEnable()
 								 .featuresToDisable(
 									 // 即如果一个类没有public的方法或属性时，会导致序列化失败。关闭后，会得到一个空JSON串。
 									 SerializationFeature.FAIL_ON_EMPTY_BEANS,
@@ -349,6 +352,26 @@ public abstract class JsonUtils {
 									 // 若POJO中不含有JSON中的属性，则抛出异常。关闭后，不解析该字段，而不会抛出异常
 									 DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 								 .modules(simpleModule, javaTimeModule, jdk8Module, parameterNamesModule);
+	}
+
+	@JacksonStdImpl
+	public static class BigDecimalSerializer extends StdSerializer<BigDecimal> {
+
+		public static final BigDecimalSerializer instance = new BigDecimalSerializer();
+
+		protected BigDecimalSerializer() {
+			super(BigDecimal.class);
+		}
+
+		protected BigDecimalSerializer(Class<BigDecimal> handledType) {
+			super(handledType);
+		}
+
+		@Override
+		public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+			gen.writeString(value.toPlainString());
+		}
+
 	}
 
 }

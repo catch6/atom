@@ -17,25 +17,30 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author Catch
- * @since 2023-06-06
+ * @since 2023-11-24
  */
 @Data
-@ConfigurationProperties(prefix = "atom.core")
-public class CoreProperties {
+@ConfigurationProperties(prefix = "atom.core.rest-template")
+public class CoreRestTemplateProperties {
 
 	/**
-	 * 是否启用 core 模块
+	 * 是否启用 RestTemplate
 	 */
-	private boolean enabled = true;
+	private final boolean enabled = true;
 
 	/**
-	 * 是否启用异步
+	 * 连接超时时间
 	 */
-	private boolean async = true;
+	private int connectTimeout = 5000;
 
 	/**
-	 * 是否启用json
+	 * 读取超时时间
 	 */
-	private boolean json = true;
+	private int readTimeout = 5000;
+
+	/**
+	 * 写入超时时间
+	 */
+	private int writeTimeout = 5000;
 
 }

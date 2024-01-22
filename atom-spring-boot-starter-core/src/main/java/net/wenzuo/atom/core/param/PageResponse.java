@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -29,7 +29,7 @@ public class PageResponse<T> {
 	 * 页码
 	 */
 	@Schema(description = "页码", example = "1")
-	private long pageNumber = 1;
+	private long pageNo = 1;
 	/**
 	 * 每页结果数
 	 */

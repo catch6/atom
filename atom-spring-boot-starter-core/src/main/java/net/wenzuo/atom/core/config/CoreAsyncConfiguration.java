@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -19,7 +19,7 @@ import org.slf4j.MDC;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
-import org.springframework.boot.task.TaskExecutorBuilder;
+import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.lang.NonNull;
@@ -50,16 +50,16 @@ public class CoreAsyncConfiguration implements AsyncConfigurer, AsyncUncaughtExc
 		TaskExecutionProperties.Pool pool = taskExecutionProperties.getPool();
 		TaskExecutionProperties.Shutdown shutdown = taskExecutionProperties.getShutdown();
 
-		ThreadPoolTaskExecutor executor = new TaskExecutorBuilder().queueCapacity(pool.getQueueCapacity())
-																   .corePoolSize(pool.getCoreSize())
-																   .maxPoolSize(pool.getMaxSize())
-																   .allowCoreThreadTimeOut(pool.isAllowCoreThreadTimeout())
-																   .keepAlive(pool.getKeepAlive())
-																   .awaitTermination(shutdown.isAwaitTermination())
-																   .awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod())
-																   .threadNamePrefix(taskExecutionProperties.getThreadNamePrefix())
-																   .taskDecorator(this)
-																   .build();
+		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutorBuilder().queueCapacity(pool.getQueueCapacity())
+																			 .corePoolSize(pool.getCoreSize())
+																			 .maxPoolSize(pool.getMaxSize())
+																			 .allowCoreThreadTimeOut(pool.isAllowCoreThreadTimeout())
+																			 .keepAlive(pool.getKeepAlive())
+																			 .awaitTermination(shutdown.isAwaitTermination())
+																			 .awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod())
+																			 .threadNamePrefix(taskExecutionProperties.getThreadNamePrefix())
+																			 .taskDecorator(this)
+																			 .build();
 
 		executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
 		executor.initialize();

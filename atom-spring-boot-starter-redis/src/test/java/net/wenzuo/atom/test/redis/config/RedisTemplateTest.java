@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -13,15 +13,9 @@
 package net.wenzuo.atom.test.redis.config;
 
 import jakarta.annotation.Resource;
-import net.wenzuo.atom.core.param.IdName;
 import net.wenzuo.atom.redis.service.RedisService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Catch
@@ -40,13 +34,6 @@ class RedisTemplateTest {
 		redisService.set("long", 1L);
 		redisService.set("long2", 1000000000000000L);
 		redisService.set("string", "test");
-		redisService.set("object", new IdName(1L, "test"));
-		List<IdName> list = Arrays.asList(new IdName(1L, "test"), new IdName(2L, "test2"));
-		redisService.set("list", list);
-		Map<Long, IdName> map = new HashMap<>();
-		map.put(1L, new IdName(1L, "test"));
-		map.put(2L, new IdName(2L, "test2"));
-		redisService.set("map", map);
 
 		Integer i = redisService.get("int", Integer.class);
 		System.out.println(i);
@@ -59,15 +46,6 @@ class RedisTemplateTest {
 
 		String s = redisService.get("string", String.class);
 		System.out.println(s);
-
-		IdName o = redisService.get("object", IdName.class);
-		System.out.println(o);
-
-		list = redisService.get("list", List.class, IdName.class);
-		System.out.println(list);
-
-		map = redisService.get("map", Map.class, Long.class, IdName.class);
-		System.out.println(map);
 
 	}
 

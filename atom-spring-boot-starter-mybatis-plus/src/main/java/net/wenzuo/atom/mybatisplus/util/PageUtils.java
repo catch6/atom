@@ -13,8 +13,8 @@
 package net.wenzuo.atom.mybatisplus.util;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import net.wenzuo.atom.core.param.PageRequest;
-import net.wenzuo.atom.core.param.PageResponse;
+import net.wenzuo.atom.api.param.PageRequest;
+import net.wenzuo.atom.api.param.PageResponse;
 import org.springframework.lang.NonNull;
 
 import java.util.function.Function;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -20,8 +20,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -321,8 +319,8 @@ public abstract class JsonUtils {
 
 		// 解决Long精度丢失，Long to String
 		SimpleModule simpleModule = new SimpleModule();
-		simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
-		simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+		// simpleModule.addSerializer(Long.class, LongSerializer.instance);
+		// simpleModule.addSerializer(Long.TYPE, LongSerializer.instance);
 		simpleModule.addSerializer(BigDecimal.class, BigDecimalSerializer.instance);
 
 		JavaTimeModule javaTimeModule = new JavaTimeModule();
@@ -355,17 +353,9 @@ public abstract class JsonUtils {
 	}
 
 	@JacksonStdImpl
-	public static class BigDecimalSerializer extends StdSerializer<BigDecimal> {
+	public static class BigDecimalSerializer extends JsonSerializer<BigDecimal> {
 
 		public static final BigDecimalSerializer instance = new BigDecimalSerializer();
-
-		protected BigDecimalSerializer() {
-			super(BigDecimal.class);
-		}
-
-		protected BigDecimalSerializer(Class<BigDecimal> handledType) {
-			super(handledType);
-		}
 
 		@Override
 		public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider provider) throws IOException {
@@ -373,5 +363,28 @@ public abstract class JsonUtils {
 		}
 
 	}
+	//
+	// @JacksonStdImpl
+	// public static class LongSerializer extends JsonSerializer<Long> {
+	//
+	// 	public final static LongSerializer instance = new LongSerializer();
+	//
+	// 	private static final long MAX_SAFE_LONG = 9007199254740991L;
+	// 	private static final long MIN_SAFE_LONG = -9007199254740991L;
+	//
+	// 	@Override
+	// 	public void serialize(Long value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+	// 		if (value == null) {
+	// 			gen.writeNull();
+	// 			return;
+	// 		}
+	// 		if (value < MAX_SAFE_LONG && value > MIN_SAFE_LONG) {
+	// 			gen.writeNumber(value);
+	// 			return;
+	// 		}
+	// 		gen.writeString(value.toString());
+	// 	}
+	//
+	// }
 
 }

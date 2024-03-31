@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+  ~ Copyright (c) 2022-2024 Catch(catchlife6@163.com).
   ~ Atom is licensed under Mulan PSL v2.
   ~ You can use this software according to the terms and conditions of the Mulan PSL v2.
   ~ You may obtain a copy of Mulan PSL v2 at:
@@ -44,8 +44,8 @@
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- 文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中 -->
 			<FileNamePattern>${APP_LOG_FILE}.%d{yyyy-MM-dd}.log</FileNamePattern>
-			<!-- 默认保留最近30天的日志 -->
-			<maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-30}</maxHistory>
+			<!-- 默认保留最近7天的日志 -->
+			<maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-7}</maxHistory>
 		</rollingPolicy>
 		<!-- 日志输出编码格式化 -->
 		<encoder>
@@ -68,7 +68,7 @@
 			<!-- 文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中 -->
 			<FileNamePattern>${ERROR_LOG_FILE}.%d{yyyy-MM-dd}.log</FileNamePattern>
 			<!-- 默认保留最近30天的日志 -->
-			<maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-30}</maxHistory>
+			<maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-7}</maxHistory>
 		</rollingPolicy>
 		<!-- 日志输出编码格式化 -->
 		<encoder>

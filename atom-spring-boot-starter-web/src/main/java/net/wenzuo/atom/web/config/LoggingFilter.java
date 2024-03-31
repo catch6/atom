@@ -25,7 +25,6 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -74,7 +73,7 @@ public class LoggingFilter extends OncePerRequestFilter {
 		}
 
 		String method = request.getMethod();
-		if (OPTIONS.equals(method)) {
+		if (OPTIONS.contains(method)) {
 			return true;
 		}
 
@@ -105,19 +104,17 @@ public class LoggingFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-		HttpServletRequest requestToUse = request;
-		HttpServletResponse responseToUse = response;
 		TIMER.set(System.currentTimeMillis());
 		String reqId = NanoIdUtils.nanoId();
 		response.setHeader(REQ_ID, reqId);
 		MDC.put(REQ_ID, reqId);
-		if (!(requestToUse instanceof CachedRequestWrapper)) {
-			requestToUse = new CachedRequestWrapper(request);
-		}
+
+		HttpServletRequest requestToUse = loggingRequest(request);
+		HttpServletResponse responseToUse = response;
+
 		if (!(responseToUse instanceof CachedResponseWrapper)) {
 			responseToUse = new CachedResponseWrapper(response);
 		}
-		loggingRequest((CachedRequestWrapper) requestToUse);
 		try {
 			filterChain.doFilter(requestToUse, responseToUse);
 		} finally {
@@ -127,68 +124,54 @@ public class LoggingFilter extends OncePerRequestFilter {
 		}
 	}
 
-	private void loggingRequest(CachedRequestWrapper wrapper) throws IOException {
+	private HttpServletRequest loggingRequest(HttpServletRequest request) throws IOException {
+		HttpServletRequest requestToUse = request;
 		StringBuilder msg = new StringBuilder();
 		msg.append("REQUEST: ")
-		   .append(wrapper.getMethod()).append(' ')
-		   .append(wrapper.getRequestURI());
+		   .append(requestToUse.getMethod()).append(' ')
+		   .append(requestToUse.getRequestURI());
 
-		String queryString = wrapper.getQueryString();
+		String queryString = requestToUse.getQueryString();
 		if (queryString != null) {
 			msg.append('?').append(URLDecoder.decode(queryString, StandardCharsets.UTF_8));
 		}
 
-		// String client = request.getRemoteAddr();
-		// if (StringUtils.hasLength(client)) {
-		//     msg.append(", client=").append(client);
-		// }
-		// HttpSession session = request.getSession(false);
-		// if (session != null) {
-		//     msg.append(", session=").append(session.getId());
-		// }
-		// String user = request.getRemoteUser();
-		// if (user != null) {
-		//     msg.append(", user=").append(user);
-		// }
-
-		// HttpHeaders headers = new ServletServerHttpRequest(request).getHeaders();
-		// msg.append(", headers=").append(headers);
-
-		if (isReadable(wrapper)) {
-			String payload;
-			try (ServletInputStream inputStream = wrapper.getInputStream()) {
-				payload = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-			}
-
-			if (payload.isEmpty()) {
-				Map<String, String[]> form = wrapper.getParameterMap();
-				StringBuilder param = new StringBuilder();
-				for (Iterator<String> nameIterator = form.keySet().iterator(); nameIterator.hasNext(); ) {
-					String name = nameIterator.next();
-					List<String> values = Arrays.asList(form.get(name));
-					for (Iterator<String> valueIterator = values.iterator(); valueIterator.hasNext(); ) {
-						String value = valueIterator.next();
-						param.append(name);
-						if (value != null) {
-							param.append('=')
-								 .append(value);
-							if (valueIterator.hasNext()) {
-								param.append('&');
-							}
-						}
-					}
-					if (nameIterator.hasNext()) {
-						param.append('&');
+		StringBuilder payload = new StringBuilder();
+		Map<String, String[]> form = requestToUse.getParameterMap();
+		for (Iterator<String> nameIterator = form.keySet().iterator(); nameIterator.hasNext(); ) {
+			String name = nameIterator.next();
+			List<String> values = Arrays.asList(form.get(name));
+			for (Iterator<String> valueIterator = values.iterator(); valueIterator.hasNext(); ) {
+				String value = valueIterator.next();
+				payload.append(name);
+				if (value != null) {
+					payload.append('=')
+						   .append(value);
+					if (valueIterator.hasNext()) {
+						payload.append('&');
 					}
 				}
-				payload = param.toString();
 			}
-			if (!payload.isEmpty()) {
-				msg.append(' ').append(payload);
+			if (nameIterator.hasNext()) {
+				payload.append('&');
 			}
 		}
 
+		String contentType = requestToUse.getContentType();
+		if (contentType != null && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
+			if (!(requestToUse instanceof CachedRequestWrapper)) {
+				requestToUse = new CachedRequestWrapper(request);
+			}
+			try (ServletInputStream inputStream = requestToUse.getInputStream()) {
+				payload.append(StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8));
+			}
+		}
+
+		if (!payload.isEmpty()) {
+			msg.append(' ').append(payload);
+		}
 		log.info(msg.toString());
+		return requestToUse;
 	}
 
 	private void loggingResponse(CachedResponseWrapper wrapper) throws IOException {
@@ -197,13 +180,9 @@ public class LoggingFilter extends OncePerRequestFilter {
 		msg.append("RESPONSE: ").append(time).append("ms");
 		msg.append(' ').append(wrapper.getStatus());
 
-		if (isReadable(wrapper)) {
+		String contentType = wrapper.getContentType();
+		if (contentType != null && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
 			String payload;
-			// byte[] byteArray = wrapper.getContentAsByteArray();
-			// if (byteArray.length > 0) {
-			//     payload = new String(byteArray, StandardCharsets.UTF_8);
-			// }
-
 			try (InputStream is = wrapper.getContentInputStream()) {
 				payload = StreamUtils.copyToString(is, StandardCharsets.UTF_8);
 			}
@@ -212,31 +191,7 @@ public class LoggingFilter extends OncePerRequestFilter {
 			}
 		}
 		wrapper.copyBodyToResponse();
-
 		log.info(msg.toString());
-	}
-
-	private boolean isReadable(CachedRequestWrapper wrapper) {
-		String contentType = wrapper.getContentType();
-		if (contentType == null) {
-			return false;
-		}
-		return !contentType.contains(MediaType.MULTIPART_FORM_DATA_VALUE);
-	}
-
-	private boolean isReadable(CachedResponseWrapper wrapper) {
-		if (wrapper.getStatus() != HttpStatus.OK.value()) {
-			return true;
-		}
-		String contentType = wrapper.getContentType();
-		if (contentType == null) {
-			return false;
-		}
-		return contentType.contains(MediaType.APPLICATION_JSON_VALUE)
-			|| contentType.contains(MediaType.APPLICATION_XML_VALUE)
-			|| contentType.contains(MediaType.TEXT_PLAIN_VALUE)
-			|| contentType.contains(MediaType.TEXT_HTML_VALUE)
-			|| contentType.contains(MediaType.TEXT_XML_VALUE);
 	}
 
 }

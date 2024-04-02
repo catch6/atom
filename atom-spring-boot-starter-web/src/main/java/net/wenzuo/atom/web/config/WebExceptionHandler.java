@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -207,6 +208,20 @@ public class WebExceptionHandler {
 		String message = "请求内容类型错误: 不支持" + contentType;
 		log.warn(message, e);
 		return Result.fail(BusinessException.DEFAULT_CODE, "请求内容类型错误");
+	}
+
+	/**
+	 * 请求的资源或接口不存在
+	 *
+	 * @param e 异常对象
+	 * @return Result
+	 */
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(NoResourceFoundException.class)
+	public Result<?> handler(NoResourceFoundException e) {
+		String message = "请求资源不存在";
+		log.warn(message, e);
+		return Result.fail(HttpStatus.NOT_FOUND.value(), message);
 	}
 
 	/**

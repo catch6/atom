@@ -35,7 +35,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -131,12 +130,12 @@ public class LoggingFilter extends OncePerRequestFilter {
 		   .append(requestToUse.getMethod()).append(' ')
 		   .append(requestToUse.getRequestURI());
 
-		String queryString = requestToUse.getQueryString();
-		if (queryString != null) {
-			msg.append('?').append(URLDecoder.decode(queryString, StandardCharsets.UTF_8));
-		}
+		// String queryString = requestToUse.getQueryString();
+		// if (queryString != null) {
+		// 	msg.append('?').append(URLDecoder.decode(queryString, StandardCharsets.UTF_8));
+		// }
 
-		StringBuilder payload = new StringBuilder();
+		StringBuilder payload = new StringBuilder("?");
 		Map<String, String[]> form = requestToUse.getParameterMap();
 		for (Iterator<String> nameIterator = form.keySet().iterator(); nameIterator.hasNext(); ) {
 			String name = nameIterator.next();
@@ -163,12 +162,12 @@ public class LoggingFilter extends OncePerRequestFilter {
 				requestToUse = new CachedRequestWrapper(request);
 			}
 			try (ServletInputStream inputStream = requestToUse.getInputStream()) {
-				payload.append(StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8));
+				payload.append(' ').append(StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8));
 			}
 		}
 
 		if (!payload.isEmpty()) {
-			msg.append(' ').append(payload);
+			msg.append(payload);
 		}
 		log.info(msg.toString());
 		return requestToUse;

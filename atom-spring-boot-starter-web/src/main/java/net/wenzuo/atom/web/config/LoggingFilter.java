@@ -36,10 +36,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Catch
@@ -135,8 +132,12 @@ public class LoggingFilter extends OncePerRequestFilter {
 		// 	msg.append('?').append(URLDecoder.decode(queryString, StandardCharsets.UTF_8));
 		// }
 
-		StringBuilder payload = new StringBuilder("?");
+		StringBuilder payload = new StringBuilder();
 		Map<String, String[]> form = requestToUse.getParameterMap();
+		Set<String> keySet = form.keySet();
+		if (!keySet.isEmpty()) {
+			payload.append("?");
+		}
 		for (Iterator<String> nameIterator = form.keySet().iterator(); nameIterator.hasNext(); ) {
 			String name = nameIterator.next();
 			List<String> values = Arrays.asList(form.get(name));

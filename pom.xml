@@ -40,6 +40,8 @@
 		<module>atom-spring-boot-starter-core</module>
 		<module>atom-spring-boot-starter-doc</module>
 		<module>atom-spring-boot-starter-jwt</module>
+		<module>atom-spring-boot-starter-mqttv3</module>
+		<module>atom-spring-boot-starter-mqttv5</module>
 		<module>atom-spring-boot-starter-mybatis-plus</module>
 		<module>atom-spring-boot-starter-redis</module>
 		<module>atom-spring-boot-starter-web</module>
@@ -48,8 +50,6 @@
 		<module>atom-spring-cloud-starter-nacos-config</module>
 		<module>atom-spring-cloud-starter-nacos-discovery</module>
 		<module>atom-spring-cloud-starter-kafka</module>
-		<module>atom-spring-boot-starter-mqttv3</module>
-		<module>atom-spring-boot-starter-mqttv5</module>
 	</modules>
 
 	<scm>
@@ -439,17 +439,17 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>${maven-javadoc-plugin.version}</version>
+						<configuration>
+							<encoding>UTF-8</encoding>
+							<charset>UTF-8</charset>
+							<doclint>none</doclint>
+						</configuration>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
 								<goals>
 									<goal>jar</goal>
 								</goals>
-								<configuration>
-									<encoding>UTF-8</encoding>
-									<charset>UTF-8</charset>
-									<doclint>none</doclint>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>

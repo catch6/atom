@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.mqtt;
+package net.wenzuo.atom.mqttv5;
 
 import lombok.RequiredArgsConstructor;
 import org.eclipse.paho.mqttv5.client.MqttClient;

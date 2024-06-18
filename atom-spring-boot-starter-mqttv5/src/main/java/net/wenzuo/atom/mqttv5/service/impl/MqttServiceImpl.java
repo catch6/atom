@@ -10,11 +10,11 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.mqtt.service.impl;
+package net.wenzuo.atom.mqttv5.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.mqtt.service.MqttService;
+import net.wenzuo.atom.mqttv5.service.MqttService;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.springframework.context.ApplicationContext;

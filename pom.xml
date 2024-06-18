@@ -75,7 +75,7 @@
 	<properties>
 		<java.version>17</java.version>
 
-		<revision>2.4.6</revision>
+		<revision>2.4.7</revision>
 		<spring-cloud-dependencies.version>2023.0.1</spring-cloud-dependencies.version>
 		<spring-cloud-alibaba-dependencies.version>2023.0.1.0</spring-cloud-alibaba-dependencies.version>
 		<spring-modulith-bom.version>1.2.0</spring-modulith-bom.version>

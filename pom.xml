@@ -50,6 +50,8 @@
 		<module>atom-spring-cloud-starter-nacos-config</module>
 		<module>atom-spring-cloud-starter-nacos-discovery</module>
 		<module>atom-spring-cloud-starter-kafka</module>
+		<module>atom-spring-boot-starter-opc-ua</module>
+		<module>atom-spring-boot-starter-opc-da</module>
 	</modules>
 
 	<scm>
@@ -93,8 +95,11 @@
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<httpclient.version>4.5.14</httpclient.version>
 		<httpclient5.version>5.3.1</httpclient5.version>
-		<mqttv3.version>1.2.5</mqttv3.version>
-		<mqttv5.version>1.2.5</mqttv5.version>
+		<org.eclipse.paho.client.mqttv3.version>1.2.5</org.eclipse.paho.client.mqttv3.version>
+		<org.eclipse.paho.mqttv5.client.version>1.2.5</org.eclipse.paho.mqttv5.client.version>
+		<org.openscada.opc.lib.version>1.5.0</org.openscada.opc.lib.version>
+		<bcprov-jdk15on.version>1.70</bcprov-jdk15on.version>
+		<milo.version>0.6.13</milo.version>
 
 		<lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
 		<flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
@@ -170,6 +175,16 @@
 				<artifactId>atom-spring-boot-starter-mybatis-plus</artifactId>
 				<version>${revision}</version>
 			</dependency>
+			<!-- <dependency> -->
+			<!-- 	<groupId>net.wenzuo</groupId> -->
+			<!-- 	<artifactId>atom-spring-boot-starter-opc-da</artifactId> -->
+			<!-- 	<version>${revision}</version> -->
+			<!-- </dependency> -->
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-boot-starter-opc-ua</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<dependency>
 				<groupId>net.wenzuo</groupId>
 				<artifactId>atom-spring-boot-starter-redis</artifactId>
@@ -205,7 +220,6 @@
 				<artifactId>atom-spring-cloud-starter-nacos-discovery</artifactId>
 				<version>${revision}</version>
 			</dependency>
-
 
 			<!-- 第三方依赖 -->
 			<dependency>
@@ -276,16 +290,36 @@
 			<dependency>
 				<groupId>org.eclipse.paho</groupId>
 				<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-				<version>${mqttv3.version}</version>
+				<version>${org.eclipse.paho.client.mqttv3.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.paho</groupId>
 				<artifactId>org.eclipse.paho.mqttv5.client</artifactId>
-				<version>${mqttv5.version}</version>
+				<version>${org.eclipse.paho.mqttv5.client.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openscada.utgard</groupId>
+				<artifactId>org.openscada.opc.lib</artifactId>
+				<version>${org.openscada.opc.lib.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.bouncycastle</groupId>
+						<artifactId>bcprov-jdk15on</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.milo</groupId>
+				<artifactId>sdk-client</artifactId>
+				<version>${milo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-jdk15on</artifactId>
+				<version>${bcprov-jdk15on.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 
 	<build>
 		<pluginManagement>

@@ -21,20 +21,20 @@
 		<version>${revision}</version>
 	</parent>
 
-	<artifactId>atom-spring-boot-starter-core</artifactId>
+	<artifactId>atom-spring-boot-starter-opc-da</artifactId>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<groupId>net.wenzuo</groupId>
+			<artifactId>atom-spring-boot-starter-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-logging</artifactId>
+			<groupId>org.openscada.utgard</groupId>
+			<artifactId>org.openscada.opc.lib</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-json</artifactId>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
 		</dependency>
 
 		<dependency>
@@ -52,11 +52,5 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>cn.hutool</groupId>
-			<artifactId>hutool-all</artifactId>
-		</dependency>
 	</dependencies>
-
 </project>

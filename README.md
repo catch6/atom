@@ -80,10 +80,20 @@ atom:
   jwt:
     enabled: true # 是否启用jwt模块
     secret: # JWT密钥, 可通过 net.wenzuo.atom.jwt.GenerateKey 生成随机密钥
-  mqtt:
-    enabled: true # 是否启用 MQTT 模块
+  mqttv3:
+    enabled: true # 是否启用 MQTT V3 模块
     instances: # MQTT 实例配置, 可以有多个
       - id: emqx1 # 实例 ID
+        enabled: true # 是否启用
+        url: tcp://broker.emqx.io:1883 # MQTT 服务器地址
+        username: # MQTT 服务器用户名
+        password: # MQTT 服务器密码
+        client-id: # MQTT 客户端 ID
+  mqttv5:
+    enabled: true # 是否启用 MQTT V5 模块
+    instances: # MQTT 实例配置, 可以有多个
+      - id: emqx1 # 实例 ID
+        enabled: true # 是否启用
         url: tcp://broker.emqx.io:1883 # MQTT 服务器地址
         username: # MQTT 服务器用户名
         password: # MQTT 服务器密码
@@ -94,6 +104,18 @@ atom:
     auto-fill: false # 是否启用创建时间,更新时间自动填充
     create-time-field: createTime # 创建时间字段名,此处为entity的属性名,非数据库字段名
     update-time-field: updateTime # 更新时间字段名,此处为entity的属性名,非数据库字段名
+  opc:
+    da:
+      enabled: true # 是否启用opc-da模块
+      instances: # OPC DA 实例配置, 可以有多个
+        - id: opcda1 # 实例 ID
+          enabled: true # 是否启用
+          host: 127.0.0.1 # 实例主机
+          domain: # 实例域
+          user: opc # 实例用户
+          password: opc123
+          prog-id: # 实例 ProgID
+          cls-id: # 实例 ClsID
   redis:
     enabled: true # 是否启用redis模块
     redis-template: true # 是否启用redisTemplate,启用后将自动配置RedisTemplate<String, Object>, 使用jackson序列化value

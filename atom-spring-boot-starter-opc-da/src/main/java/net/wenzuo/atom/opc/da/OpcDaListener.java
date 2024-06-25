@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Atom is licensed under Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
+
+package net.wenzuo.atom.opc.da;
+
+import java.lang.annotation.*;
+
+/**
+ * @author Catch
+ * @since 2024-06-16
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface OpcDaListener {
+
+	/**
+	 * 实例 ID
+	 */
+	String id();
+
+	/**
+	 * 标签
+	 */
+	String[] tags();
+
+	/**
+	 * 轮询周期
+	 */
+	int period() default 3000;
+
+	/**
+	 * 是否异步
+	 */
+	boolean async() default false;
+
+}

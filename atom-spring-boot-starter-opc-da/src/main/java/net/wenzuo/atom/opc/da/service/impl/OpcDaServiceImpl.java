@@ -10,23 +10,30 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.config;
+package net.wenzuo.atom.opc.da.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
+import lombok.extern.slf4j.Slf4j;
+import net.wenzuo.atom.opc.da.AccessBase;
+import net.wenzuo.atom.opc.da.service.OpcDaService;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
 /**
  * @author Catch
- * @since 2023-06-05
+ * @since 2024-06-21
  */
+@Slf4j
 @RequiredArgsConstructor
-@ComponentScan("net.wenzuo.atom.core")
-@EnableConfigurationProperties(CoreProperties.class)
-@PropertySource("classpath:application-core.properties")
-@ConditionalOnProperty(value = "atom.core.enabled", matchIfMissing = true)
-public class CoreAutoConfiguration {
+@Service
+public class OpcDaServiceImpl implements OpcDaService {
+
+	private final ApplicationContext applicationContext;
+
+	@Override
+	public void write(String id, String tag, Object value) {
+		AccessBase accessBase = applicationContext.getBean("opcDaAccessBase-" + id, AccessBase.class);
+		accessBase.writeItem(tag, value);
+	}
 
 }

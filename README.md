@@ -30,8 +30,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 - [atom-spring-boot-starter-core](atom-spring-boot-starter-core) 核心模块
 - [atom-spring-boot-starter-doc](atom-spring-boot-starter-doc) API 文档模块
 - [atom-spring-boot-starter-jwt](atom-spring-boot-starter-jwt) JWT 模块
-- [atom-spring-boot-starter-mqttv3](atom-spring-boot-starter-mqttv3) MQTTv3 模块
-- [atom-spring-boot-starter-mqttv5](atom-spring-boot-starter-mqttv5) MQTTv5 模块
+- [atom-spring-boot-starter-mqtt](atom-spring-boot-starter-mqtt) MQTT 模块
 - [atom-spring-boot-starter-mybatis-plus](atom-spring-boot-starter-mybatis-plus) Mybatis Plus 模块
 - [atom-spring-boot-starter-redis](atom-spring-boot-starter-redis) Redis 模块
 - [atom-spring-boot-starter-web](atom-spring-boot-starter-web) Web 模块
@@ -80,24 +79,20 @@ atom:
   jwt:
     enabled: true # 是否启用jwt模块
     secret: # JWT密钥, 可通过 net.wenzuo.atom.jwt.GenerateKey 生成随机密钥
-  mqttv3:
-    enabled: true # 是否启用 MQTT V3 模块
-    instances: # MQTT 实例配置, 可以有多个
+  mqtt:
+    enabled: true # 是否启用 MQTT 模块
+    id: default # 实例 ID
+    url: tcp://broker.emqx.io:1883 # 服务器地址
+    username: # 服务器用户名
+    password: # 服务器密码
+    client-id: # 客户端 ID
+    instances: # MQTT 多实例配置
       - id: emqx1 # 实例 ID
         enabled: true # 是否启用
-        url: tcp://broker.emqx.io:1883 # MQTT 服务器地址
-        username: # MQTT 服务器用户名
-        password: # MQTT 服务器密码
-        client-id: # MQTT 客户端 ID
-  mqttv5:
-    enabled: true # 是否启用 MQTT V5 模块
-    instances: # MQTT 实例配置, 可以有多个
-      - id: emqx1 # 实例 ID
-        enabled: true # 是否启用
-        url: tcp://broker.emqx.io:1883 # MQTT 服务器地址
-        username: # MQTT 服务器用户名
-        password: # MQTT 服务器密码
-        client-id: # MQTT 客户端 ID
+        url: tcp://broker.emqx.io:1883 # 服务器地址
+        username: # 服务器用户名
+        password: # 服务器密码
+        client-id: # 客户端 ID
   mybatis-plus:
     enabled: true # 是否启用mybatis-plus模块
     pagination: true # 是否启用mybatis-plus分页插件

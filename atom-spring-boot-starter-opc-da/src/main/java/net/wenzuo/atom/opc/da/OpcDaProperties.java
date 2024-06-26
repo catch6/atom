@@ -31,6 +31,11 @@ public class OpcDaProperties {
 	private Boolean enabled = true;
 
 	/**
+	 * Bean 前缀
+	 */
+	private String beanPrefix = "opcDaClient-";
+
+	/**
 	 * OPC DA 实例配置
 	 */
 	private List<OpcDaInstance> instances;

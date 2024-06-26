@@ -27,8 +27,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 /**
@@ -42,11 +45,16 @@ import java.util.concurrent.Executors;
 public class OpcDaAutoConfiguration implements ApplicationListener<ApplicationStartedEvent> {
 
 	private final OpcDaProperties opcDaProperties;
+	private final List<OpcDaSubscriber> opcDaSubscribers;
 
 	@Override
 	public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
 		// 关闭 COM 对象的自动垃圾收集
 		JISystem.setJavaCoClassAutoCollection(false);
+		Map<String, List<OpcDaSubscriber>> opcDaSubscribersMap = new HashMap<>();
+		for (OpcDaSubscriber subscriber : opcDaSubscribers) {
+			validate(subscriber);
+		}
 		ConfigurableListableBeanFactory beanFactory = event.getApplicationContext().getBeanFactory();
 		List<OpcDaProperties.OpcDaInstance> instances = opcDaProperties.getInstances();
 		for (OpcDaProperties.OpcDaInstance instance : instances) {
@@ -99,6 +107,11 @@ public class OpcDaAutoConfiguration implements ApplicationListener<ApplicationSt
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	private void validate(OpcDaSubscriber subscriber) {
+		Assert.notNull(subscriber.getId(), "OpcDaSubscriber.getId() must not be null");
+		Assert.notEmpty(subscriber.getTags(), "OpcDaSubscriber.getTags() must not be empty");
 	}
 
 }

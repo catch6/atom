@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.ua;
+package net.wenzuo.atom.opc.ua.config;
 
 import lombok.RequiredArgsConstructor;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;

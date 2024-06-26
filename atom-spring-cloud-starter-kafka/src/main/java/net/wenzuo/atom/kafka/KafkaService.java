@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -10,12 +10,11 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.kafka.service.impl;
+package net.wenzuo.atom.kafka;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.util.JsonUtils;
-import net.wenzuo.atom.kafka.service.KafkaService;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
@@ -30,16 +29,14 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class KafkaServiceImpl implements KafkaService {
+public class KafkaService {
 
 	private final KafkaTemplate<String, String> kafkaTemplate;
 
-	@Override
 	public void send(String topic, Object message) {
 		send(topic, null, message);
 	}
 
-	@Override
 	public void send(String topic, String key, Object message) {
 		// 分区编号为 null，交给 Kafka 自己去分配
 		String json = JsonUtils.toJson(message);

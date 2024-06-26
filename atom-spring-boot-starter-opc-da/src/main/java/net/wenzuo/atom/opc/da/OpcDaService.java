@@ -10,12 +10,10 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da.service.impl;
+package net.wenzuo.atom.opc.da;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.opc.da.AccessBase;
-import net.wenzuo.atom.opc.da.service.OpcDaService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +24,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class OpcDaServiceImpl implements OpcDaService {
+public class OpcDaService {
 
 	private final ApplicationContext applicationContext;
 
-	@Override
 	public void write(String id, String tag, Object value) {
 		AccessBase accessBase = applicationContext.getBean("opcDaAccessBase-" + id, AccessBase.class);
 		accessBase.writeItem(tag, value);

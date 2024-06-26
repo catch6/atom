@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -14,7 +14,7 @@ package net.wenzuo.atom.redis.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
@@ -24,7 +24,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 @RequiredArgsConstructor
 @ComponentScan("net.wenzuo.atom.redis")
-@ConfigurationPropertiesScan("net.wenzuo.atom.redis.properties")
+@EnableConfigurationProperties(RedisProperties.class)
 @PropertySource("classpath:application-redis.properties")
 @ConditionalOnProperty(value = "atom.redis.enabled", matchIfMissing = true)
 public class RedisAutoConfiguration {

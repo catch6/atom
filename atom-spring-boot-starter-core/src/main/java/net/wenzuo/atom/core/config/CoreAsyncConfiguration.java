@@ -15,6 +15,7 @@ package net.wenzuo.atom.core.config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.util.JsonUtils;
+import net.wenzuo.atom.core.util.NanoIdUtils;
 import org.slf4j.MDC;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.lang.reflect.Method;
@@ -37,7 +37,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 2022-11-10
  */
 @Slf4j
-@EnableAsync
 @ConditionalOnProperty(value = "atom.core.async", matchIfMissing = true)
 @RequiredArgsConstructor
 @Configuration
@@ -81,6 +80,10 @@ public class CoreAsyncConfiguration implements AsyncConfigurer, AsyncUncaughtExc
 	@Override
 	public Runnable decorate(@NonNull Runnable runnable) {
 		Map<String, String> contextMap = MDC.getCopyOfContextMap();
+		if (contextMap != null && !contextMap.containsKey("Trace-Id")) {
+			String traceId = NanoIdUtils.nanoId();
+			contextMap.put("Trace-Id", traceId);
+		}
 		return () -> {
 			try {
 				if (contextMap != null) {

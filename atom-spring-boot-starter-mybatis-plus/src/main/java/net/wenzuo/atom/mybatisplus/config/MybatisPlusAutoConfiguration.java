@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.PropertySource;
  */
 @RequiredArgsConstructor
 @ComponentScan("net.wenzuo.atom.mybatisplus")
-@ConfigurationPropertiesScan("net.wenzuo.atom.mybatisplus.properties")
+@EnableConfigurationProperties(MybatisPlusProperties.class)
 @PropertySource("classpath:application-mybatis-plus.properties")
 @ConditionalOnProperty(value = "atom.mybatis-plus.enabled", matchIfMissing = true)
 public class MybatisPlusAutoConfiguration {

@@ -14,6 +14,7 @@ package net.wenzuo.atom.mqtt;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.wenzuo.atom.mqtt.config.MqttProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 

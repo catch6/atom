@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -10,16 +10,26 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.kafka.service;
+package net.wenzuo.atom.jwt.config;
+
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author Catch
- * @since 2023-08-13
+ * @since 2023-06-06
  */
-public interface KafkaService {
+@Data
+@ConfigurationProperties(prefix = "atom.jwt")
+public class JwtProperties {
 
-	void send(String topic, Object message);
-
-	void send(String topic, String key, Object message);
+	/**
+	 * 是否启用 jwt 模块
+	 */
+	private Boolean enabled = true;
+	/**
+	 * jwt secret
+	 */
+	private String secret;
 
 }

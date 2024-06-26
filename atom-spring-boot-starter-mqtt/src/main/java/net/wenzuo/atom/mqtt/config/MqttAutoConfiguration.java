@@ -10,14 +10,19 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da.service;
+package net.wenzuo.atom.mqtt.config;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @author Catch
- * @since 2024-06-21
+ * @since 2024-06-16
  */
-public interface OpcDaService {
-
-	void write(String id, String tag, Object value);
+@ComponentScan("net.wenzuo.atom.mqtt")
+@EnableConfigurationProperties(MqttProperties.class)
+@ConditionalOnProperty(value = "atom.mqtt.enabled", matchIfMissing = true)
+public class MqttAutoConfiguration {
 
 }

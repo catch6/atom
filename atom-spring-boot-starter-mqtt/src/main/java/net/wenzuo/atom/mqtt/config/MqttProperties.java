@@ -10,9 +10,10 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.mqtt;
+package net.wenzuo.atom.mqtt.config;
 
 import lombok.Data;
+import net.wenzuo.atom.mqtt.MqttService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;

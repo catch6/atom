@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -10,14 +10,13 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.kafka.config;
+package net.wenzuo.atom.kafka;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import net.wenzuo.atom.kafka.properties.KafkaProperties;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.GenericApplicationContext;
 
@@ -27,7 +26,7 @@ import org.springframework.context.support.GenericApplicationContext;
  */
 @RequiredArgsConstructor
 @ComponentScan("net.wenzuo.atom.kafka")
-@ConfigurationPropertiesScan("net.wenzuo.atom.kafka.properties")
+@EnableConfigurationProperties(KafkaProperties.class)
 @ConditionalOnProperty(value = "atom.kafka.enabled", matchIfMissing = true)
 public class KafkaAutoConfiguration {
 
@@ -36,8 +35,10 @@ public class KafkaAutoConfiguration {
 
 	@PostConstruct
 	public void initKafkaTopics() {
-		for (KafkaProperties.Topic topic : kafkaProperties.getTopics()) {
-			genericApplicationContext.registerBean(topic.getName(), NewTopic.class, () -> new NewTopic(topic.getName(), topic.getNumPartitions(), topic.getReplicationFactor()));
+		if (kafkaProperties.getTopics() != null) {
+			for (KafkaProperties.Topic topic : kafkaProperties.getTopics()) {
+				genericApplicationContext.registerBean(topic.getName(), NewTopic.class, () -> new NewTopic(topic.getName(), topic.getNumPartitions(), topic.getReplicationFactor()));
+			}
 		}
 	}
 

@@ -10,17 +10,21 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.mqtt;
+package net.wenzuo.atom.mqtt.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import net.wenzuo.atom.mqtt.MqttListenerProcessor;
+import net.wenzuo.atom.mqtt.MqttListenerSubscriber;
+import net.wenzuo.atom.mqtt.MqttSubscriber;
+import org.eclipse.paho.mqttv5.client.IMqttMessageListener;
+import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
+import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
+import org.eclipse.paho.mqttv5.common.MqttException;
+import org.eclipse.paho.mqttv5.common.MqttSubscription;
 import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -43,7 +47,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @ConditionalOnClass(MqttClient.class)
 @Configuration
-public class Mqttv3Configuration implements ApplicationListener<ApplicationStartedEvent> {
+public class Mqttv5Configuration implements ApplicationListener<ApplicationStartedEvent> {
 
 	private final MqttProperties mqttProperties;
 	private final List<MqttSubscriber> mqttSubscribers;
@@ -64,29 +68,27 @@ public class Mqttv3Configuration implements ApplicationListener<ApplicationStart
 			String[] urls = instance.getUrl().split(",");
 			try {
 				MqttClient mqttClient = new MqttClient(urls[0], instance.getClientId(), new MemoryPersistence());
-				MqttConnectOptions options = new MqttConnectOptions();
+				MqttConnectionOptions options = new MqttConnectionOptions();
 				options.setServerURIs(urls);
 				if (instance.getUsername() != null) {
 					options.setUserName(instance.getUsername());
 				}
 				if (instance.getPassword() != null) {
-					options.setPassword(instance.getPassword().toCharArray());
+					options.setPassword(instance.getPassword().getBytes(StandardCharsets.UTF_8));
 				}
 				options.setAutomaticReconnect(true);
 				mqttClient.connect(options);
 
 				List<MqttSubscriberWrapper> wrappers = subscriberMap.get(instance.getId());
 				if (wrappers != null) {
-					String[] topics = new String[wrappers.size()];
-					int[] qos = new int[wrappers.size()];
+					MqttSubscription[] subscriptions = new MqttSubscription[wrappers.size()];
 					IMqttMessageListener[] listeners = new IMqttMessageListener[wrappers.size()];
 					for (int i = 0; i < wrappers.size(); i++) {
 						MqttSubscriberWrapper wrapper = wrappers.get(i);
-						topics[i] = wrapper.getTopic();
-						qos[i] = wrapper.getQos();
+						subscriptions[i] = new MqttSubscription(wrapper.getTopic(), wrapper.getQos());
 						listeners[i] = wrapper.getListener();
 					}
-					mqttClient.subscribe(topics, qos, listeners);
+					mqttClient.subscribe(subscriptions, listeners);
 				}
 				beanFactory.registerSingleton(mqttProperties.getBeanPrefix() + instance.getId(), mqttClient);
 			} catch (MqttException e) {
@@ -110,6 +112,7 @@ public class Mqttv3Configuration implements ApplicationListener<ApplicationStart
 			Assert.notNull(id, "mqtt id must not be null");
 			Assert.notEmpty(topics, "mqtt topics must not be empty");
 			Assert.notNull(qos, "mqtt qos must not be null");
+
 			if (expressionResolver != null) {
 				List<String> newTopics = new ArrayList<>();
 				for (String topic : topics) {

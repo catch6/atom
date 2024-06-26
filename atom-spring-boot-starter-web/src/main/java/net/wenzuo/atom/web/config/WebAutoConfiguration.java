@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -12,9 +12,8 @@
 
 package net.wenzuo.atom.web.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
@@ -22,9 +21,8 @@ import org.springframework.context.annotation.PropertySource;
  * @author Catch
  * @since 2023-06-06
  */
-@RequiredArgsConstructor
 @ComponentScan("net.wenzuo.atom.web")
-@ConfigurationPropertiesScan("net.wenzuo.atom.web.properties")
+@EnableConfigurationProperties({CorsProperties.class, LoggingProperties.class, WebProperties.class})
 @PropertySource("classpath:application-web.properties")
 @ConditionalOnProperty(value = "atom.web.enabled", matchIfMissing = true)
 public class WebAutoConfiguration {

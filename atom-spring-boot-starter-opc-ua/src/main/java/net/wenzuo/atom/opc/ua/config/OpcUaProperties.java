@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -10,43 +10,60 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.kafka.properties;
+package net.wenzuo.atom.opc.ua.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+
 /**
  * @author Catch
- * @since 2023-08-13
+ * @since 2024-06-23
  */
+@ConfigurationProperties(prefix = "atom.opc.ua")
 @Data
-@ConfigurationProperties(prefix = "atom.kafka")
-public class KafkaProperties {
+public class OpcUaProperties {
 
 	/**
-	 * 是否启用 kafka 模块
+	 * 是否启用
 	 */
 	private Boolean enabled = true;
+
 	/**
-	 * 自动创建的 topic
+	 * 证书路径
 	 */
-	private Topic[] topics;
+	private String certificatePath;
+
+	/**
+	 * OPC UA 实例配置
+	 */
+	private List<OpcUaInstance> instances;
 
 	@Data
-	public static class Topic {
+	public static class OpcUaInstance {
 
 		/**
-		 * topic 名称
+		 * 实例 ID
 		 */
-		private String name;
+		private String id;
 		/**
-		 * 分区数
+		 * 是否启用
 		 */
-		private Integer numPartitions = -1;
+		private Boolean enabled = true;
+
 		/**
-		 * 副本数
+		 * 服务器地址, 如: opc.tcp://milo.digitalpetri.com:62541/milo
 		 */
-		private Short replicationFactor = -1;
+		private String url = "127.0.0.1";
+		/**
+		 * 服务器用户名
+		 */
+		private String username;
+		/**
+		 * 服务器密码
+		 */
+		private String password;
 
 	}
 

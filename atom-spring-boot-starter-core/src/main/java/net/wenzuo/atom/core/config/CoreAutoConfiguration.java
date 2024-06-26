@@ -12,7 +12,6 @@
 
 package net.wenzuo.atom.core.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
@@ -22,7 +21,6 @@ import org.springframework.context.annotation.PropertySource;
  * @author Catch
  * @since 2023-06-05
  */
-@RequiredArgsConstructor
 @ComponentScan("net.wenzuo.atom.core")
 @EnableConfigurationProperties(CoreProperties.class)
 @PropertySource("classpath:application-core.properties")

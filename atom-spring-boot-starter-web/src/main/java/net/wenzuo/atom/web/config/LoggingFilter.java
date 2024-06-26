@@ -20,7 +20,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.util.NanoIdUtils;
-import net.wenzuo.atom.web.properties.LoggingProperties;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -50,7 +49,7 @@ public class LoggingFilter extends OncePerRequestFilter {
 
 	private static final ThreadLocal<Long> TIMER = new ThreadLocal<>();
 	private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
-	private static final String REQ_ID = "Req-Id";
+	private static final String TRACE_ID = "Trace-Id";
 	private static final String OPTIONS = "OPTIONS";
 
 	@Resource
@@ -101,9 +100,9 @@ public class LoggingFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 		TIMER.set(System.currentTimeMillis());
-		String reqId = NanoIdUtils.nanoId();
-		response.setHeader(REQ_ID, reqId);
-		MDC.put(REQ_ID, reqId);
+		String traceId = NanoIdUtils.nanoId();
+		response.setHeader(TRACE_ID, traceId);
+		MDC.put(TRACE_ID, traceId);
 
 		HttpServletRequest requestToUse = loggingRequest(request);
 		HttpServletResponse responseToUse = response;
@@ -116,7 +115,7 @@ public class LoggingFilter extends OncePerRequestFilter {
 		} finally {
 			loggingResponse((CachedResponseWrapper) responseToUse);
 			TIMER.remove();
-			MDC.remove(REQ_ID);
+			MDC.remove(TRACE_ID);
 		}
 	}
 

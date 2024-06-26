@@ -10,34 +10,37 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.feign.properties;
+package net.wenzuo.atom.web.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author Catch
- * @since 2021-06-29
+ * @since 2023-06-28
  */
 @Data
-@ConfigurationProperties(prefix = "atom.feign")
-public class FeignProperties {
+@ConfigurationProperties(prefix = "atom.web.logging")
+public class LoggingProperties {
 
 	/**
-	 * 是否启用 Feign 模块功能
+	 * 是否启用请求响应日志记录
 	 */
 	private Boolean enabled = true;
+
 	/**
-	 * 是否启用Feign请求响应日志记录
+	 * 日志过滤包含的路径
 	 */
-	private Boolean logging = true;
+	private String[] includePath = {"/**"};
+
 	/**
-	 * 是否启用 Feign 第三方响应结果异常处理
+	 * 日志过滤排除的路径
 	 */
-	private Boolean exceptionHandler = true;
+	private String[] excludePath = {};
+
 	/**
-	 * 是否启用Feign的解码器, 解码响应结果,针对小于 400 的状态码抛出异常
+	 * 日志过滤内部排除的路径, 优先级高于 excludePath, 一般不建议修改
 	 */
-	private Boolean decode = true;
+	private String[] internalExcludePath = {"/favicon.ico", "/actuator/**", "/error", "/v3/api-docs/**", "/swagger-ui*/**", "/webjars/**"};
 
 }

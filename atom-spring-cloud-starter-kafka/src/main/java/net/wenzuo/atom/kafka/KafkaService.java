@@ -38,15 +38,12 @@ public class KafkaService {
 	}
 
 	public void send(String topic, String key, Object message) {
-		// 分区编号为 null，交给 Kafka 自己去分配
 		String json = JsonUtils.toJson(message);
 		ProducerRecord<String, String> producerRecord = new ProducerRecord<>(topic, null, System.currentTimeMillis(), key, json);
 		CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(producerRecord);
 		future.whenComplete((result, ex) -> {
-			if (ex == null) {
-				log.info("Kafka 消息发送成功, TOPIC:{}, DATA:{}", topic, json);
-			} else {
-				log.error("Kafka 消息发送失败, {}", ex.getMessage());
+			if (ex != null) {
+				log.error("Kafka send error: {}", ex.getMessage());
 			}
 		});
 	}

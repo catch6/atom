@@ -23,11 +23,10 @@ import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 import org.springframework.boot.task.ThreadPoolTaskExecutorBuilder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskDecorator;
-import org.springframework.lang.NonNull;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -40,7 +39,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @ConditionalOnProperty(value = "atom.core.async", matchIfMissing = true)
 @RequiredArgsConstructor
 @Configuration
-public class CoreAsyncConfiguration implements AsyncConfigurer, AsyncUncaughtExceptionHandler, TaskDecorator {
+public class CoreAsyncConfiguration implements AsyncConfigurer {
 
 	private final TaskExecutionProperties taskExecutionProperties;
 
@@ -48,6 +47,22 @@ public class CoreAsyncConfiguration implements AsyncConfigurer, AsyncUncaughtExc
 	public Executor getAsyncExecutor() {
 		TaskExecutionProperties.Pool pool = taskExecutionProperties.getPool();
 		TaskExecutionProperties.Shutdown shutdown = taskExecutionProperties.getShutdown();
+		TaskDecorator taskDecorator = (runnable) -> {
+			Map<String, String> contextMap = MDC.getCopyOfContextMap();
+			final Map<String, String> ctxMap = new HashMap<>(contextMap);
+			if (!ctxMap.containsKey("Trace-Id")) {
+				String traceId = NanoIdUtils.nanoId();
+				ctxMap.put("Trace-Id", traceId);
+			}
+			return () -> {
+				try {
+					MDC.setContextMap(ctxMap);
+					runnable.run();
+				} finally {
+					MDC.clear();
+				}
+			};
+		};
 
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutorBuilder().queueCapacity(pool.getQueueCapacity())
 																			 .corePoolSize(pool.getCoreSize())
@@ -57,7 +72,7 @@ public class CoreAsyncConfiguration implements AsyncConfigurer, AsyncUncaughtExc
 																			 .awaitTermination(shutdown.isAwaitTermination())
 																			 .awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod())
 																			 .threadNamePrefix(taskExecutionProperties.getThreadNamePrefix())
-																			 .taskDecorator(this)
+																			 .taskDecorator(taskDecorator)
 																			 .build();
 
 		executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
@@ -67,33 +82,7 @@ public class CoreAsyncConfiguration implements AsyncConfigurer, AsyncUncaughtExc
 
 	@Override
 	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-		return this;
-	}
-
-	@Override
-	public void handleUncaughtException(Throwable t, Method method, @NonNull Object... params) {
-		String message = "Async exception: " + t.getMessage() + ", method: " + method.getName() + ", params: " + JsonUtils.toJson(params);
-		log.error(message, t);
-	}
-
-	@NonNull
-	@Override
-	public Runnable decorate(@NonNull Runnable runnable) {
-		Map<String, String> contextMap = MDC.getCopyOfContextMap();
-		if (contextMap != null && !contextMap.containsKey("Trace-Id")) {
-			String traceId = NanoIdUtils.nanoId();
-			contextMap.put("Trace-Id", traceId);
-		}
-		return () -> {
-			try {
-				if (contextMap != null) {
-					MDC.setContextMap(contextMap);
-				}
-				runnable.run();
-			} finally {
-				MDC.clear();
-			}
-		};
+		return (t, method, params) -> log.error("Async exception: " + t.getMessage() + ", method: " + method.getName() + ", params: " + JsonUtils.toJson(params), t);
 	}
 
 }

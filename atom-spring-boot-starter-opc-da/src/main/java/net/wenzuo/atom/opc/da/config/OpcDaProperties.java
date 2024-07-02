@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package net.wenzuo.atom.opc.da.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -76,6 +76,15 @@ public class OpcDaProperties {
 		 * 服务器 ClsID
 		 */
 		private String clsId;
+		/**
+		 * 轮询周期,单位毫秒, 默认 1 秒
+		 */
+		private int period = 1000;
+
+		/**
+		 * 是否异步
+		 */
+		private boolean async = true;
 
 	}
 

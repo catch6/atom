@@ -10,11 +10,12 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package net.wenzuo.atom.opc.da.config;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import net.wenzuo.atom.core.util.JsonUtils;
+import net.wenzuo.atom.opc.da.*;
 import org.jinterop.dcom.common.JISystem;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.openscada.opc.lib.da.AutoReconnectController;
@@ -80,16 +81,17 @@ public class OpcDaAutoConfiguration implements ApplicationListener<ApplicationSt
 				AutoReconnectController autoReconnectController = new AutoReconnectController(server);
 				autoReconnectController.connect();
 
+				AccessBase access;
+				if (instance.isAsync()) {
+					access = new Async20Access(server, instance.getPeriod(), true);
+				} else {
+					access = new SyncAccess(server, instance.getPeriod());
+				}
+
 				OpcDaListenerProcessor processor = beanFactory.getBean(OpcDaListenerProcessor.class);
 				List<OpcDaMessageListener> opcDaListeners = processor.getOpcDaListeners(id);
 				if (opcDaListeners != null) {
 					for (OpcDaMessageListener listener : opcDaListeners) {
-						AccessBase access;
-						if (listener.isAsync()) {
-							access = new Async20Access(server, listener.getPeriod(), true);
-						} else {
-							access = new SyncAccess(server, listener.getPeriod());
-						}
 						for (String tag : listener.getTags()) {
 							access.addItem(tag, (item, itemState) -> {
 								try {
@@ -101,7 +103,6 @@ public class OpcDaAutoConfiguration implements ApplicationListener<ApplicationSt
 						}
 					}
 				}
-				AccessBase access = new SyncAccess(server, 1000);
 				beanFactory.registerSingleton("opcDaAccessBase-" + id, access);
 			} catch (Exception e) {
 				throw new RuntimeException(e);

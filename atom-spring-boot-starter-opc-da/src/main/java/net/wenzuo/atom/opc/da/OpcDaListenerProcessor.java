@@ -13,6 +13,7 @@
 package net.wenzuo.atom.opc.da;
 
 import lombok.extern.slf4j.Slf4j;
+import net.wenzuo.atom.opc.da.config.OpcDaProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
@@ -57,11 +58,9 @@ public class OpcDaListenerProcessor implements BeanPostProcessor {
 					continue;
 				}
 				String[] tags = listener.tags();
-				int period = listener.period();
-				boolean async = listener.async();
 				Assert.notNull(id, "OpcDaListener.id() must not be null");
 				Assert.notNull(tags, "OpcDaListener.tags() must not be null");
-				OpcDaMessageListener opcDaMessageListener = new OpcDaMessageListener(bean, method, tags, period, async);
+				OpcDaMessageListener opcDaMessageListener = new OpcDaMessageListener(bean, method, tags);
 				opcDaListeners.computeIfAbsent(listener.id(), k -> new ArrayList<>()).add(opcDaMessageListener);
 			}
 		}

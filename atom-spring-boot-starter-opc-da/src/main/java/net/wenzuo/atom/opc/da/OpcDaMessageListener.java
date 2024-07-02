@@ -39,13 +39,5 @@ public class OpcDaMessageListener {
 	 * 标签
 	 */
 	private String[] tags;
-	/**
-	 * 轮询周期
-	 */
-	private int period;
-	/**
-	 * 是否异步
-	 */
-	private boolean async;
 
 }

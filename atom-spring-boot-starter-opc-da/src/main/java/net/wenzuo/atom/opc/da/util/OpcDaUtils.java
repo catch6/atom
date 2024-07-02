@@ -10,12 +10,14 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package net.wenzuo.atom.opc.da.util;
 
 import org.jinterop.dcom.common.JIException;
 import org.openscada.opc.dcom.list.ClassDetails;
 import org.openscada.opc.lib.common.AlreadyConnectedException;
 import org.openscada.opc.lib.common.ConnectionInformation;
+import org.openscada.opc.lib.da.Item;
+import org.openscada.opc.lib.da.ItemState;
 import org.openscada.opc.lib.da.Server;
 import org.openscada.opc.lib.da.browser.Branch;
 import org.openscada.opc.lib.da.browser.FlatBrowser;
@@ -33,9 +35,9 @@ import java.util.concurrent.Executors;
  * @author Catch
  * @since 2024-06-23
  */
-public class OpcDaUtil {
+public class OpcDaUtils {
 
-	private OpcDaUtil() {
+	private OpcDaUtils() {
 	}
 
 	public static void showServerList(String host, String domain, String user, String password) {
@@ -59,6 +61,7 @@ public class OpcDaUtil {
 			Branch browse = treeBrowser.browse();
 			Collection<Branch> branches = browse.getBranches();
 			System.out.println("==================================================================");
+			dumpTree(browse, 0);
 			for (Branch branch : branches) {
 				System.out.println("Branch: " + branch.getName());
 				Collection<Leaf> leaves = branch.getLeaves();
@@ -70,6 +73,21 @@ public class OpcDaUtil {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static void dumpTree(final Branch branch, final int level) {
+		String indent = "  ".repeat(Math.max(0, level));
+		for (final Leaf leaf : branch.getLeaves()) {
+			System.out.println(indent + "Leaf: " + leaf.getName() + " [" + leaf.getItemId() + "]");
+		}
+		for (final Branch subBranch : branch.getBranches()) {
+			System.out.println(indent + "Branch: " + subBranch.getName());
+			dumpTree(subBranch, level + 1);
+		}
+	}
+
+	public static void dumpItemState(final Item item, final ItemState state) {
+		System.out.printf("Item: %s, Value: %s, Timestamp: %tc, Quality: %d%n", item.getId(), state.getValue(), state.getTimestamp(), state.getQuality());
 	}
 
 	private static Server getServer(String host, String domain, String user, String password, String progId) throws UnknownHostException, JIException, AlreadyConnectedException {

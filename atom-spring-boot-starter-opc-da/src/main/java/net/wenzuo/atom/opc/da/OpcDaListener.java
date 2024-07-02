@@ -33,14 +33,4 @@ public @interface OpcDaListener {
 	 */
 	String[] tags();
 
-	/**
-	 * 轮询周期
-	 */
-	int period() default 3000;
-
-	/**
-	 * 是否异步
-	 */
-	boolean async() default false;
-
 }

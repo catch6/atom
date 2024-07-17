@@ -43,6 +43,7 @@
 		<module>atom-spring-boot-starter-mqtt</module>
 		<module>atom-spring-boot-starter-mybatis-plus</module>
 		<module>atom-spring-boot-starter-redis</module>
+		<module>atom-spring-boot-starter-scheduling</module>
 		<module>atom-spring-boot-starter-web</module>
 		<module>atom-spring-cloud-starter-consul</module>
 		<module>atom-spring-cloud-starter-feign</module>
@@ -169,11 +170,11 @@
 				<artifactId>atom-spring-boot-starter-mybatis-plus</artifactId>
 				<version>${revision}</version>
 			</dependency>
-			<!-- <dependency> -->
-			<!-- 	<groupId>net.wenzuo</groupId> -->
-			<!-- 	<artifactId>atom-spring-boot-starter-opc-da</artifactId> -->
-			<!-- 	<version>${revision}</version> -->
-			<!-- </dependency> -->
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-boot-starter-opc-da</artifactId>
+				<version>${revision}</version>
+			</dependency>
 			<dependency>
 				<groupId>net.wenzuo</groupId>
 				<artifactId>atom-spring-boot-starter-opc-ua</artifactId>
@@ -182,6 +183,11 @@
 			<dependency>
 				<groupId>net.wenzuo</groupId>
 				<artifactId>atom-spring-boot-starter-redis</artifactId>
+				<version>${revision}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.wenzuo</groupId>
+				<artifactId>atom-spring-boot-starter-scheduling</artifactId>
 				<version>${revision}</version>
 			</dependency>
 			<dependency>

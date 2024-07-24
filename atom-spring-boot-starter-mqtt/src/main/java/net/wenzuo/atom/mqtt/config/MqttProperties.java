@@ -13,7 +13,6 @@
 package net.wenzuo.atom.mqtt.config;
 
 import lombok.Data;
-import net.wenzuo.atom.mqtt.MqttService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public class MqttProperties {
 	/**
 	 * 实例 ID
 	 */
-	private String id = MqttService.DEFAULT_ID;
+	private String id = "default";
 	/**
 	 * 实例服务器地址
 	 */
@@ -105,7 +104,7 @@ public class MqttProperties {
 			instance.setClientId(clientId);
 			instances.add(instance);
 		}
-		if (this.instances != null) {
+		if (this.instances != null && !instances.isEmpty()) {
 			instances.addAll(this.instances);
 		}
 		return instances;

@@ -24,7 +24,7 @@ public interface MqttSubscriber {
 	 * @return 实例 ID
 	 */
 	default String id() {
-		return MqttService.DEFAULT_ID;
+		return null;
 	}
 
 	/**

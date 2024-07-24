@@ -105,8 +105,15 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
 		MqttListenerProcessor processor = applicationContext.getBean(MqttListenerProcessor.class);
 		List<MqttListenerSubscriber> subscribers = processor.getSubscribers();
 
+		if (subscribers == null || subscribers.isEmpty()) {
+			return;
+		}
+
 		for (MqttListenerSubscriber subscriber : subscribers) {
 			String id = subscriber.getId();
+			if (id == null) {
+				id = mqttProperties.getId();
+			}
 			String[] topics = subscriber.getTopics();
 			int[] qos = subscriber.getQos();
 			Assert.notNull(id, "mqtt id must not be null");
@@ -151,11 +158,14 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
 	}
 
 	private void processSubscriber(Map<String, List<MqttSubscriberWrapper>> subscriberMap, List<MqttSubscriber> mqttSubscribers) {
-		if (mqttSubscribers == null) {
+		if (mqttSubscribers == null || mqttSubscribers.isEmpty()) {
 			return;
 		}
 		for (MqttSubscriber subscriber : mqttSubscribers) {
 			String id = subscriber.id();
+			if (id == null) {
+				id = mqttProperties.getId();
+			}
 			String[] topics = subscriber.topics();
 			int[] qos = subscriber.qos();
 			Assert.notNull(id, "mqtt id must not be null");

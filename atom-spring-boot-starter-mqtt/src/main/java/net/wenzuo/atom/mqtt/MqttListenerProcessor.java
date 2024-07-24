@@ -32,7 +32,11 @@ import java.util.List;
 @Component
 public class MqttListenerProcessor implements BeanPostProcessor {
 
-	private final List<MqttListenerSubscriber> subscribers = new ArrayList<>();
+	private final List<MqttListenerSubscriber> subscribers;
+
+	public MqttListenerProcessor() {
+		subscribers = new ArrayList<>();
+	}
 
 	@Override
 	public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {

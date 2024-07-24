@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class MqttService {
 
-	public static final String DEFAULT_ID = "default";
 	public static final int DEFAULT_QOS = 1;
 	public static final boolean DEFAULT_RETAINED = true;
 
@@ -35,19 +34,19 @@ public class MqttService {
 	private final MqttProperties mqttProperties;
 
 	public void send(String topic, String message) {
-		send(DEFAULT_ID, topic, message, DEFAULT_QOS, DEFAULT_RETAINED);
+		send(mqttProperties.getId(), topic, message, DEFAULT_QOS, DEFAULT_RETAINED);
 	}
 
 	public void send(String topic, String message, int qos) {
-		send(DEFAULT_ID, topic, message, qos, DEFAULT_RETAINED);
+		send(mqttProperties.getId(), topic, message, qos, DEFAULT_RETAINED);
 	}
 
 	public void send(String topic, String message, boolean retained) {
-		send(DEFAULT_ID, topic, message, DEFAULT_QOS, retained);
+		send(mqttProperties.getId(), topic, message, DEFAULT_QOS, retained);
 	}
 
 	public void send(String topic, String message, int qos, boolean retained) {
-		send(DEFAULT_ID, topic, message, qos, retained);
+		send(mqttProperties.getId(), topic, message, qos, retained);
 	}
 
 	public void send(String id, String topic, String message) {

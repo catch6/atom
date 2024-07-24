@@ -12,6 +12,7 @@
 
 package net.wenzuo.atom.opc.da.config;
 
+import net.wenzuo.atom.opc.da.OpcDaListenerProcessor;
 import net.wenzuo.atom.opc.da.OpcDaService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +22,7 @@ import org.springframework.context.annotation.Import;
  * @author Catch
  * @since 2024-06-21
  */
-@Import({OpcDaConfiguration.class, OpcDaService.class})
+@Import({OpcDaConfiguration.class, OpcDaService.class, OpcDaListenerProcessor.class})
 @EnableConfigurationProperties(OpcDaProperties.class)
 @ConditionalOnProperty(value = "atom.opc.da.enabled", matchIfMissing = true)
 public class OpcDaAutoConfiguration {

@@ -16,12 +16,8 @@ import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.opc.da.*;
-import org.jinterop.dcom.common.JISystem;
 import org.openscada.opc.lib.common.ConnectionInformation;
-import org.openscada.opc.lib.da.AutoReconnectController;
-import org.openscada.opc.lib.da.Item;
-import org.openscada.opc.lib.da.ItemState;
-import org.openscada.opc.lib.da.Server;
+import org.openscada.opc.lib.da.*;
 import org.openscada.opc.lib.list.ServerList;
 import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
@@ -54,8 +50,6 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 
 	@Override
 	public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
-		// 关闭 COM 对象的自动垃圾收集
-		JISystem.setJavaCoClassAutoCollection(false);
 		ConfigurableApplicationContext applicationContext = event.getApplicationContext();
 		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
 		Map<String, List<OpcDaListenerSubscriber>> subscriberMap = new HashMap<>();
@@ -88,21 +82,46 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 				} else {
 					access = new WriteableSyncAccess(server, instance.getPeriod());
 				}
+
 				List<OpcDaListenerSubscriber> subscribers = subscriberMap.get(instance.getId());
-				if (subscribers == null || subscribers.isEmpty()) {
-					continue;
-				}
-				for (OpcDaListenerSubscriber subscriber : subscribers) {
-					String[] items = subscriber.getItems();
-					BiConsumer<Item, ItemState> consumer = subscriber.getConsumer();
-					for (String item : items) {
-						access.addItem(item, consumer::accept);
-					}
-				}
-				access.bind();
+
+				// for (OpcDaListenerSubscriber subscriber : subscribers) {
+				// 	String[] items = subscriber.getItems();
+				// 	BiConsumer<Item, ItemState> consumer = subscriber.getConsumer();
+				// 	for (String item : items) {
+				// 		try {
+				// 			log.info("add item: {}", item);
+				// 			access.addItem(item, consumer::accept);
+				// 		} catch (Exception e) {
+				// 			log.error(e.getMessage(), e);
+				// 		}
+				// 	}
+				// }
 
 				AutoReconnectController autoReconnectController = new AutoReconnectController(server);
+				autoReconnectController.addListener(state -> {
+					if (state == AutoReconnectState.CONNECTED) {
+						log.info("OPC DA instance {} connected", instance.getId());
+						if (subscribers == null || subscribers.isEmpty()) {
+							return;
+						}
+						for (OpcDaListenerSubscriber subscriber : subscribers) {
+							String[] items = subscriber.getItems();
+							BiConsumer<Item, ItemState> consumer = subscriber.getConsumer();
+							for (String item : items) {
+								try {
+									access.addItem(item, consumer::accept);
+								} catch (Exception e) {
+									log.error(e.getMessage(), e);
+								}
+							}
+						}
+						access.bind();
+					}
+				});
 				autoReconnectController.connect();
+				
+				// access.bind();
 
 				beanFactory.registerSingleton(opcDaProperties.getBeanPrefix() + instance.getId(), access);
 			} catch (Exception e) {

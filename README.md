@@ -32,6 +32,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 - [atom-spring-boot-starter-jwt](atom-spring-boot-starter-jwt) JWT 模块
 - [atom-spring-boot-starter-mqtt](atom-spring-boot-starter-mqtt) MQTT 模块
 - [atom-spring-boot-starter-mybatis-plus](atom-spring-boot-starter-mybatis-plus) Mybatis Plus 模块
+- [atom-spring-boot-starter-opc-da](atom-spring-boot-starter-opc-da) OPC DA 模块
 - [atom-spring-boot-starter-redis](atom-spring-boot-starter-redis) Redis 模块
 - [atom-spring-boot-starter-scheduling](atom-spring-boot-starter-scheduling) Scheduling 模块
 - [atom-spring-boot-starter-web](atom-spring-boot-starter-web) Web 模块
@@ -102,16 +103,29 @@ atom:
     update-time-field: updateTime # 更新时间字段名,此处为entity的属性名,非数据库字段名
   opc:
     da:
-      enabled: true # 是否启用opc-da模块
+      enabled: true # 是否启用 OPC DA 模块
+      beanPrefix: opcDaClient- # 实例 Bean 前缀
+      id: default # 实例 ID
+      host: # 实例主机
+      domain: # 实例域
+      user:  # 实例用户
+      password: # 实例密码
+      prog-id: # 实例 ProgID
+      cls-id: # 实例 ClsID
+      period: 1000 # 刷新间隔
+      async: true # 是否异步执行
+      initialRefresh: false # 初始化获取全量数据, 仅在 async 为 true 时有效
       instances: # OPC DA 实例配置, 可以有多个
         - id: opcda1 # 实例 ID
-          enabled: true # 是否启用
           host: 127.0.0.1 # 实例主机
           domain: # 实例域
           user: opc # 实例用户
-          password: opc123
+          password: opc123 # 实例密码
           prog-id: # 实例 ProgID
           cls-id: # 实例 ClsID
+          period: 1000 # 刷新间隔
+          async: true # 是否异步执行
+          initialRefresh: false # 初始化获取全量数据, 仅在 async 为 true 时有效
   redis:
     enabled: true # 是否启用redis模块
     redis-template: true # 是否启用redisTemplate,启用后将自动配置RedisTemplate<String, Object>, 使用jackson序列化value

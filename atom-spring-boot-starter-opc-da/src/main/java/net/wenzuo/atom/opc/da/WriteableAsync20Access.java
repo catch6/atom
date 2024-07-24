@@ -12,6 +12,7 @@
 
 package net.wenzuo.atom.opc.da;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jinterop.dcom.common.JIException;
 import org.openscada.opc.dcom.common.EventHandler;
 import org.openscada.opc.dcom.common.KeyedResult;
@@ -23,50 +24,28 @@ import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.impl.OPCAsyncIO2;
 import org.openscada.opc.lib.common.NotConnectedException;
 import org.openscada.opc.lib.da.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.UnknownHostException;
 
 /**
  * @author Catch
- * @since 2024-06-22
+ * @since 2024-07-24
  */
-public class Async20Access extends AccessBase implements IOPCDataCallback {
-
-	private static final Logger logger = LoggerFactory.getLogger(org.openscada.opc.lib.da.Async20Access.class);
+@Slf4j
+public class WriteableAsync20Access extends WriteableAccessBase implements IOPCDataCallback {
 
 	private EventHandler eventHandler = null;
 
-	private boolean initialRefresh = false;
+	private final boolean initialRefresh;
 
-	public Async20Access(final Server server, final int period, final boolean initialRefresh) throws IllegalArgumentException, UnknownHostException, NotConnectedException, JIException, DuplicateGroupException {
+	public WriteableAsync20Access(final Server server, final int period, final boolean initialRefresh) throws IllegalArgumentException, UnknownHostException, NotConnectedException, JIException, DuplicateGroupException {
 		super(server, period);
 		this.initialRefresh = initialRefresh;
 	}
 
-	public Async20Access(final Server server, final int period, final boolean initialRefresh, final String logTag) throws IllegalArgumentException, UnknownHostException, NotConnectedException, JIException, DuplicateGroupException {
+	public WriteableAsync20Access(final Server server, final int period, final boolean initialRefresh, final String logTag) throws IllegalArgumentException, UnknownHostException, NotConnectedException, JIException, DuplicateGroupException {
 		super(server, period, logTag);
 		this.initialRefresh = initialRefresh;
-	}
-
-	@Override
-	protected synchronized void stop() throws JIException {
-		if (!isActive()) {
-			return;
-		}
-
-		if (this.eventHandler != null) {
-			try {
-				this.eventHandler.detach();
-			} catch (final Throwable e) {
-				logger.warn("Failed to detach group", e);
-			}
-
-			this.eventHandler = null;
-		}
-
-		super.stop();
 	}
 
 	@Override
@@ -88,8 +67,30 @@ public class Async20Access extends AccessBase implements IOPCDataCallback {
 		}
 	}
 
+	@Override
+	protected synchronized void stop() throws JIException {
+		if (!isActive()) {
+			return;
+		}
+
+		if (this.eventHandler != null) {
+			try {
+				this.eventHandler.detach();
+			} catch (final Throwable e) {
+				log.warn("Failed to detach group", e);
+			}
+
+			this.eventHandler = null;
+		}
+
+		super.stop();
+	}
+
+	public void cancelComplete(final int transactionId, final int serverGroupHandle) {
+	}
+
 	public void dataChange(final int transactionId, final int serverGroupHandle, final int masterQuality, final int masterErrorCode, final KeyedResultSet<Integer, ValueData> result) {
-		logger.debug("dataChange - transId {}, items: {}", transactionId, result.size());
+		log.debug("dataChange - transId {}, items: {}", transactionId, result.size());
 
 		final Group group = this.group;
 		if (group == null) {
@@ -98,21 +99,17 @@ public class Async20Access extends AccessBase implements IOPCDataCallback {
 
 		for (final KeyedResult<Integer, ValueData> entry : result) {
 			final Item item = group.findItemByClientHandle(entry.getKey());
-			logger.debug("Update for '{}'", item.getId());
+			log.debug("Update for '{}'", item.getId());
 			updateItem(item, new ItemState(entry.getErrorCode(), entry.getValue().getValue(), entry.getValue().getTimestamp(), entry.getValue().getQuality()));
 		}
 	}
 
 	public void readComplete(final int transactionId, final int serverGroupHandle, final int masterQuality, final int masterErrorCode, final KeyedResultSet<Integer, ValueData> result) {
-		logger.debug("readComplete - transId {}", transactionId);
+		log.debug("readComplete - transId {}", transactionId);
 	}
 
 	public void writeComplete(final int transactionId, final int serverGroupHandle, final int masterErrorCode, final ResultSet<Integer> result) {
-		logger.debug("writeComplete - transId {}", transactionId);
-	}
-
-	public void cancelComplete(final int transactionId, final int serverGroupHandle) {
+		log.debug("writeComplete - transId {}", transactionId);
 	}
 
 }
-

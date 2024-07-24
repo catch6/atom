@@ -12,33 +12,33 @@
 
 package net.wenzuo.atom.opc.da;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jinterop.dcom.common.JIException;
-import org.jinterop.dcom.core.JIVariant;
 import org.openscada.opc.lib.common.NotConnectedException;
-import org.openscada.opc.lib.da.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openscada.opc.lib.da.DuplicateGroupException;
+import org.openscada.opc.lib.da.Item;
+import org.openscada.opc.lib.da.ItemState;
+import org.openscada.opc.lib.da.Server;
 
 import java.net.UnknownHostException;
 import java.util.Map;
 
 /**
  * @author Catch
- * @since 2024-06-22
+ * @since 2024-07-24
  */
-public class SyncAccess extends AccessBase implements Runnable {
-
-	private static final Logger logger = LoggerFactory.getLogger(org.openscada.opc.lib.da.SyncAccess.class);
+@Slf4j
+public class WriteableSyncAccess extends WriteableAccessBase implements Runnable {
 
 	private Thread runner = null;
 
 	private Throwable lastError = null;
 
-	public SyncAccess(final Server server, final int period) throws IllegalArgumentException, UnknownHostException, NotConnectedException, JIException, DuplicateGroupException {
+	public WriteableSyncAccess(final Server server, final int period) throws IllegalArgumentException, UnknownHostException, NotConnectedException, JIException, DuplicateGroupException {
 		super(server, period);
 	}
 
-	public SyncAccess(final Server server, final int period, final String logTag) throws IllegalArgumentException, UnknownHostException, NotConnectedException, JIException, DuplicateGroupException {
+	public WriteableSyncAccess(final Server server, final int period, final String logTag) throws IllegalArgumentException, UnknownHostException, NotConnectedException, JIException, DuplicateGroupException {
 		super(server, period, logTag);
 	}
 
@@ -51,7 +51,7 @@ public class SyncAccess extends AccessBase implements Runnable {
 					handleError(null);
 				}
 			} catch (Throwable e) {
-				logger.error("Sync read failed", e);
+				log.error("Sync read failed", e);
 				handleError(e);
 				this.server.disconnect();
 			}
@@ -98,15 +98,6 @@ public class SyncAccess extends AccessBase implements Runnable {
 
 		this.runner = null;
 		this.items.clear();
-	}
-
-	public void updateItem(String itemId, Object value) {
-		Item item = this.itemMap.get(itemId);
-		try {
-			item.write(JIVariant.makeVariant(value));
-		} catch (JIException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 }

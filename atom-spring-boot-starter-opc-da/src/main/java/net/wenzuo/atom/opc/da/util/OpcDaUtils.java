@@ -109,10 +109,10 @@ public class OpcDaUtils {
 			Server server = getServer(host, domain, user, password, progId);
 			server.connect();
 			FlatBrowser flatBrowser = server.getFlatBrowser();
-			Collection<String> tags = flatBrowser.browse();
+			Collection<String> items = flatBrowser.browse();
 			System.out.println("==================================================================");
-			for (String tag : tags) {
-				System.out.println(tag);
+			for (String item : items) {
+				System.out.println(item);
 			}
 			server.disconnect();
 		} catch (Exception e) {

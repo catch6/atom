@@ -15,29 +15,22 @@ package net.wenzuo.atom.opc.da;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.openscada.opc.lib.da.Item;
+import org.openscada.opc.lib.da.ItemState;
 
-import java.lang.reflect.Method;
+import java.util.function.BiConsumer;
 
 /**
  * @author Catch
  * @since 2024-06-16
  */
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OpcDaMessageListener {
+@Data
+public class OpcDaListenerSubscriber {
 
-	/**
-	 * 回调对象
-	 */
-	private Object bean;
-	/**
-	 * 回调方法
-	 */
-	private Method method;
-	/**
-	 * 标签
-	 */
-	private String[] tags;
+	private String id;
+	private String[] items;
+	private BiConsumer<Item, ItemState> consumer;
 
 }

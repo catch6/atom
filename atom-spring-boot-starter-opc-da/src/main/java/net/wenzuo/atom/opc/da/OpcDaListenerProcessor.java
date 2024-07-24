@@ -12,56 +12,46 @@
 
 package net.wenzuo.atom.opc.da;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.opc.da.config.OpcDaProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Catch
  * @since 2024-06-16
  */
 @Slf4j
+@Getter
 @Component
 public class OpcDaListenerProcessor implements BeanPostProcessor {
 
-	private final Set<String> enabledIds;
-	private final Map<String, List<OpcDaMessageListener>> opcDaListeners = new HashMap<>();
+	private final List<OpcDaListenerSubscriber> subscribers;
 
-	public OpcDaListenerProcessor(OpcDaProperties opcDaProperties) {
-		enabledIds = opcDaProperties.getInstances()
-									.stream()
-									.filter(OpcDaProperties.OpcDaInstance::getEnabled)
-									.map(OpcDaProperties.OpcDaInstance::getId)
-									.collect(Collectors.toSet());
-	}
-
-	public List<OpcDaMessageListener> getOpcDaListeners(String id) {
-		return opcDaListeners.get(id);
+	public OpcDaListenerProcessor() {
+		subscribers = new ArrayList<>();
 	}
 
 	@Override
-	public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
+	public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
 		Method[] methods = bean.getClass().getMethods();
 		for (Method method : methods) {
 			if (method.isAnnotationPresent(OpcDaListener.class)) {
 				OpcDaListener listener = method.getAnnotation(OpcDaListener.class);
-				String id = listener.id();
-				if (!enabledIds.contains(id)) {
-					continue;
-				}
-				String[] tags = listener.tags();
-				Assert.notNull(id, "OpcDaListener.id() must not be null");
-				Assert.notNull(tags, "OpcDaListener.tags() must not be null");
-				OpcDaMessageListener opcDaMessageListener = new OpcDaMessageListener(bean, method, tags);
-				opcDaListeners.computeIfAbsent(listener.id(), k -> new ArrayList<>()).add(opcDaMessageListener);
+				OpcDaListenerSubscriber subscriber = new OpcDaListenerSubscriber(listener.id(), listener.items(), (item, value) -> {
+					try {
+						method.invoke(bean, item, value);
+					} catch (Exception e) {
+						log.error("OpcDaListenerSubscriber invoke error", e);
+					}
+				});
+				subscribers.add(subscriber);
 			}
 		}
 		return bean;

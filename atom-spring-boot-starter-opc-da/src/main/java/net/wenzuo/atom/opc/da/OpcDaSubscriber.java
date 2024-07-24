@@ -12,6 +12,9 @@
 
 package net.wenzuo.atom.opc.da;
 
+import org.openscada.opc.lib.da.Item;
+import org.openscada.opc.lib.da.ItemState;
+
 /**
  * @author Catch
  * @since 2024-06-25
@@ -21,25 +24,21 @@ public interface OpcDaSubscriber {
 	/**
 	 * 实例 ID
 	 */
-	String getId();
-
-	/**
-	 * 订阅标签
-	 */
-	String[] getTags();
-
-	/**
-	 * 轮询周期
-	 */
-	default int getPeriod() {
-		return 5000;
+	default String id() {
+		return null;
 	}
 
 	/**
-	 * 是否异步
+	 * 订阅项目
 	 */
-	default boolean getAsync() {
-		return false;
-	}
+	String[] items();
+
+	/**
+	 * 订阅消息
+	 *
+	 * @param item      项目
+	 * @param itemState 项目状态
+	 */
+	void message(Item item, ItemState itemState);
 
 }

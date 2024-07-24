@@ -12,107 +12,18 @@
 
 package net.wenzuo.atom.opc.da.config;
 
-import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
-import net.wenzuo.atom.core.util.JsonUtils;
-import net.wenzuo.atom.opc.da.*;
-import org.jinterop.dcom.common.JISystem;
-import org.openscada.opc.lib.common.ConnectionInformation;
-import org.openscada.opc.lib.da.AutoReconnectController;
-import org.openscada.opc.lib.da.Server;
-import org.openscada.opc.lib.list.ServerList;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import net.wenzuo.atom.opc.da.OpcDaService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executors;
+import org.springframework.context.annotation.Import;
 
 /**
  * @author Catch
  * @since 2024-06-21
  */
-@RequiredArgsConstructor
-@ComponentScan("net.wenzuo.atom.opc.da")
+@Import({OpcDaConfiguration.class, OpcDaService.class})
 @EnableConfigurationProperties(OpcDaProperties.class)
 @ConditionalOnProperty(value = "atom.opc.da.enabled", matchIfMissing = true)
-public class OpcDaAutoConfiguration implements ApplicationListener<ApplicationStartedEvent> {
-
-	private final OpcDaProperties opcDaProperties;
-	private final List<OpcDaSubscriber> opcDaSubscribers;
-
-	@Override
-	public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
-		// 关闭 COM 对象的自动垃圾收集
-		JISystem.setJavaCoClassAutoCollection(false);
-		Map<String, List<OpcDaSubscriber>> opcDaSubscribersMap = new HashMap<>();
-		for (OpcDaSubscriber subscriber : opcDaSubscribers) {
-			validate(subscriber);
-		}
-		ConfigurableListableBeanFactory beanFactory = event.getApplicationContext().getBeanFactory();
-		List<OpcDaProperties.OpcDaInstance> instances = opcDaProperties.getInstances();
-		for (OpcDaProperties.OpcDaInstance instance : instances) {
-			if (!instance.getEnabled()) {
-				continue;
-			}
-			String id = instance.getId();
-			try {
-				if (StrUtil.isEmpty(instance.getClsId())) {
-					ServerList serverList = new ServerList(instance.getHost(), instance.getUser(), instance.getPassword(), instance.getDomain());
-					instance.setClsId(serverList.getClsIdFromProgId(instance.getProgId()));
-				}
-
-				ConnectionInformation ci = new ConnectionInformation();
-				ci.setHost(instance.getHost());
-				ci.setDomain(instance.getDomain());
-				ci.setUser(instance.getUser());
-				ci.setPassword(instance.getPassword());
-				ci.setProgId(instance.getProgId());
-				ci.setClsid(instance.getClsId());
-
-				Server server = new Server(ci, Executors.newSingleThreadScheduledExecutor());
-				AutoReconnectController autoReconnectController = new AutoReconnectController(server);
-				autoReconnectController.connect();
-
-				AccessBase access;
-				if (instance.isAsync()) {
-					access = new Async20Access(server, instance.getPeriod(), true);
-				} else {
-					access = new SyncAccess(server, instance.getPeriod());
-				}
-
-				OpcDaListenerProcessor processor = beanFactory.getBean(OpcDaListenerProcessor.class);
-				List<OpcDaMessageListener> opcDaListeners = processor.getOpcDaListeners(id);
-				if (opcDaListeners != null) {
-					for (OpcDaMessageListener listener : opcDaListeners) {
-						for (String tag : listener.getTags()) {
-							access.addItem(tag, (item, itemState) -> {
-								try {
-									listener.getMethod().invoke(listener.getBean(), item.getId(), itemState.getValue() == null ? null : JsonUtils.toJson(itemState.getValue().getObject()));
-								} catch (Exception e) {
-									throw new RuntimeException(e);
-								}
-							});
-						}
-					}
-				}
-				beanFactory.registerSingleton("opcDaAccessBase-" + id, access);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	private void validate(OpcDaSubscriber subscriber) {
-		Assert.notNull(subscriber.getId(), "OpcDaSubscriber.getId() must not be null");
-		Assert.notEmpty(subscriber.getTags(), "OpcDaSubscriber.getTags() must not be empty");
-	}
+public class OpcDaAutoConfiguration {
 
 }

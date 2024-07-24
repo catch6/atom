@@ -14,8 +14,9 @@ package net.wenzuo.atom.opc.da;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.wenzuo.atom.opc.da.config.OpcDaProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Catch
@@ -23,14 +24,20 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Service
+@Component
 public class OpcDaService {
 
+	private final OpcDaProperties opcDaProperties;
 	private final ApplicationContext applicationContext;
 
-	public void write(String id, String tag, Object value) {
-		AccessBase accessBase = applicationContext.getBean("opcDaAccessBase-" + id, AccessBase.class);
-		accessBase.writeItem(tag, value);
+	public void updateItem(String id, String item, Object value) {
+		WriteableAccessBase access = applicationContext.getBean(opcDaProperties.getBeanPrefix() + id, WriteableSyncAccess.class);
+		access.updateItem(item, value);
+	}
+
+	public void updateItem(String id, String item, Object value, boolean isByRef) {
+		WriteableAccessBase access = applicationContext.getBean(opcDaProperties.getBeanPrefix() + id, WriteableSyncAccess.class);
+		access.updateItem(item, value, isByRef);
 	}
 
 }

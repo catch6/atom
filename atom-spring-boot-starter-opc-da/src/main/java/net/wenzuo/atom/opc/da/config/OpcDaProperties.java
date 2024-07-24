@@ -15,6 +15,7 @@ package net.wenzuo.atom.opc.da.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,6 +37,50 @@ public class OpcDaProperties {
 	private String beanPrefix = "opcDaClient-";
 
 	/**
+	 * 实例 ID
+	 */
+	private String id = "default";
+	/**
+	 * 服务器主机
+	 */
+	private String host;
+	/**
+	 * 服务器域
+	 */
+	private String domain = "";
+	/**
+	 * 服务器用户
+	 */
+	private String user;
+	/**
+	 * 服务器密码
+	 */
+	private String password;
+
+	/**
+	 * 服务器 ProgID
+	 */
+	private String progId;
+	/**
+	 * 服务器 ClsID, 留空则使用 ProgID 获取
+	 */
+	private String clsId;
+	/**
+	 * 轮询周期,单位毫秒, 默认 1 秒
+	 */
+	private int period = 1000;
+
+	/**
+	 * 是否异步
+	 */
+	private boolean async = true;
+
+	/**
+	 * 初始化获取全量数据, 仅在 async 为 true 时有效
+	 */
+	private Boolean initialRefresh = false;
+
+	/**
 	 * OPC DA 实例配置
 	 */
 	private List<OpcDaInstance> instances;
@@ -54,7 +99,7 @@ public class OpcDaProperties {
 		/**
 		 * 服务器主机
 		 */
-		private String host = "127.0.0.1";
+		private String host;
 		/**
 		 * 服务器域
 		 */
@@ -86,6 +131,34 @@ public class OpcDaProperties {
 		 */
 		private boolean async = true;
 
+		/**
+		 * 初始化获取全量数据, 仅在 async 为 true 时有效
+		 */
+		private Boolean initialRefresh = true;
+
+	}
+
+	public List<OpcDaInstance> getInstances() {
+		List<OpcDaInstance> instances = new ArrayList<>();
+		if (id != null && host != null) {
+			OpcDaInstance instance = new OpcDaInstance();
+			instance.setId(id);
+			instance.setEnabled(enabled);
+			instance.setHost(host);
+			instance.setDomain(domain);
+			instance.setUser(user);
+			instance.setPassword(password);
+			instance.setProgId(progId);
+			instance.setClsId(clsId);
+			instance.setPeriod(period);
+			instance.setAsync(async);
+			instance.setInitialRefresh(initialRefresh);
+			instances.add(instance);
+		}
+		if (this.instances != null && !instances.isEmpty()) {
+			instances.addAll(this.instances);
+		}
+		return instances;
 	}
 
 }

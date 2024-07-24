@@ -29,8 +29,8 @@ public @interface OpcDaListener {
 	String id();
 
 	/**
-	 * 标签
+	 * 项目
 	 */
-	String[] tags();
+	String[] items();
 
 }

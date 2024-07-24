@@ -17,6 +17,17 @@ atom:
   opc:
     da:
       enabled: true # 是否启用 OPC DA 模块
+      beanPrefix: opcDaClient- # 实例 Bean 前缀
+      id: default # 实例 ID
+      host: # 实例主机
+      domain: # 实例域
+      user:  # 实例用户
+      password: # 实例密码
+      prog-id: # 实例 ProgID
+      cls-id: # 实例 ClsID
+      period: 1000 # 刷新间隔
+      async: true # 是否异步执行
+      initialRefresh: false # 初始化获取全量数据, 仅在 async 为 true 时有效
       instances: # OPC DA 实例配置, 可以有多个
         - id: opcda1 # 实例 ID
           host: 127.0.0.1 # 实例主机
@@ -25,6 +36,9 @@ atom:
           password: opc123 # 实例密码
           prog-id: # 实例 ProgID
           cls-id: # 实例 ClsID
+          period: 1000 # 刷新间隔
+          async: true # 是否异步执行
+          initialRefresh: false # 初始化获取全量数据, 仅在 async 为 true 时有效
 ```
 
 ## 使用
@@ -33,9 +47,12 @@ atom:
 
 ```java
 
-@OpcDaListener(id = "opcda1", tags = {"A.B.C", "D.E.F"}, period = 3000, async = false)
-public void message(String tag, String value) {
-	log.info("tag: {}, value: {}", tag, value);
+import org.openscada.opc.lib.da.Item;
+import org.openscada.opc.lib.da.ItemState;
+
+@OpcDaListener(id = "opcda1", items = {"A.B.C", "D.E.F"})
+public void message(Item item, ItemState value) {
+	log.info("item: {}, value: {}", item, value);
 }
 
 ```
@@ -43,6 +60,8 @@ public void message(String tag, String value) {
 发布消息
 
 ```java
+
+import net.wenzuo.atom.opc.da.OpcDaService;
 
 @RequiredArgsConstructor
 @RequestMapping("/")
@@ -53,7 +72,7 @@ public class TestController {
 
 	@RequestMapping("")
 	public String test() {
-		opcDaService.write("opcda1", "A.B.C", 1);
+		opcDaService.updateItem("opcda1", "A.B.C", 1);
 		return "test";
 	}
 

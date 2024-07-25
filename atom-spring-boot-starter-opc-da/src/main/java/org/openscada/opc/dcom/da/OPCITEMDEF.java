@@ -87,7 +87,7 @@ public class OPCITEMDEF {
 		final JIStruct struct = new JIStruct();
 		struct.addMember(new JIString(getAccessPath(), JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR));
 		struct.addMember(new JIString(getItemID(), JIFlags.FLAG_REPRESENTATION_STRING_LPWSTR));
-		struct.addMember(new Integer(isActive() ? 1 : 0));
+		struct.addMember(Integer.valueOf(isActive() ? 1 : 0));
 		struct.addMember(Integer.valueOf(getClientHandle()));
 
 		struct.addMember(Integer.valueOf(0)); // blob size

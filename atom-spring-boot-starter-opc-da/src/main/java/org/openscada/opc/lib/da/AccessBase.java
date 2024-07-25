@@ -204,9 +204,6 @@ public abstract class AccessBase implements ServerConnectionStateListener {
 		}
 	}
 
-	/*
-	 * FIXME: need some perfomance boost: subscribe all in one call
-	 */
 	protected void realizeAll() {
 		for (final String itemId : this.itemSet.keySet()) {
 			try {

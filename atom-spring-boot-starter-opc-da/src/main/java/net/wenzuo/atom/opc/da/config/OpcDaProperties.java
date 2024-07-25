@@ -26,15 +26,13 @@ import java.util.List;
 @Data
 public class OpcDaProperties {
 
+	public static final String CLIENT_BEAN_PREFIX = "opcDaClient-";
+	public static final String CONNECTION_BEAN_PREFIX = "opcDaConnection-";
+
 	/**
 	 * 是否启用
 	 */
 	private Boolean enabled = true;
-
-	/**
-	 * Bean 前缀
-	 */
-	private String beanPrefix = "opcDaClient-";
 
 	/**
 	 * 实例 ID

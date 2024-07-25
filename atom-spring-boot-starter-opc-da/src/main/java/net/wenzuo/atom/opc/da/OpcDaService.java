@@ -18,6 +18,8 @@ import net.wenzuo.atom.opc.da.config.OpcDaProperties;
 import net.wenzuo.atom.opc.da.util.OpcDaUtils;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
+import org.openscada.opc.lib.da.AutoReconnectController;
+import org.openscada.opc.lib.da.AutoReconnectState;
 import org.openscada.opc.lib.da.Item;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -41,31 +43,48 @@ public class OpcDaService {
 		subscriberItem(id, new String[]{item}, consumer);
 	}
 
+	public void subscriberItem(String item, BiConsumer<String, String> consumer) {
+		subscriberItem(opcDaProperties.getId(), new String[]{item}, consumer);
+	}
+
 	public void subscriberItem(String id, Collection<String> item, BiConsumer<String, String> consumer) {
 		subscriberItem(id, item.toArray(new String[0]), consumer);
 	}
 
+	public void subscriberItem(Collection<String> item, BiConsumer<String, String> consumer) {
+		subscriberItem(opcDaProperties.getId(), item.toArray(new String[0]), consumer);
+	}
+
 	public void subscriberItem(String id, String[] items, BiConsumer<String, String> consumer) {
-		if (items == null) {
+		if (items == null || items.length == 0) {
 			return;
 		}
-		WriteableAccessBase access = applicationContext.getBean(opcDaProperties.getBeanPrefix() + id, WriteableSyncAccess.class);
-		for (String item : items) {
-			try {
-				access.addItem(item, (it, itState) -> {
-					JIVariant jiVariant = itState.getValue();
-					String value = OpcDaUtils.getString(jiVariant);
-					consumer.accept(it.getId(), value);
-				});
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+		AutoReconnectController autoReconnectController = applicationContext.getBean(OpcDaProperties.CONNECTION_BEAN_PREFIX + id, AutoReconnectController.class);
+		WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
+		autoReconnectController.addListener(state -> {
+			if (state == AutoReconnectState.CONNECTED) {
+				for (String item : items) {
+					try {
+						access.addItem(item, (it, itState) -> {
+							JIVariant jiVariant = itState.getValue();
+							String value = OpcDaUtils.getString(jiVariant);
+							consumer.accept(it.getId(), value);
+						});
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+				access.bind();
 			}
-		}
-		access.bind();
+		});
+	}
+
+	public void subscriberItem(String[] items, BiConsumer<String, String> consumer) {
+		subscriberItem(opcDaProperties.getId(), items, consumer);
 	}
 
 	public String readItem(String id, String item) {
-		WriteableAccessBase access = applicationContext.getBean(opcDaProperties.getBeanPrefix() + id, WriteableSyncAccess.class);
+		WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
 		Item cachedItem = access.getItem(item);
 		try {
 			JIVariant jiVariant = cachedItem.read(false).getValue();
@@ -75,14 +94,26 @@ public class OpcDaService {
 		}
 	}
 
+	public String readItem(String item) {
+		return readItem(opcDaProperties.getId(), item);
+	}
+
 	public void updateItem(String id, String item, Object value) {
-		WriteableAccessBase access = applicationContext.getBean(opcDaProperties.getBeanPrefix() + id, WriteableSyncAccess.class);
+		WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
 		access.updateItem(item, value);
 	}
 
+	public void updateItem(String item, Object value) {
+		updateItem(opcDaProperties.getId(), item, value);
+	}
+
 	public void removeItem(String id, String item) {
-		WriteableAccessBase access = applicationContext.getBean(opcDaProperties.getBeanPrefix() + id, WriteableSyncAccess.class);
+		WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
 		access.removeItem(item);
+	}
+
+	public void removeItem(String item) {
+		removeItem(opcDaProperties.getId(), item);
 	}
 
 }

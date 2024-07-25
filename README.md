@@ -104,7 +104,6 @@ atom:
   opc:
     da:
       enabled: true # 是否启用 OPC DA 模块
-      beanPrefix: opcDaClient- # 实例 Bean 前缀
       id: default # 实例 ID
       host: # 实例主机
       domain: # 实例域

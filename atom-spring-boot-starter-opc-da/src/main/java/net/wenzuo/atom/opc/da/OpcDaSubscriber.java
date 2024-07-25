@@ -12,6 +12,8 @@
 
 package net.wenzuo.atom.opc.da;
 
+import net.wenzuo.atom.opc.da.config.OpcDaProperties;
+
 /**
  * @author Catch
  * @since 2024-06-25
@@ -19,7 +21,7 @@ package net.wenzuo.atom.opc.da;
 public interface OpcDaSubscriber {
 
 	/**
-	 * 实例 ID
+	 * 实例 ID, 为 null 则使用 {@link OpcDaProperties#getId()}
 	 */
 	default String id() {
 		return null;

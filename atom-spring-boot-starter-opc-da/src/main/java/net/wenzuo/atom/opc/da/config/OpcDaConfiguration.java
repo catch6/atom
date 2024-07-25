@@ -88,20 +88,6 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 				}
 
 				List<OpcDaListenerSubscriber> subscribers = subscriberMap.get(instance.getId());
-
-				// for (OpcDaListenerSubscriber subscriber : subscribers) {
-				// 	String[] items = subscriber.getItems();
-				// 	BiConsumer<Item, ItemState> consumer = subscriber.getConsumer();
-				// 	for (String item : items) {
-				// 		try {
-				// 			log.info("add item: {}", item);
-				// 			access.addItem(item, consumer::accept);
-				// 		} catch (Exception e) {
-				// 			log.error(e.getMessage(), e);
-				// 		}
-				// 	}
-				// }
-
 				AutoReconnectController autoReconnectController = new AutoReconnectController(server);
 				autoReconnectController.addListener(state -> {
 					if (state == AutoReconnectState.CONNECTED) {
@@ -129,10 +115,8 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 				});
 				autoReconnectController.connect();
 
-				// access.bind();
-
-				beanFactory.registerSingleton("autoReconnectController-" + instance.getId(), autoReconnectController);
-				beanFactory.registerSingleton(opcDaProperties.getBeanPrefix() + instance.getId(), access);
+				beanFactory.registerSingleton(OpcDaProperties.CONNECTION_BEAN_PREFIX + instance.getId(), autoReconnectController);
+				beanFactory.registerSingleton(OpcDaProperties.CLIENT_BEAN_PREFIX + instance.getId(), access);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

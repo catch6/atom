@@ -13,6 +13,7 @@
 package net.wenzuo.atom.opc.da;
 
 import lombok.extern.slf4j.Slf4j;
+import net.wenzuo.atom.opc.da.util.OpcDaUtils;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.opc.lib.common.NotConnectedException;
@@ -37,37 +38,37 @@ public abstract class WriteableAccessBase extends AccessBase {
 	}
 
 	public void updateItem(String item, Object value) {
-		updateItem(item, value, false);
-	}
-
-	public void updateItem(String item, Object value, boolean isByRef) {
-		Item it = this.itemMap.get(item);
-		if (it == null) {
+		Item cachedItem = this.itemMap.get(item);
+		if (cachedItem == null) {
 			return;
 		}
 		try {
-			JIVariant val = JIVariant.makeVariant(value, isByRef);
-			it.write(val);
-			DataCallback dataCallback = this.items.get(it);
+			JIVariant jiVariant = OpcDaUtils.getJIVariant(value);
+			cachedItem.write(jiVariant);
+			DataCallback dataCallback = this.items.get(cachedItem);
 			if (dataCallback == null) {
 				return;
 			}
-			ItemState cachedState = this.itemCache.get(it);
+			ItemState cachedState = this.itemCache.get(cachedItem);
 			if (cachedState == null) {
 				cachedState = new ItemState();
-				cachedState.setValue(val);
-				this.itemCache.put(it, cachedState);
-				dataCallback.changed(it, cachedState);
+				cachedState.setValue(jiVariant);
+				this.itemCache.put(cachedItem, cachedState);
+				dataCallback.changed(cachedItem, cachedState);
 				return;
 			}
-			if (!Objects.equals(cachedState.getValue(), val)) {
-				cachedState.setValue(val);
-				this.itemCache.put(it, cachedState);
-				dataCallback.changed(it, cachedState);
+			if (!Objects.equals(cachedState.getValue().getObject(), jiVariant.getObject())) {
+				cachedState.setValue(jiVariant);
+				this.itemCache.put(cachedItem, cachedState);
+				dataCallback.changed(cachedItem, cachedState);
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(String.format("Failed to update item '%s'", item), e);
+			throw new RuntimeException("Failed to update item " + item, e);
 		}
+	}
+
+	public Item getItem(String item) {
+		return this.itemMap.get(item);
 	}
 
 }

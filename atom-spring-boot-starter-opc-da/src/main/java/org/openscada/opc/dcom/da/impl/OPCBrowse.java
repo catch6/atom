@@ -10,32 +10,19 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.dcom.da.impl;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+import java.net.UnknownHostException;
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
+import org.jinterop.dcom.common.JIException;
+import org.jinterop.dcom.core.IJIComObject;
+import org.openscada.opc.dcom.common.impl.BaseCOMObject;
+import org.openscada.opc.dcom.da.Constants;
+
+public class OPCBrowse extends BaseCOMObject {
+
+	public OPCBrowse(final IJIComObject opcServer) throws IllegalArgumentException, UnknownHostException, JIException {
+		super(opcServer.queryInterface(Constants.IOPCBrowse_IID));
 	}
-
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
-
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
 
 }

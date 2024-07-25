@@ -10,32 +10,28 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.lib.da;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+public class UnknownGroupException extends Exception {
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
+	private String _name = null;
+
+	public UnknownGroupException(final String name) {
+		super();
+		this._name = name;
 	}
 
 	/**
-	 * 订阅项目
-	 */
-	String[] items();
-
-	/**
-	 * 订阅消息
 	 *
-	 * @param item  项目
-	 * @param value 项目值
 	 */
-	void message(String item, String value);
+	private static final long serialVersionUID = 1771564928794033075L;
+
+	public String getName() {
+		return this._name;
+	}
+
+	public void setName(final String name) {
+		this._name = name;
+	}
 
 }

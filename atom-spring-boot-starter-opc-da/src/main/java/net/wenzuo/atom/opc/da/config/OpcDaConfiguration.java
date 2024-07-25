@@ -16,8 +16,12 @@ import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.opc.da.*;
+import net.wenzuo.atom.opc.da.util.OpcDaUtils;
+import org.jinterop.dcom.core.JIVariant;
 import org.openscada.opc.lib.common.ConnectionInformation;
-import org.openscada.opc.lib.da.*;
+import org.openscada.opc.lib.da.AutoReconnectController;
+import org.openscada.opc.lib.da.AutoReconnectState;
+import org.openscada.opc.lib.da.Server;
 import org.openscada.opc.lib.list.ServerList;
 import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
@@ -107,12 +111,16 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 						}
 						for (OpcDaListenerSubscriber subscriber : subscribers) {
 							String[] items = subscriber.getItems();
-							BiConsumer<Item, ItemState> consumer = subscriber.getConsumer();
+							BiConsumer<String, String> consumer = subscriber.getConsumer();
 							for (String item : items) {
 								try {
-									access.addItem(item, consumer::accept);
+									access.addItem(item, (it, itState) -> {
+										JIVariant jiVariant = itState.getValue();
+										String value = OpcDaUtils.getString(jiVariant);
+										consumer.accept(it.getId(), value);
+									});
 								} catch (Exception e) {
-									log.error(e.getMessage(), e);
+									throw new RuntimeException(e);
 								}
 							}
 						}
@@ -120,9 +128,10 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 					}
 				});
 				autoReconnectController.connect();
-				
+
 				// access.bind();
 
+				beanFactory.registerSingleton("autoReconnectController-" + instance.getId(), autoReconnectController);
 				beanFactory.registerSingleton(opcDaProperties.getBeanPrefix() + instance.getId(), access);
 			} catch (Exception e) {
 				throw new RuntimeException(e);

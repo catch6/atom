@@ -10,32 +10,20 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.dcom.common;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+import java.util.ArrayList;
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
+public class ResultSet<T> extends ArrayList<Result<T>> {
+
+	private static final long serialVersionUID = 6392417310208978252L;
+
+	public ResultSet() {
+		super();
 	}
 
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
-
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
+	public ResultSet(final int size) {
+		super(size); // me
+	}
 
 }

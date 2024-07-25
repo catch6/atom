@@ -15,8 +15,15 @@ package net.wenzuo.atom.opc.da;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.opc.da.config.OpcDaProperties;
+import net.wenzuo.atom.opc.da.util.OpcDaUtils;
+import org.jinterop.dcom.common.JIException;
+import org.jinterop.dcom.core.JIVariant;
+import org.openscada.opc.lib.da.Item;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.function.BiConsumer;
 
 /**
  * @author Catch
@@ -30,14 +37,52 @@ public class OpcDaService {
 	private final OpcDaProperties opcDaProperties;
 	private final ApplicationContext applicationContext;
 
+	public void subscriberItem(String id, String item, BiConsumer<String, String> consumer) {
+		subscriberItem(id, new String[]{item}, consumer);
+	}
+
+	public void subscriberItem(String id, Collection<String> item, BiConsumer<String, String> consumer) {
+		subscriberItem(id, item.toArray(new String[0]), consumer);
+	}
+
+	public void subscriberItem(String id, String[] items, BiConsumer<String, String> consumer) {
+		if (items == null) {
+			return;
+		}
+		WriteableAccessBase access = applicationContext.getBean(opcDaProperties.getBeanPrefix() + id, WriteableSyncAccess.class);
+		for (String item : items) {
+			try {
+				access.addItem(item, (it, itState) -> {
+					JIVariant jiVariant = itState.getValue();
+					String value = OpcDaUtils.getString(jiVariant);
+					consumer.accept(it.getId(), value);
+				});
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		access.bind();
+	}
+
+	public String readItem(String id, String item) {
+		WriteableAccessBase access = applicationContext.getBean(opcDaProperties.getBeanPrefix() + id, WriteableSyncAccess.class);
+		Item cachedItem = access.getItem(item);
+		try {
+			JIVariant jiVariant = cachedItem.read(false).getValue();
+			return OpcDaUtils.getString(jiVariant);
+		} catch (JIException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public void updateItem(String id, String item, Object value) {
 		WriteableAccessBase access = applicationContext.getBean(opcDaProperties.getBeanPrefix() + id, WriteableSyncAccess.class);
 		access.updateItem(item, value);
 	}
 
-	public void updateItem(String id, String item, Object value, boolean isByRef) {
+	public void removeItem(String id, String item) {
 		WriteableAccessBase access = applicationContext.getBean(opcDaProperties.getBeanPrefix() + id, WriteableSyncAccess.class);
-		access.updateItem(item, value, isByRef);
+		access.removeItem(item);
 	}
 
 }

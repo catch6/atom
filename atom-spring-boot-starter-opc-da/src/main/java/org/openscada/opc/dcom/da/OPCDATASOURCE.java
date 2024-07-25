@@ -10,32 +10,31 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.dcom.da;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+public enum OPCDATASOURCE {
+	OPC_DS_CACHE(1),
+	OPC_DS_DEVICE(2),
+	OPC_DS_UNKNOWN(0);
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
+	private int _id;
+
+	private OPCDATASOURCE(final int id) {
+		this._id = id;
 	}
 
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
+	public int id() {
+		return this._id;
+	}
 
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
-
+	public static OPCDATASOURCE fromID(final int id) {
+		switch (id) {
+			case 1:
+				return OPC_DS_CACHE;
+			case 2:
+				return OPC_DS_DEVICE;
+			default:
+				return OPC_DS_UNKNOWN;
+		}
+	}
 }

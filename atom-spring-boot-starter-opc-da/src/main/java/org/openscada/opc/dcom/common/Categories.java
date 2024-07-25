@@ -10,32 +10,16 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.dcom.common;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+public interface Categories {
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
-	}
+	public static final String OPCDAServer10 = "63D5F430-CFE4-11d1-B2C8-0060083BA1FB";
 
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
+	public static final String OPCDAServer20 = "63D5F432-CFE4-11d1-B2C8-0060083BA1FB";
 
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
+	public static final String OPCDAServer30 = "CC603642-66D7-48f1-B69A-B625E73652D7";
+
+	public static final String XMLDAServer10 = "3098EDA4-A006-48b2-A27F-247453959408";
 
 }

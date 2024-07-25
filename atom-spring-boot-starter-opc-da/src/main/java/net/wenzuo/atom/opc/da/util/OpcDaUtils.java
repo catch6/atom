@@ -12,7 +12,9 @@
 
 package net.wenzuo.atom.opc.da.util;
 
+import net.wenzuo.atom.core.util.JsonUtils;
 import org.jinterop.dcom.common.JIException;
+import org.jinterop.dcom.core.JIVariant;
 import org.openscada.opc.dcom.list.ClassDetails;
 import org.openscada.opc.lib.common.AlreadyConnectedException;
 import org.openscada.opc.lib.common.ConnectionInformation;
@@ -29,6 +31,7 @@ import org.openscada.opc.lib.list.ServerList;
 
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.concurrent.Executors;
 
 /**
@@ -118,6 +121,69 @@ public class OpcDaUtils {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static String getString(JIVariant jiVariant) {
+		if (jiVariant == null) {
+			return null;
+		}
+		try {
+			int type = jiVariant.getType();
+			switch (type) {
+				case JIVariant.VT_I2:
+					short shortValue = jiVariant.getObjectAsShort();
+					return String.valueOf(shortValue);
+				case JIVariant.VT_I4:
+					int intValue = jiVariant.getObjectAsInt();
+					return String.valueOf(intValue);
+				case JIVariant.VT_I8:
+					long longValue = jiVariant.getObjectAsLong();
+					return String.valueOf(longValue);
+				case JIVariant.VT_R4:
+					float floatValue = jiVariant.getObjectAsFloat();
+					return String.valueOf(floatValue);
+				case JIVariant.VT_R8:
+					double doubleValue = jiVariant.getObjectAsDouble();
+					return String.valueOf(doubleValue);
+				case JIVariant.VT_BOOL:
+					boolean boolValue = jiVariant.getObjectAsBoolean();
+					return String.valueOf(boolValue);
+				case JIVariant.VT_BSTR:
+					return jiVariant.getObjectAsString2();
+				case JIVariant.VT_DATE:
+					Date dateValue = jiVariant.getObjectAsDate();
+					return JsonUtils.toJson(dateValue);
+				default:
+					Object object = jiVariant.getObject();
+					return JsonUtils.toJson(object);
+			}
+		} catch (JIException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static JIVariant getJIVariant(Object value) {
+		JIVariant jiVariant;
+		if (value instanceof Short) {
+			jiVariant = new JIVariant((short) value);
+		} else if (value instanceof Integer) {
+			jiVariant = new JIVariant((int) value);
+		} else if (value instanceof Long) {
+			jiVariant = new JIVariant((long) value);
+		} else if (value instanceof Float) {
+			jiVariant = new JIVariant((float) value);
+		} else if (value instanceof Double) {
+			jiVariant = new JIVariant((double) value);
+		} else if (value instanceof Boolean) {
+			jiVariant = new JIVariant((boolean) value);
+		} else if (value instanceof String) {
+			jiVariant = new JIVariant((String) value);
+		} else if (value instanceof Date) {
+			jiVariant = new JIVariant((Date) value);
+		} else {
+			jiVariant = new JIVariant(JsonUtils.toJson(value));
+		}
+		return jiVariant;
 	}
 
 }

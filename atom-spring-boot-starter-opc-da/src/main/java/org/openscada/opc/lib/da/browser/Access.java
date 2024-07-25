@@ -10,32 +10,19 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.lib.da.browser;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+public enum Access {
+	READ(1),
+	WRITE(2);
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
+	private int _code = 0;
+
+	private Access(final int code) {
+		this._code = code;
 	}
 
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
-
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
-
+	public int getCode() {
+		return this._code;
+	}
 }

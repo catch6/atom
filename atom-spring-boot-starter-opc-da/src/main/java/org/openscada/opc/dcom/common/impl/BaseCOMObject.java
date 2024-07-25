@@ -10,32 +10,25 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.dcom.common.impl;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+import org.jinterop.dcom.core.IJIComObject;
+
+public class BaseCOMObject {
+
+	private IJIComObject comObject = null;
 
 	/**
-	 * 实例 ID
+	 * Create a new base COM object
+	 *
+	 * @param comObject The COM object to wrap but be addRef'ed
 	 */
-	default String id() {
-		return null;
+	public BaseCOMObject(final IJIComObject comObject) {
+		this.comObject = comObject;
 	}
 
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
-
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
+	protected synchronized IJIComObject getCOMObject() {
+		return this.comObject;
+	}
 
 }

@@ -15,8 +15,6 @@ package net.wenzuo.atom.opc.da;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.openscada.opc.lib.da.Item;
-import org.openscada.opc.lib.da.ItemState;
 
 import java.util.function.BiConsumer;
 
@@ -31,6 +29,6 @@ public class OpcDaListenerSubscriber {
 
 	private String id;
 	private String[] items;
-	private BiConsumer<Item, ItemState> consumer;
+	private BiConsumer<String, String> consumer;
 
 }

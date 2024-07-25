@@ -10,32 +10,12 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.dcom.list;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+public interface Constants extends org.openscada.opc.dcom.common.Constants {
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
-	}
+	public static final String IOPCServerList_IID = "13486D50-4821-11D2-A494-3CB306C10000";
 
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
-
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
+	public static final String OPCServerList_CLSID = "13486D51-4821-11D2-A494-3CB306C10000";
 
 }

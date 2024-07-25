@@ -10,32 +10,28 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.lib.da;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+import org.jinterop.dcom.core.JIVariant;
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
+public class WriteRequest {
+
+	private Item _item = null;
+
+	private JIVariant _value = null;
+
+	public WriteRequest(final Item item, final JIVariant value) {
+		super();
+		this._item = item;
+		this._value = value;
 	}
 
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
+	public Item getItem() {
+		return this._item;
+	}
 
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
+	public JIVariant getValue() {
+		return this._value;
+	}
 
 }

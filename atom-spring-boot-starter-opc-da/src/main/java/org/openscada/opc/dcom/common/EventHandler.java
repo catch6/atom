@@ -10,32 +10,17 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.dcom.common;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+import org.jinterop.dcom.common.JIException;
+import org.jinterop.dcom.core.IJIComObject;
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
-	}
+public interface EventHandler {
 
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
+	public String getIdentifier();
 
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
+	public IJIComObject getObject();
+
+	public void detach() throws JIException;
 
 }

@@ -10,32 +10,33 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.dcom.da;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+public class IORequest {
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
+	private String itemID;
+
+	private int maxAge;
+
+	public IORequest(final String itemID, final int maxAge) {
+		this.itemID = itemID;
+		this.maxAge = maxAge;
 	}
 
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
+	public String getItemID() {
+		return this.itemID;
+	}
 
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
+	public void setItemID(final String itemID) {
+		this.itemID = itemID;
+	}
+
+	public int getMaxAge() {
+		return this.maxAge;
+	}
+
+	public void setMaxAge(final int maxAge) {
+		this.maxAge = maxAge;
+	}
 
 }

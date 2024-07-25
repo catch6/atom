@@ -10,32 +10,27 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.da;
+package org.openscada.opc.dcom.common;
 
-/**
- * @author Catch
- * @since 2024-06-25
- */
-public interface OpcDaSubscriber {
+public class KeyedResult<K, V> extends Result<V> {
 
-	/**
-	 * 实例 ID
-	 */
-	default String id() {
-		return null;
+	private K key;
+
+	public KeyedResult() {
+		super();
 	}
 
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
+	public KeyedResult(final K key, final V value, final int errorCode) {
+		super(value, errorCode);
+		this.key = key;
+	}
 
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
+	public K getKey() {
+		return this.key;
+	}
+
+	public void setKey(final K key) {
+		this.key = key;
+	}
 
 }

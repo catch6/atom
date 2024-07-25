@@ -68,7 +68,7 @@ public class OpcDaService {
 						access.addItem(item, (it, itState) -> {
 							JIVariant jiVariant = itState.getValue();
 							String value = OpcDaUtils.getString(jiVariant);
-							consumer.accept(it.getId(), value);
+							consumer.accept(item, value);
 						});
 					} catch (Exception e) {
 						throw new RuntimeException(e);

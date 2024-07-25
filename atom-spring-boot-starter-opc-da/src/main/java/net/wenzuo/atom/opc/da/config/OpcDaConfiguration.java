@@ -90,8 +90,8 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 				List<OpcDaListenerSubscriber> subscribers = subscriberMap.get(instance.getId());
 				AutoReconnectController autoReconnectController = new AutoReconnectController(server);
 				autoReconnectController.addListener(state -> {
+					log.info("AutoReconnectState: " + state);
 					if (state == AutoReconnectState.CONNECTED) {
-						log.info("OPC DA instance {} connected", instance.getId());
 						if (subscribers == null || subscribers.isEmpty()) {
 							return;
 						}
@@ -103,7 +103,7 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 									access.addItem(item, (it, itState) -> {
 										JIVariant jiVariant = itState.getValue();
 										String value = OpcDaUtils.getString(jiVariant);
-										consumer.accept(it.getId(), value);
+										consumer.accept(item, value);
 									});
 								} catch (Exception e) {
 									throw new RuntimeException(e);
@@ -136,9 +136,9 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 			String[] items = opcDaSubscriber.items();
 			Assert.notNull(id, "OPC DA id must not be null");
 			Assert.notEmpty(items, "OPC DA items must not be empty");
-			OpcDaListenerSubscriber subscriber = new OpcDaListenerSubscriber(id, items, (item, itemState) -> {
+			OpcDaListenerSubscriber subscriber = new OpcDaListenerSubscriber(id, items, (item, value) -> {
 				try {
-					opcDaSubscriber.message(item, itemState);
+					opcDaSubscriber.message(item, value);
 				} catch (Exception e) {
 					log.error("OpcDaListenerSubscriber invoke error", e);
 				}

@@ -132,7 +132,7 @@ public class OpcDaProperties {
 		/**
 		 * 初始化获取全量数据, 仅在 async 为 true 时有效
 		 */
-		private Boolean initialRefresh = true;
+		private Boolean initialRefresh = false;
 
 	}
 

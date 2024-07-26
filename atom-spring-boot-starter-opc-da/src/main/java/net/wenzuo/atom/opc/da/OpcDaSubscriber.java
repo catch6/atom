@@ -12,32 +12,23 @@
 
 package net.wenzuo.atom.opc.da;
 
-import net.wenzuo.atom.opc.da.config.OpcDaProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.function.BiConsumer;
 
 /**
  * @author Catch
- * @since 2024-06-25
+ * @since 2024-06-16
  */
-public interface OpcDaSubscriber {
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class OpcDaSubscriber {
 
-	/**
-	 * 实例 ID, 为 null 则使用 {@link OpcDaProperties#getId()}
-	 */
-	default String id() {
-		return null;
-	}
-
-	/**
-	 * 订阅项目
-	 */
-	String[] items();
-
-	/**
-	 * 订阅消息
-	 *
-	 * @param item  项目
-	 * @param value 项目值
-	 */
-	void message(String item, String value);
+	private String id;
+	private String[] items;
+	private BiConsumer<String, String> consumer;
 
 }

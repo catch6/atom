@@ -30,6 +30,7 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
@@ -44,21 +45,22 @@ import java.util.function.BiConsumer;
  * @author Catch
  * @since 2024-07-24
  */
+@Order(0)
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class OpcDaConfiguration implements ApplicationListener<ApplicationStartedEvent> {
 
 	private final OpcDaProperties opcDaProperties;
-	private final List<OpcDaSubscriber> opcDaSubscribers;
+	private final List<OpcDaRegistration> opcDaRegistrations;
 
 	@Override
 	public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
 		ConfigurableApplicationContext applicationContext = event.getApplicationContext();
 		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-		Map<String, List<OpcDaListenerSubscriber>> subscriberMap = new HashMap<>();
+		Map<String, List<OpcDaSubscriber>> subscriberMap = new HashMap<>();
 		processListener(subscriberMap, applicationContext);
-		processSubscriber(subscriberMap, opcDaSubscribers);
+		processRegistration(subscriberMap, opcDaRegistrations);
 
 		List<OpcDaProperties.OpcDaInstance> instances = opcDaProperties.getInstances();
 		for (OpcDaProperties.OpcDaInstance instance : instances) {
@@ -87,32 +89,9 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 					access = new WriteableSyncAccess(server, instance.getPeriod());
 				}
 
-				List<OpcDaListenerSubscriber> subscribers = subscriberMap.get(instance.getId());
+				List<OpcDaSubscriber> subscribers = subscriberMap.get(instance.getId());
 				AutoReconnectController autoReconnectController = new AutoReconnectController(server);
-				autoReconnectController.addListener(state -> {
-					log.info("AutoReconnectState: " + state);
-					if (state == AutoReconnectState.CONNECTED) {
-						if (subscribers == null || subscribers.isEmpty()) {
-							return;
-						}
-						for (OpcDaListenerSubscriber subscriber : subscribers) {
-							String[] items = subscriber.getItems();
-							BiConsumer<String, String> consumer = subscriber.getConsumer();
-							for (String item : items) {
-								try {
-									access.addItem(item, (it, itState) -> {
-										JIVariant jiVariant = itState.getValue();
-										String value = OpcDaUtils.getString(jiVariant);
-										consumer.accept(item, value);
-									});
-								} catch (Exception e) {
-									throw new RuntimeException(e);
-								}
-							}
-						}
-						access.bind();
-					}
-				});
+				addListener(autoReconnectController, access, subscribers);
 				autoReconnectController.connect();
 
 				beanFactory.registerSingleton(OpcDaProperties.CONNECTION_BEAN_PREFIX + instance.getId(), autoReconnectController);
@@ -124,43 +103,70 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 		}
 	}
 
-	private void processSubscriber(Map<String, List<OpcDaListenerSubscriber>> subscriberMap, List<OpcDaSubscriber> opcDaSubscribers) {
-		if (opcDaSubscribers == null || opcDaSubscribers.isEmpty()) {
+	public static void addListener(AutoReconnectController autoReconnectController, WriteableAccessBase access, List<OpcDaSubscriber> subscribers) {
+		autoReconnectController.addListener(state -> {
+			log.info("AutoReconnectState: " + state);
+			if (state == AutoReconnectState.CONNECTED) {
+				if (subscribers == null || subscribers.isEmpty()) {
+					return;
+				}
+				for (OpcDaSubscriber subscriber : subscribers) {
+					String[] items = subscriber.getItems();
+					BiConsumer<String, String> consumer = subscriber.getConsumer();
+					for (String item : items) {
+						try {
+							access.addItem(item, (it, itState) -> {
+								JIVariant jiVariant = itState.getValue();
+								String value = OpcDaUtils.getString(jiVariant);
+								consumer.accept(item, value);
+							});
+						} catch (Exception e) {
+							throw new RuntimeException(e);
+						}
+					}
+				}
+				access.bind();
+			}
+		});
+	}
+
+	private void processRegistration(Map<String, List<OpcDaSubscriber>> subscriberMap, List<OpcDaRegistration> registrations) {
+		if (registrations == null || registrations.isEmpty()) {
 			return;
 		}
-		for (OpcDaSubscriber opcDaSubscriber : opcDaSubscribers) {
-			String id = opcDaSubscriber.id();
+		for (OpcDaRegistration registration : registrations) {
+			String id = registration.id();
 			if (id == null) {
 				id = opcDaProperties.getId();
 			}
-			String[] items = opcDaSubscriber.items();
+			String[] items = registration.items();
 			Assert.notNull(id, "OPC DA id must not be null");
 			Assert.notEmpty(items, "OPC DA items must not be empty");
-			OpcDaListenerSubscriber subscriber = new OpcDaListenerSubscriber(id, items, (item, value) -> {
+			OpcDaSubscriber subscriber = new OpcDaSubscriber(id, items, (item, value) -> {
 				try {
-					opcDaSubscriber.message(item, value);
+					registration.message(item, value);
 				} catch (Exception e) {
 					log.error("OpcDaListenerSubscriber invoke error", e);
 				}
 			});
-			List<OpcDaListenerSubscriber> list = subscriberMap.computeIfAbsent(id, k -> new ArrayList<>());
+			List<OpcDaSubscriber> list = subscriberMap.computeIfAbsent(id, k -> new ArrayList<>());
 			list.add(subscriber);
 		}
 	}
 
-	private void processListener(Map<String, List<OpcDaListenerSubscriber>> subscriberMap, ConfigurableApplicationContext applicationContext) {
+	private void processListener(Map<String, List<OpcDaSubscriber>> subscriberMap, ConfigurableApplicationContext applicationContext) {
 		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
 		BeanExpressionContext expressionContext = new BeanExpressionContext(beanFactory, null);
 		BeanExpressionResolver expressionResolver = beanFactory.getBeanExpressionResolver();
 
 		OpcDaListenerProcessor processor = applicationContext.getBean(OpcDaListenerProcessor.class);
-		List<OpcDaListenerSubscriber> subscribers = processor.getSubscribers();
+		List<OpcDaSubscriber> subscribers = processor.getSubscribers();
 
 		if (subscribers == null || subscribers.isEmpty()) {
 			return;
 		}
 
-		for (OpcDaListenerSubscriber subscriber : subscribers) {
+		for (OpcDaSubscriber subscriber : subscribers) {
 			String id = subscriber.getId();
 			if (id == null) {
 				id = opcDaProperties.getId();
@@ -192,7 +198,7 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
 				items = newItems.toArray(new String[0]);
 				subscriber.setItems(items);
 			}
-			List<OpcDaListenerSubscriber> list = subscriberMap.computeIfAbsent(id, k -> new ArrayList<>());
+			List<OpcDaSubscriber> list = subscriberMap.computeIfAbsent(id, k -> new ArrayList<>());
 			list.add(subscriber);
 		}
 	}

@@ -32,7 +32,7 @@ import java.util.List;
 @Component
 public class OpcDaListenerProcessor implements BeanPostProcessor {
 
-	private final List<OpcDaListenerSubscriber> subscribers;
+	private final List<OpcDaSubscriber> subscribers;
 
 	public OpcDaListenerProcessor() {
 		subscribers = new ArrayList<>();
@@ -44,7 +44,7 @@ public class OpcDaListenerProcessor implements BeanPostProcessor {
 		for (Method method : methods) {
 			if (method.isAnnotationPresent(OpcDaListener.class)) {
 				OpcDaListener listener = method.getAnnotation(OpcDaListener.class);
-				OpcDaListenerSubscriber subscriber = new OpcDaListenerSubscriber(listener.id(), listener.items(), (item, value) -> {
+				OpcDaSubscriber subscriber = new OpcDaSubscriber(listener.id(), listener.items(), (item, value) -> {
 					try {
 						method.invoke(bean, item, value);
 					} catch (Exception e) {

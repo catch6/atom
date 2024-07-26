@@ -14,17 +14,18 @@ package net.wenzuo.atom.opc.da;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.wenzuo.atom.opc.da.config.OpcDaConfiguration;
 import net.wenzuo.atom.opc.da.config.OpcDaProperties;
 import net.wenzuo.atom.opc.da.util.OpcDaUtils;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.opc.lib.da.AutoReconnectController;
-import org.openscada.opc.lib.da.AutoReconnectState;
 import org.openscada.opc.lib.da.Item;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 /**
@@ -61,22 +62,8 @@ public class OpcDaService {
 		}
 		AutoReconnectController autoReconnectController = applicationContext.getBean(OpcDaProperties.CONNECTION_BEAN_PREFIX + id, AutoReconnectController.class);
 		WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
-		autoReconnectController.addListener(state -> {
-			if (state == AutoReconnectState.CONNECTED) {
-				for (String item : items) {
-					try {
-						access.addItem(item, (it, itState) -> {
-							JIVariant jiVariant = itState.getValue();
-							String value = OpcDaUtils.getString(jiVariant);
-							consumer.accept(item, value);
-						});
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
-				}
-				access.bind();
-			}
-		});
+		OpcDaSubscriber subscriber = new OpcDaSubscriber(id, items, consumer);
+		OpcDaConfiguration.addListener(autoReconnectController, access, List.of(subscriber));
 	}
 
 	public void subscriberItem(String[] items, BiConsumer<String, String> consumer) {

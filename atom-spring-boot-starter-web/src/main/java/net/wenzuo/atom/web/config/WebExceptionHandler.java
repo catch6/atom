@@ -72,6 +72,22 @@ public class WebExceptionHandler {
 		return Result.fail(e);
 	}
 
+	// /**
+	//  * 请求参数类型不匹配异常处理
+	//  * 如要 Integer 参数，却传了字符串，且无法转换为 Integer
+	//  * eg: Failed to convert value of type 'java.lang.String' to required type 'java.lang.Integer';
+	//  * nested exception is java.lang.NumberFormatException: For input string: "hello"
+	//  *
+	//  * @param e 异常对象
+	//  * @return Result
+	//  */
+	// @ResponseStatus(HttpStatus.BAD_REQUEST)
+	// @ExceptionHandler(MethodArgumentNotValidException.class)
+	// public Result<?> handler(MethodArgumentTypeMismatchException e) {
+	// 	log.warn("请求参数类型不匹配" + e.getMessage(), e);
+	// 	return Result.fail(BusinessException.DEFAULT_CODE, BusinessException.DEFAULT_MESSAGE);
+	// }
+
 	/**
 	 * 请求参数类型不匹配异常处理
 	 * 如要 Integer 参数，却传了字符串，且无法转换为 Integer

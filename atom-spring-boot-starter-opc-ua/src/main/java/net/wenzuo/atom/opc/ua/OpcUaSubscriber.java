@@ -10,25 +10,41 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.mqtt;
+package net.wenzuo.atom.opc.ua;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-import java.lang.reflect.Method;
+import net.wenzuo.atom.opc.ua.config.OpcUaProperties;
 
 /**
  * @author Catch
  * @since 2024-06-25
  */
-@AllArgsConstructor
-@Data
-public class MqttListenerSubscriber {
+public interface OpcUaSubscriber {
 
-	private String id;
-	private String[] topics;
-	private int[] qos;
-	private Object bean;
-	private Method method;
+	/**
+	 * 实例 ID, 为空则使用 {@link OpcUaProperties#getId()}
+	 */
+	default String id() {
+		return "";
+	}
+
+	/**
+	 * 订阅项目
+	 */
+	String[] items();
+
+	/**
+	 * 命名空间索引, 默认 0
+	 */
+	default int[] namespaceIndices() {
+		return new int[]{0};
+	}
+
+	/**
+	 * 订阅消息
+	 *
+	 * @param item  项目
+	 * @param value 项目值
+	 */
+	void message(String item, String value);
 
 }

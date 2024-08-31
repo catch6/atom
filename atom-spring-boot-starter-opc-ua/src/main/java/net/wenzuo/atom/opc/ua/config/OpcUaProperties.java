@@ -14,7 +14,9 @@ package net.wenzuo.atom.opc.ua.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.Ordered;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,15 +27,42 @@ import java.util.List;
 @Data
 public class OpcUaProperties {
 
+	public static final String CLIENT_BEAN_PREFIX = "opcUaClient-";
+
 	/**
 	 * 是否启用
 	 */
 	private Boolean enabled = true;
 
 	/**
+	 * 加载顺序, 默认 Ordered.LOWEST_PRECEDENCE
+	 */
+	private Integer order = Ordered.LOWEST_PRECEDENCE;
+
+	/**
 	 * 证书路径
 	 */
 	private String certificatePath;
+
+	/**
+	 * 实例 ID
+	 */
+	private String id = "default";
+
+	/**
+	 * 服务器地址, 如: opc.tcp://milo.digitalpetri.com:62541/milo
+	 */
+	private String url;
+
+	/**
+	 * 服务器用户名
+	 */
+	private String username;
+
+	/**
+	 * 服务器密码
+	 */
+	private String password;
 
 	/**
 	 * OPC UA 实例配置
@@ -55,7 +84,7 @@ public class OpcUaProperties {
 		/**
 		 * 服务器地址, 如: opc.tcp://milo.digitalpetri.com:62541/milo
 		 */
-		private String url = "127.0.0.1";
+		private String url;
 		/**
 		 * 服务器用户名
 		 */
@@ -65,6 +94,23 @@ public class OpcUaProperties {
 		 */
 		private String password;
 
+	}
+
+	public List<OpcUaInstance> getInstances() {
+		List<OpcUaInstance> instances = new ArrayList<>();
+		if (id != null && url != null) {
+			OpcUaInstance instance = new OpcUaInstance();
+			instance.setId(id);
+			instance.setEnabled(enabled);
+			instance.setUrl(url);
+			instance.setUsername(username);
+			instance.setPassword(password);
+			instances.add(instance);
+		}
+		if (this.instances != null && !instances.isEmpty()) {
+			instances.addAll(this.instances);
+		}
+		return instances;
 	}
 
 }

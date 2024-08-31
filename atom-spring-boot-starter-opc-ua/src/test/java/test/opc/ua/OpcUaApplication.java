@@ -10,34 +10,21 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.ua;
+package test.opc.ua;
 
-import net.wenzuo.atom.opc.ua.config.OpcUaProperties;
-
-import java.lang.annotation.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author Catch
- * @since 2024-06-16
+ * @since 2024-08-07
  */
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface OpcUaListener {
+@SpringBootApplication
+public class OpcUaApplication {
 
-	/**
-	 * 实例 ID, 为空则使用 {@link OpcUaProperties#getId()}
-	 */
-	String id() default "";
-
-	/**
-	 * 项目
-	 */
-	String[] items();
-
-	/**
-	 * 命名空间索引, 默认 0
-	 */
-	int[] namespaceIndices() default {0};
+	public static void main(String[] args) throws InterruptedException {
+		SpringApplication.run(OpcUaApplication.class, args);
+		Thread.sleep(100000L);
+	}
 
 }

@@ -1,0 +1,4 @@
+atom:
+  opc:
+    ua:
+      url: opc.tcp://milo.digitalpetri.com:62541/milo

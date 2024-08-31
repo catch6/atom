@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.opc.ua;
+package net.wenzuo.atom.opc.ua.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
@@ -28,11 +28,18 @@ import java.util.List;
 @Slf4j
 public class OpcUaUtils {
 
-	public static void listNode(OpcUaClient client) {
-		listNode(client, Identifiers.RootFolder, "");
+	private OpcUaUtils() {
 	}
 
-	public static void listNode(OpcUaClient client, NodeId nodeId, String prefix) {
+	public static void showItemList(OpcUaClient client) {
+		showItemList(client, Identifiers.RootFolder);
+	}
+
+	public static void showItemList(OpcUaClient client, NodeId nodeId) {
+		showItemList(client, nodeId, "");
+	}
+
+	private static void showItemList(OpcUaClient client, NodeId nodeId, String prefix) {
 		try {
 			List<? extends UaNode> nodes = client.getAddressSpace().browseNodes(nodeId);
 			for (UaNode node : nodes) {
@@ -40,18 +47,22 @@ public class OpcUaUtils {
 				String name = prefix.isEmpty() ? browseName.getName() : prefix + "." + browseName.getName();
 				String namespaceIndex = browseName.getNamespaceIndex().toString();
 				log.info("{}[{}]", name, namespaceIndex);
-				listNode(client, node.getNodeId(), name);
+				showItemList(client, node.getNodeId(), name);
 			}
 		} catch (Exception e) {
 			log.error("Browsing nodeId={} failed: {}", nodeId, e.getMessage(), e);
 		}
 	}
 
-	public static void treeNode(OpcUaClient client) {
-		treeNode(client, Identifiers.RootFolder, "");
+	public static void showItemTree(OpcUaClient client) {
+		showItemTree(client, Identifiers.RootFolder);
 	}
 
-	public static void treeNode(OpcUaClient client, NodeId nodeId, String prefix) {
+	public static void showItemTree(OpcUaClient client, NodeId nodeId) {
+		showItemTree(client, nodeId, "");
+	}
+
+	private static void showItemTree(OpcUaClient client, NodeId nodeId, String prefix) {
 		try {
 			List<? extends UaNode> nodes = client.getAddressSpace().browseNodes(nodeId);
 			for (int i = 0; i < nodes.size(); i++) {
@@ -67,7 +78,7 @@ public class OpcUaUtils {
 				}
 				String namespaceIndex = browseName.getNamespaceIndex().toString();
 				log.info("{}[{}]", name, namespaceIndex);
-				listNode(client, node.getNodeId(), prefix + "│   " + name);
+				showItemTree(client, node.getNodeId(), prefix + "│   " + name);
 			}
 		} catch (Exception e) {
 			log.error("Browsing nodeId={} failed: {}", nodeId, e.getMessage(), e);

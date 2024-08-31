@@ -12,33 +12,27 @@
 
 package net.wenzuo.atom.mqtt.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import net.wenzuo.atom.mqtt.MqttListenerProcessor;
-import net.wenzuo.atom.mqtt.MqttListenerSubscriber;
+import net.wenzuo.atom.mqtt.MqttConsumer;
+import net.wenzuo.atom.mqtt.MqttConsumerProcessor;
 import net.wenzuo.atom.mqtt.MqttSubscriber;
 import org.eclipse.paho.mqttv5.client.IMqttMessageListener;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
-import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttSubscription;
-import org.springframework.beans.factory.config.BeanExpressionContext;
-import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
 
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Catch
@@ -47,26 +41,28 @@ import java.util.*;
 @RequiredArgsConstructor
 @ConditionalOnClass(MqttClient.class)
 @Configuration
-public class Mqttv5Configuration implements ApplicationListener<ApplicationStartedEvent> {
+public class Mqttv5Configuration implements ApplicationListener<ApplicationStartedEvent>, Ordered {
 
 	private final MqttProperties mqttProperties;
 	private final List<MqttSubscriber> mqttSubscribers;
 
 	@Override
 	public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
+		List<MqttProperties.MqttInstance> instances = mqttProperties.getInstances();
+		if (instances == null || instances.isEmpty()) {
+			return;
+		}
+
 		ConfigurableApplicationContext applicationContext = event.getApplicationContext();
 		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-		Map<String, List<MqttSubscriberWrapper>> subscriberMap = new HashMap<>();
-		processListener(subscriberMap, applicationContext);
-		processSubscriber(subscriberMap, mqttSubscribers);
+		Map<String, List<MqttConsumer>> consumerMap = MqttConsumerProcessor.processConsumerMap(applicationContext, mqttProperties, mqttSubscribers);
 
-		List<MqttProperties.MqttInstance> instances = mqttProperties.getInstances();
 		for (MqttProperties.MqttInstance instance : instances) {
 			if (!instance.getEnabled()) {
 				continue;
 			}
-			String[] urls = instance.getUrl().split(",");
 			try {
+				String[] urls = instance.getUrl().split(",");
 				MqttClient mqttClient = new MqttClient(urls[0], instance.getClientId(), new MemoryPersistence());
 				MqttConnectionOptions options = new MqttConnectionOptions();
 				options.setServerURIs(urls);
@@ -79,130 +75,34 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
 				options.setAutomaticReconnect(true);
 				mqttClient.connect(options);
 
-				List<MqttSubscriberWrapper> wrappers = subscriberMap.get(instance.getId());
-				if (wrappers != null) {
-					MqttSubscription[] subscriptions = new MqttSubscription[wrappers.size()];
-					IMqttMessageListener[] listeners = new IMqttMessageListener[wrappers.size()];
-					for (int i = 0; i < wrappers.size(); i++) {
-						MqttSubscriberWrapper wrapper = wrappers.get(i);
-						subscriptions[i] = new MqttSubscription(wrapper.getTopic(), wrapper.getQos());
-						listeners[i] = wrapper.getListener();
+				List<MqttConsumer> consumers = consumerMap.get(instance.getId());
+				if (consumers == null || consumers.isEmpty()) {
+					continue;
+				}
+				for (MqttConsumer consumer : consumers) {
+					String[] topics = consumer.getTopics();
+					if (topics == null || topics.length == 0) {
+						continue;
+					}
+					int[] qos = consumer.getQos();
+					MqttSubscription[] subscriptions = new MqttSubscription[topics.length];
+					IMqttMessageListener[] listeners = new IMqttMessageListener[topics.length];
+					for (int i = 0; i < topics.length; i++) {
+						subscriptions[i] = new MqttSubscription(topics[i], qos[i]);
+						listeners[i] = (topic, message) -> consumer.getConsumer().accept(topic, new String(message.getPayload(), StandardCharsets.UTF_8));
 					}
 					mqttClient.subscribe(subscriptions, listeners);
 				}
-				beanFactory.registerSingleton(mqttProperties.getBeanPrefix() + instance.getId(), mqttClient);
-			} catch (MqttException e) {
-				throw new RuntimeException(e);
+				beanFactory.registerSingleton(MqttProperties.CLIENT_BEAN_PREFIX + instance.getId(), mqttClient);
+			} catch (Exception e) {
+				throw new RuntimeException("MQTT connect error: " + e.getMessage(), e);
 			}
 		}
 	}
 
-	private void processListener(Map<String, List<MqttSubscriberWrapper>> subscriberMap, ConfigurableApplicationContext applicationContext) {
-		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-		BeanExpressionContext expressionContext = new BeanExpressionContext(beanFactory, null);
-		BeanExpressionResolver expressionResolver = beanFactory.getBeanExpressionResolver();
-
-		MqttListenerProcessor processor = applicationContext.getBean(MqttListenerProcessor.class);
-		List<MqttListenerSubscriber> subscribers = processor.getSubscribers();
-
-		if (subscribers == null || subscribers.isEmpty()) {
-			return;
-		}
-
-		for (MqttListenerSubscriber subscriber : subscribers) {
-			String id = subscriber.getId();
-			if (id == null) {
-				id = mqttProperties.getId();
-			}
-			String[] topics = subscriber.getTopics();
-			int[] qos = subscriber.getQos();
-			Assert.notNull(id, "mqtt id must not be null");
-			Assert.notEmpty(topics, "mqtt topics must not be empty");
-			Assert.notNull(qos, "mqtt qos must not be null");
-
-			if (expressionResolver != null) {
-				List<String> newTopics = new ArrayList<>();
-				for (String topic : topics) {
-					Object object = expressionResolver.evaluate(beanFactory.resolveEmbeddedValue(topic), expressionContext);
-					if (object == null) {
-						throw new IllegalArgumentException("mqtt topic must not be null");
-					}
-					if (object instanceof String str) {
-						newTopics.add(str);
-					} else if (object instanceof String[] strs) {
-						for (String str : strs) {
-							if (str == null) {
-								throw new IllegalArgumentException("mqtt topic must not be null");
-							}
-							newTopics.add(str);
-						}
-					} else {
-						throw new IllegalArgumentException("mqtt topic must be String or String[]");
-					}
-				}
-				topics = newTopics.toArray(new String[0]);
-			}
-			Assert.isTrue(qos.length == 1 || qos.length == topics.length, "mqtt qos length must be 1 or equal to topics length");
-			if (qos.length == 1) {
-				int qos0 = qos[0];
-				qos = new int[topics.length];
-				Arrays.fill(qos, qos0);
-			}
-			Object bean = subscriber.getBean();
-			Method method = subscriber.getMethod();
-			IMqttMessageListener listener = (topic, message) -> {
-				method.invoke(bean, topic, new String(message.getPayload(), StandardCharsets.UTF_8));
-			};
-			fillSubscriberMap(subscriberMap, id, topics, qos, listener);
-		}
-	}
-
-	private void processSubscriber(Map<String, List<MqttSubscriberWrapper>> subscriberMap, List<MqttSubscriber> mqttSubscribers) {
-		if (mqttSubscribers == null || mqttSubscribers.isEmpty()) {
-			return;
-		}
-		for (MqttSubscriber subscriber : mqttSubscribers) {
-			String id = subscriber.id();
-			if (id == null) {
-				id = mqttProperties.getId();
-			}
-			String[] topics = subscriber.topics();
-			int[] qos = subscriber.qos();
-			Assert.notNull(id, "mqtt id must not be null");
-			Assert.notEmpty(topics, "mqtt topics must not be empty");
-			Assert.notNull(qos, "mqtt qos must not be null");
-			if (topics.length != qos.length) {
-				Assert.isTrue(qos.length == 1, "mqtt qos length must be 1 or equal to topics length");
-				int qos0 = qos[0];
-				qos = new int[topics.length];
-				Arrays.fill(qos, qos0);
-			}
-			IMqttMessageListener listener = (topic, message) -> {
-				subscriber.message(topic, new String(message.getPayload(), StandardCharsets.UTF_8));
-			};
-			fillSubscriberMap(subscriberMap, id, topics, qos, listener);
-		}
-	}
-
-	private static void fillSubscriberMap(Map<String, List<MqttSubscriberWrapper>> subscriberMap, String id, String[] topics, int[] qos, IMqttMessageListener listener) {
-		List<MqttSubscriberWrapper> wrappers = subscriberMap.computeIfAbsent(id, k -> new ArrayList<>());
-		for (int i = 0; i < topics.length; i++) {
-			String topic = topics[i];
-			int qos0 = qos[i];
-			MqttSubscriberWrapper wrapper = new MqttSubscriberWrapper(topic, qos0, listener);
-			wrappers.add(wrapper);
-		}
-	}
-
-	@AllArgsConstructor
-	@NoArgsConstructor
-	@Data
-	public static class MqttSubscriberWrapper {
-
-		private String topic;
-		private int qos;
-		private IMqttMessageListener listener;
-
+	@Override
+	public int getOrder() {
+		return mqttProperties.getOrder();
 	}
 
 }

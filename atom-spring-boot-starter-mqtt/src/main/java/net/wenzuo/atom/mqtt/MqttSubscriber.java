@@ -12,6 +12,8 @@
 
 package net.wenzuo.atom.mqtt;
 
+import net.wenzuo.atom.mqtt.config.MqttProperties;
+
 /**
  * @author Catch
  * @since 2024-06-25
@@ -19,12 +21,12 @@ package net.wenzuo.atom.mqtt;
 public interface MqttSubscriber {
 
 	/**
-	 * 实例 ID
+	 * 实例 ID, 为空则使用 {@link MqttProperties#getId()}
 	 *
 	 * @return 实例 ID
 	 */
 	default String id() {
-		return null;
+		return "";
 	}
 
 	/**

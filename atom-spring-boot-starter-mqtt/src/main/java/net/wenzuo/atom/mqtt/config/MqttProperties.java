@@ -14,6 +14,7 @@ package net.wenzuo.atom.mqtt.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.Ordered;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +27,17 @@ import java.util.List;
 @Data
 public class MqttProperties {
 
+	public static final String CLIENT_BEAN_PREFIX = "mqttClient-";
+
 	/**
 	 * 是否启用
 	 */
 	private Boolean enabled = true;
 
 	/**
-	 * mqttClient 前缀
+	 * 加载顺序, 默认 Ordered.LOWEST_PRECEDENCE
 	 */
-	private String beanPrefix = "mqttClient-";
+	private Integer order = Ordered.LOWEST_PRECEDENCE;
 
 	/**
 	 * 实例 ID

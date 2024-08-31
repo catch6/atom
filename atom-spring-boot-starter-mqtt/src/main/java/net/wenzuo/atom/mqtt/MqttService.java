@@ -63,18 +63,20 @@ public class MqttService {
 
 	public void send(String id, String topic, String message, int qos, boolean retained) {
 		if (log.isDebugEnabled()) {
-			log.debug("Mqtt Send: id={}, topic={}, qos: {}, retained: {}, message={}", id, topic, qos, retained, message);
+			log.debug("MQTT send: id={}, topic={}, qos: {}, retained: {}, message={}", id, topic, qos, retained, message);
 		}
 		try {
-			Object mqttClient = applicationContext.getBean(mqttProperties.getBeanPrefix() + id);
+			Object mqttClient = applicationContext.getBean(MqttProperties.CLIENT_BEAN_PREFIX + id);
 			String className = mqttClient.getClass().getName();
 			if ("org.eclipse.paho.mqttv5.client.MqttClient".equals(className)) {
 				((org.eclipse.paho.mqttv5.client.MqttClient) mqttClient).publish(topic, message.getBytes(), qos, retained);
-			} else if ("org.eclipse.paho.client.mqttv3.MqttClient".equals(className)) {
-				((org.eclipse.paho.client.mqttv3.MqttClient) mqttClient).publish(topic, message.getBytes(), qos, retained);
-			} else {
-				throw new RuntimeException("MqttClient not found");
+				return;
 			}
+			if ("org.eclipse.paho.client.mqttv3.MqttClient".equals(className)) {
+				((org.eclipse.paho.client.mqttv3.MqttClient) mqttClient).publish(topic, message.getBytes(), qos, retained);
+				return;
+			}
+			throw new RuntimeException("MQTT client not supported: " + className);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

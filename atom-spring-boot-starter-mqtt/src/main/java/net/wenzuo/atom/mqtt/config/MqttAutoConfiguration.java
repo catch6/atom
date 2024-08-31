@@ -12,15 +12,17 @@
 
 package net.wenzuo.atom.mqtt.config;
 
+import net.wenzuo.atom.mqtt.MqttListenerProcessor;
+import net.wenzuo.atom.mqtt.MqttService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
 /**
  * @author Catch
  * @since 2024-06-16
  */
-@ComponentScan("net.wenzuo.atom.mqtt")
+@Import({Mqttv3Configuration.class, Mqttv5Configuration.class, MqttListenerProcessor.class, MqttService.class})
 @EnableConfigurationProperties(MqttProperties.class)
 @ConditionalOnProperty(value = "atom.mqtt.enabled", matchIfMissing = true)
 public class MqttAutoConfiguration {

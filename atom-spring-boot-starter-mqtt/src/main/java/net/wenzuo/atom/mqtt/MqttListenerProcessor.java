@@ -32,10 +32,10 @@ import java.util.List;
 @Component
 public class MqttListenerProcessor implements BeanPostProcessor {
 
-	private final List<MqttListenerSubscriber> subscribers;
+	private final List<MqttConsumer> consumers;
 
 	public MqttListenerProcessor() {
-		subscribers = new ArrayList<>();
+		consumers = new ArrayList<>();
 	}
 
 	@Override
@@ -44,8 +44,14 @@ public class MqttListenerProcessor implements BeanPostProcessor {
 		for (Method method : methods) {
 			if (method.isAnnotationPresent(MqttListener.class)) {
 				MqttListener listener = method.getAnnotation(MqttListener.class);
-				MqttListenerSubscriber subscriber = new MqttListenerSubscriber(listener.id(), listener.topics(), listener.qos(), bean, method);
-				subscribers.add(subscriber);
+				MqttConsumer consumer = new MqttConsumer(listener.id(), listener.topics(), listener.qos(), (topic, value) -> {
+					try {
+						method.invoke(bean, topic, value);
+					} catch (Exception e) {
+						log.error("MQTT invoke error", e);
+					}
+				});
+				consumers.add(consumer);
 			}
 		}
 		return bean;

@@ -14,6 +14,7 @@ package net.wenzuo.atom.opc.da.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.Ordered;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,11 @@ public class OpcDaProperties {
 	 * 是否启用
 	 */
 	private Boolean enabled = true;
+
+	/**
+	 * 加载顺序, 默认 Ordered.LOWEST_PRECEDENCE
+	 */
+	private Integer order = Ordered.LOWEST_PRECEDENCE;
 
 	/**
 	 * 实例 ID

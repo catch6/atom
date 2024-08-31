@@ -28,14 +28,6 @@
 			<groupId>net.wenzuo</groupId>
 			<artifactId>atom-spring-boot-starter-core</artifactId>
 		</dependency>
-		<!-- <dependency> -->
-		<!-- 	<groupId>org.openscada.utgard</groupId> -->
-		<!-- 	<artifactId>org.openscada.opc.lib</artifactId> -->
-		<!-- </dependency> -->
-		<!-- <dependency> -->
-		<!-- 	<groupId>org.bouncycastle</groupId> -->
-		<!-- 	<artifactId>bcprov-jdk15on</artifactId> -->
-		<!-- </dependency> -->
 		<dependency>
 			<groupId>org.jinterop</groupId>
 			<artifactId>j-interop</artifactId>

@@ -70,10 +70,10 @@ final class JIComOxidRuntimeHelper extends Stub {
 						JISystem.getLogger().warning("Oxid Resolver Thread: " + e.getMessage() + " , on thread Id: " + Thread.currentThread().getName());
 					}
 				} finally {
-					try {
-						((JIComRuntimeEndpoint) getEndpoint()).detach();
-					} catch (IOException e) {
-					}
+					// try {
+					// 	((JIComRuntimeEndpoint) getEndpoint()).detach();
+					// } catch (IOException e) {
+					// }
 				}
 				if (JISystem.getLogger().isLoggable(Level.INFO)) {
 					JISystem.getLogger().info("terminating startOxid thread: " + Thread.currentThread().getName());
@@ -88,12 +88,12 @@ final class JIComOxidRuntimeHelper extends Stub {
 	Object[] startRemUnknown(final String baseIID, final String ipidOfRemUnknown, final String ipidOfComponent, final List listOfSupportedInterfaces) throws IOException {
 		final ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 		final ServerSocket serverSocket = serverSocketChannel.socket();// new ServerSocket(0);
-		//	    serverSocket.setSoTimeout(120*1000); //2 min timeout.
+		serverSocket.setSoTimeout(120 * 1000); // 2 min timeout.
 		serverSocket.bind(null);
 		int remUnknownPort = serverSocket.getLocalPort();
 		// have to pick up a random name so adding the ipid of remunknown this is a uuid so the string is quite random.
 		final ThreadGroup remUnknownForThisListener = new ThreadGroup("ThreadGroup - " + baseIID + "[" + ipidOfRemUnknown + "]");
-		remUnknownForThisListener.setDaemon(true);
+		// remUnknownForThisListener.setDaemon(true);
 		Thread remUnknownThread = new Thread(remUnknownForThisListener, new Runnable() {
 			public void run() {
 				if (JISystem.getLogger().isLoggable(Level.INFO)) {

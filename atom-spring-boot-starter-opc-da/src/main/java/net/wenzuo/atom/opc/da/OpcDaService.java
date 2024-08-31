@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.opc.da.config.OpcDaConfiguration;
 import net.wenzuo.atom.opc.da.config.OpcDaProperties;
 import net.wenzuo.atom.opc.da.util.OpcDaUtils;
-import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.opc.lib.da.AutoReconnectController;
 import org.openscada.opc.lib.da.Item;
@@ -40,34 +39,38 @@ public class OpcDaService {
 	private final OpcDaProperties opcDaProperties;
 	private final ApplicationContext applicationContext;
 
-	public void subscriberItem(String id, String item, BiConsumer<String, String> consumer) {
-		subscriberItem(id, new String[]{item}, consumer);
-	}
-
 	public void subscriberItem(String item, BiConsumer<String, String> consumer) {
 		subscriberItem(opcDaProperties.getId(), new String[]{item}, consumer);
 	}
 
-	public void subscriberItem(String id, Collection<String> item, BiConsumer<String, String> consumer) {
-		subscriberItem(id, item.toArray(new String[0]), consumer);
+	public void subscriberItem(String id, String item, BiConsumer<String, String> consumer) {
+		subscriberItem(id, new String[]{item}, consumer);
 	}
 
 	public void subscriberItem(Collection<String> item, BiConsumer<String, String> consumer) {
 		subscriberItem(opcDaProperties.getId(), item.toArray(new String[0]), consumer);
 	}
 
-	public void subscriberItem(String id, String[] items, BiConsumer<String, String> consumer) {
-		if (items == null || items.length == 0) {
-			return;
-		}
-		AutoReconnectController autoReconnectController = applicationContext.getBean(OpcDaProperties.CONNECTION_BEAN_PREFIX + id, AutoReconnectController.class);
-		WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
-		OpcDaSubscriber subscriber = new OpcDaSubscriber(id, items, consumer);
-		OpcDaConfiguration.addListener(autoReconnectController, access, List.of(subscriber));
+	public void subscriberItem(String id, Collection<String> item, BiConsumer<String, String> consumer) {
+		subscriberItem(id, item.toArray(new String[0]), consumer);
 	}
 
 	public void subscriberItem(String[] items, BiConsumer<String, String> consumer) {
 		subscriberItem(opcDaProperties.getId(), items, consumer);
+	}
+
+	public void subscriberItem(String id, String[] items, BiConsumer<String, String> consumer) {
+		if (items == null || items.length == 0) {
+			return;
+		}
+		AutoReconnectController controller = applicationContext.getBean(OpcDaProperties.CONNECTION_BEAN_PREFIX + id, AutoReconnectController.class);
+		WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
+		OpcDaConsumer opcDaConsumer = new OpcDaConsumer(id, items, consumer);
+		OpcDaConfiguration.addListener(controller, access, List.of(opcDaConsumer));
+	}
+
+	public String readItem(String item) {
+		return readItem(opcDaProperties.getId(), item);
 	}
 
 	public String readItem(String id, String item) {
@@ -76,13 +79,13 @@ public class OpcDaService {
 		try {
 			JIVariant jiVariant = cachedItem.read(false).getValue();
 			return OpcDaUtils.getString(jiVariant);
-		} catch (JIException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	public String readItem(String item) {
-		return readItem(opcDaProperties.getId(), item);
+	public void updateItem(String item, Object value) {
+		updateItem(opcDaProperties.getId(), item, value);
 	}
 
 	public void updateItem(String id, String item, Object value) {
@@ -90,17 +93,13 @@ public class OpcDaService {
 		access.updateItem(item, value);
 	}
 
-	public void updateItem(String item, Object value) {
-		updateItem(opcDaProperties.getId(), item, value);
+	public void removeItem(String item) {
+		removeItem(opcDaProperties.getId(), item);
 	}
 
 	public void removeItem(String id, String item) {
 		WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
 		access.removeItem(item);
-	}
-
-	public void removeItem(String item) {
-		removeItem(opcDaProperties.getId(), item);
 	}
 
 }

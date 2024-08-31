@@ -26,7 +26,7 @@ public @interface OpcDaListener {
 	/**
 	 * 实例 ID
 	 */
-	String id();
+	String id() default "";
 
 	/**
 	 * 项目

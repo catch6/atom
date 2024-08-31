@@ -32,10 +32,10 @@ import java.util.List;
 @Component
 public class OpcDaListenerProcessor implements BeanPostProcessor {
 
-	private final List<OpcDaSubscriber> subscribers;
+	private final List<OpcDaConsumer> consumers;
 
 	public OpcDaListenerProcessor() {
-		subscribers = new ArrayList<>();
+		consumers = new ArrayList<>();
 	}
 
 	@Override
@@ -44,14 +44,14 @@ public class OpcDaListenerProcessor implements BeanPostProcessor {
 		for (Method method : methods) {
 			if (method.isAnnotationPresent(OpcDaListener.class)) {
 				OpcDaListener listener = method.getAnnotation(OpcDaListener.class);
-				OpcDaSubscriber subscriber = new OpcDaSubscriber(listener.id(), listener.items(), (item, value) -> {
+				OpcDaConsumer consumer = new OpcDaConsumer(listener.id(), listener.items(), (item, value) -> {
 					try {
 						method.invoke(bean, item, value);
 					} catch (Exception e) {
-						log.error("OpcDaListenerSubscriber invoke error", e);
+						log.error("OPC DA invoke error", e);
 					}
 				});
-				subscribers.add(subscriber);
+				consumers.add(consumer);
 			}
 		}
 		return bean;

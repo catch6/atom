@@ -40,11 +40,10 @@ public class OpcUaUtils {
 	private OpcUaUtils() {
 	}
 
-	public static void main(String[] args) {
-		// OpcUaUtils.showItemList("opc.tcp://opcua.demo-this.com:51210/UA/SampleServer", null, null);
-		// OpcUaUtils.showItemList("opc.tcp://opcuaserver.com:48010", null, null);
-		OpcUaUtils.showItemTree("opc.tcp://opcuaserver.com:48010", null, null);
-	}
+	// public static void main(String[] args) {
+	// 	// OpcUaUtils.showItemList("opc.tcp://opcuaserver.com:48010", null, null);
+	// 	OpcUaUtils.showItemTree("opc.tcp://opcuaserver.com:48010", null, null);
+	// }
 
 	public static OpcUaClient getClient(String url, String username, String password) {
 		Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "security");

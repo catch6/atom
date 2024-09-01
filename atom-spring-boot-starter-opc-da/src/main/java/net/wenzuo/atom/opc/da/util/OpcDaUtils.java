@@ -91,31 +91,34 @@ public class OpcDaUtils {
 			server.connect();
 			TreeBrowser treeBrowser = server.getTreeBrowser();
 			Branch branch = treeBrowser.browse();
-			showItemTree(branch, "");
+			showItemTree(List.of(branch), "");
 			server.disconnect();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private static void showItemTree(Branch branch, String prefix) {
+	private static void showItemTree(List<Branch> branches, String prefix) {
 		try {
-			log.info("{}{}{}", prefix, "├── ", branch.getName());
-			prefix += "│   ";
-			List<Leaf> leaves = branch.getLeaves().stream().toList();
-			for (int i = 0; i < leaves.size(); i++) {
-				Leaf leaf = leaves.get(i);
-				String name;
-				if (i < leaves.size() - 1) {
-					name = prefix + "├── " + leaf.getName();
+			for (int i = 0; i < branches.size(); i++) {
+				Branch branch = branches.get(i);
+				if (i < branches.size() - 1) {
+					log.info("{}{}{}", prefix, "├── ", branch.getName());
 				} else {
-					name = prefix + "└── " + leaf.getName();
+					log.info("{}{}{}", prefix, "└── ", branch.getName());
 				}
-				log.info(name);
-			}
-			List<Branch> subBranches = branch.getBranches().stream().toList();
-			for (Branch subBranch : subBranches) {
-				showItemTree(subBranch, prefix);
+				prefix += "│   ";
+				List<Leaf> leaves = branch.getLeaves().stream().toList();
+				for (int j = 0; j < leaves.size(); j++) {
+					Leaf leaf = leaves.get(j);
+					if (j < leaves.size() - 1) {
+						log.info("{}{}{}", prefix, "├── ", leaf.getName());
+					} else {
+						log.info("{}{}{}", prefix, "└── ", leaf.getName());
+					}
+				}
+				List<Branch> subBranches = branch.getBranches().stream().toList();
+				showItemTree(subBranches, prefix);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);

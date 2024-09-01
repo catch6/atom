@@ -14,11 +14,20 @@ package net.wenzuo.atom.opc.ua.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
+import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
+import org.eclipse.milo.opcua.sdk.client.api.identity.IdentityProvider;
+import org.eclipse.milo.opcua.sdk.client.api.identity.UsernameProvider;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaNode;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
+import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -29,6 +38,48 @@ import java.util.List;
 public class OpcUaUtils {
 
 	private OpcUaUtils() {
+	}
+
+	public static void main(String[] args) {
+		// OpcUaUtils.showItemList("opc.tcp://opcua.demo-this.com:51210/UA/SampleServer", null, null);
+		// OpcUaUtils.showItemList("opc.tcp://opcuaserver.com:48010", null, null);
+		OpcUaUtils.showItemTree("opc.tcp://opcuaserver.com:48010", null, null);
+	}
+
+	public static OpcUaClient getClient(String url, String username, String password) {
+		Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "security");
+		try {
+			Files.createDirectories(securityTempDir);
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to create security dir: " + securityTempDir, e);
+		}
+		IdentityProvider identityProvider;
+		if (username == null) {
+			identityProvider = new AnonymousProvider();
+		} else {
+			identityProvider = new UsernameProvider(username, password);
+		}
+		try {
+			OpcUaClient opcUaClient = OpcUaClient.create(url,
+				endpoints -> endpoints
+					.stream()
+					.findFirst(),
+				configBuilder -> configBuilder
+					.setApplicationName(LocalizedText.english("Atom Opc Ua Client"))
+					.setApplicationUri("urn:atom:opc:ua:client")
+					.setIdentityProvider(identityProvider)
+					.setRequestTimeout(UInteger.valueOf(5000))
+					.build()
+			);
+			opcUaClient.connect().get();
+			return opcUaClient;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void showItemList(String url, String username, String password) {
+		showItemList(getClient(url, username, password));
 	}
 
 	public static void showItemList(OpcUaClient client) {
@@ -54,6 +105,10 @@ public class OpcUaUtils {
 		}
 	}
 
+	public static void showItemTree(String url, String username, String password) {
+		showItemTree(getClient(url, username, password));
+	}
+
 	public static void showItemTree(OpcUaClient client) {
 		showItemTree(client, Identifiers.RootFolder);
 	}
@@ -69,16 +124,14 @@ public class OpcUaUtils {
 				UaNode node = nodes.get(i);
 				QualifiedName browseName = node.getBrowseName();
 				String name;
-				if (prefix.isEmpty()) {
-					name = browseName.getName();
-				} else if (i < nodes.size() - 1) {
+				if (i < nodes.size() - 1) {
 					name = prefix + "├── " + browseName.getName();
 				} else {
 					name = prefix + "└── " + browseName.getName();
 				}
 				String namespaceIndex = browseName.getNamespaceIndex().toString();
 				log.info("{}[{}]", name, namespaceIndex);
-				showItemTree(client, node.getNodeId(), prefix + "│   " + name);
+				showItemTree(client, node.getNodeId(), prefix + "│   ");
 			}
 		} catch (Exception e) {
 			log.error("Browsing nodeId={} failed: {}", nodeId, e.getMessage(), e);

@@ -12,8 +12,6 @@
 
 package net.wenzuo.atom.opc.ua;
 
-import net.wenzuo.atom.opc.ua.config.OpcUaProperties;
-
 /**
  * @author Catch
  * @since 2024-06-25
@@ -21,7 +19,7 @@ import net.wenzuo.atom.opc.ua.config.OpcUaProperties;
 public interface OpcUaSubscriber {
 
 	/**
-	 * 实例 ID, 为空则使用 {@link OpcUaProperties#getId()}
+	 * 实例 ID, 为空则使用 OpcUaProperties.getId()
 	 */
 	default String id() {
 		return "";

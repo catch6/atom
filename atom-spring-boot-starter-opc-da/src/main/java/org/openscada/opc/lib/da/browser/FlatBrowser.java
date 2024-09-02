@@ -24,7 +24,7 @@ import java.util.EnumSet;
 /**
  * Browse through the flat server namespace
  *
- * @author Jens Reimann <jens.reimann@th4-systems.com>
+ * @author Jens Reimann jens.reimann@th4-systems.com
  */
 public class FlatBrowser extends BaseBrowser {
 

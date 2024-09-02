@@ -26,7 +26,7 @@ import java.net.UnknownHostException;
 /**
  * Implementation of <code>IOPCGroupStateMgt</code>
  *
- * @author Jens Reimann <jens.reimann@th4-systems.com>
+ * @author Jens Reimann jens.reimann@th4-systems.com
  */
 public class OPCGroupStateMgt extends BaseCOMObject {
 

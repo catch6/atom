@@ -12,8 +12,6 @@
 
 package net.wenzuo.atom.mqtt;
 
-import net.wenzuo.atom.mqtt.config.MqttProperties;
-
 import java.lang.annotation.*;
 
 /**
@@ -26,7 +24,7 @@ import java.lang.annotation.*;
 public @interface MqttListener {
 
 	/**
-	 * 实例 ID, 为空则使用 {@link MqttProperties#getId()}
+	 * 实例 ID, 为空则使用 MqttProperties.getId()
 	 *
 	 * @return 实例 ID
 	 */

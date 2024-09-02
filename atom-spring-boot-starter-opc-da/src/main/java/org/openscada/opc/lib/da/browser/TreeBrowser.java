@@ -30,7 +30,7 @@ import java.util.LinkedList;
  * as is the TreeBrowser itself. The user must take care of preventing
  * simultanious access to this instance and the server address space browser.
  *
- * @author Jens Reimann <jens.reimann@th4-systems.com>
+ * @author Jens Reimann jens.reimann@th4-systems.com
  */
 public class TreeBrowser extends BaseBrowser {
 

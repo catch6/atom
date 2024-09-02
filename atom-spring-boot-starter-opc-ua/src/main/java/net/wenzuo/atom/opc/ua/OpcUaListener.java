@@ -12,8 +12,6 @@
 
 package net.wenzuo.atom.opc.ua;
 
-import net.wenzuo.atom.opc.ua.config.OpcUaProperties;
-
 import java.lang.annotation.*;
 
 /**
@@ -26,7 +24,7 @@ import java.lang.annotation.*;
 public @interface OpcUaListener {
 
 	/**
-	 * 实例 ID, 为空则使用 {@link OpcUaProperties#getId()}
+	 * 实例 ID, 为空则使用 OpcUaProperties.getId()
 	 */
 	String id() default "";
 

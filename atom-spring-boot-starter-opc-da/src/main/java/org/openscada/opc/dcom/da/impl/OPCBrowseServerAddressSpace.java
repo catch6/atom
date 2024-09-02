@@ -27,7 +27,7 @@ import java.net.UnknownHostException;
 /**
  * Implementation for <code>IOPCBrowseServerAddressSpace</code>
  *
- * @author Jens Reimann <jens.reimann@th4-systems.com>
+ * @author Jens Reimann jens.reimann@th4-systems.com
  */
 public class OPCBrowseServerAddressSpace extends BaseCOMObject {
 

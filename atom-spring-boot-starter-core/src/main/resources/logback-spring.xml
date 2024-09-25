@@ -67,7 +67,7 @@
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- 文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中 -->
 			<FileNamePattern>${ERROR_LOG_FILE}.%d{yyyy-MM-dd}.log</FileNamePattern>
-			<!-- 默认保留最近30天的日志 -->
+			<!-- 默认保留最近7天的日志 -->
 			<maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-7}</maxHistory>
 		</rollingPolicy>
 		<!-- 日志输出编码格式化 -->
@@ -81,6 +81,8 @@
 	<logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="OFF"/>
 	<!-- 屏蔽 nacos 大量心跳日志 -->
 	<logger name="com.alibaba.nacos" level="WARN"/>
+	<!-- Stop output INFO at start -->
+	<statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
 	<springProfile name="prod">
 		<root level="INFO">

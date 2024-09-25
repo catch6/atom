@@ -28,7 +28,7 @@ public @interface MqttListener {
 	 *
 	 * @return 实例 ID
 	 */
-	String id();
+	String id() default "default";
 
 	/**
 	 * 订阅主题

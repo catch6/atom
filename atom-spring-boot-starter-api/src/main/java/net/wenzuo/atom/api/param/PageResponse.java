@@ -12,11 +12,15 @@
 
 package net.wenzuo.atom.api.param;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author Catch
@@ -50,5 +54,30 @@ public class PageResponse<T> {
 	 */
 	@Schema(description = "数据", example = "[]")
 	private List<T> items = new ArrayList<>();
+
+	public static <T> PageResponse<T> of() {
+		return new PageResponse<>();
+	}
+
+	public static <T> PageResponse<T> of(Page<T> page) {
+		PageResponse<T> pageResponse = new PageResponse<>();
+		pageResponse.setPageNo(page.getCurrent());
+		pageResponse.setPageSize(page.getSize());
+		pageResponse.setTotalRow(page.getTotal());
+		pageResponse.setTotalPage(page.getPages());
+		pageResponse.setItems(page.getRecords());
+		return pageResponse;
+	}
+
+	@NonNull
+	public static <T, R> PageResponse<R> of(@NonNull Page<T> page, Function<T, R> function) {
+		PageResponse<R> pageResponse = new PageResponse<>();
+		pageResponse.setPageNo(page.getCurrent());
+		pageResponse.setPageSize(page.getSize());
+		pageResponse.setTotalRow(page.getTotal());
+		pageResponse.setTotalPage(page.getPages());
+		pageResponse.setItems(page.getRecords().stream().map(function).collect(Collectors.toList()));
+		return pageResponse;
+	}
 
 }

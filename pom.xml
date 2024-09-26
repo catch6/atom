@@ -85,7 +85,8 @@
 		<nimbus-jose-jwt.version>9.40</nimbus-jose-jwt.version>
 		<hutool-all.version>5.8.32</hutool-all.version>
 		<guava.version>33.3.0-jre</guava.version>
-		<mybatis-plus-spring-boot3-starter.version>3.5.7</mybatis-plus-spring-boot3-starter.version>
+		<mybatis-plus-spring-boot3-starter.version>3.5.8</mybatis-plus-spring-boot3-starter.version>
+		<mybatis-plus-extension.version>3.5.8</mybatis-plus-extension.version>
 		<springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
 		<swagger-annotations-jakarta.version>2.2.23</swagger-annotations-jakarta.version>
 		<easyexcel.version>4.0.2</easyexcel.version>
@@ -317,6 +318,11 @@
 				<groupId>org.bouncycastle</groupId>
 				<artifactId>bcprov-jdk15on</artifactId>
 				<version>${bcprov-jdk15on.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-extension</artifactId>
+				<version>${mybatis-plus-extension.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

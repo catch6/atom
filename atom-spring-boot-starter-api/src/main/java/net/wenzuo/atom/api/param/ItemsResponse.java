@@ -25,24 +25,25 @@ import java.util.stream.Collectors;
  * @since 2024-01-18
  */
 @Data
-public class ItemsResponse<R> {
+public class ItemsResponse<T> {
 
 	@Schema(description = "列表")
-	private List<R> items;
+	private List<T> items = new ArrayList<>();
 
-	public ItemsResponse() {
+	public static <T> ItemsResponse<T> of() {
+		return new ItemsResponse<>();
 	}
 
-	public ItemsResponse(List<R> items) {
-		this.items = items;
+	public static <T> ItemsResponse<T> of(List<T> items) {
+		ItemsResponse<T> response = new ItemsResponse<>();
+		response.setItems(items);
+		return response;
 	}
 
-	public <T> ItemsResponse(List<T> items, Function<T, R> function) {
-		if (items == null || items.isEmpty()) {
-			this.items = new ArrayList<>();
-		} else {
-			this.items = items.stream().map(function).collect(Collectors.toList());
-		}
+	public static <T, R> ItemsResponse<T> of(List<R> items, Function<R, T> function) {
+		ItemsResponse<T> response = new ItemsResponse<>();
+		response.setItems(items.stream().map(function).collect(Collectors.toList()));
+		return response;
 	}
 
 }

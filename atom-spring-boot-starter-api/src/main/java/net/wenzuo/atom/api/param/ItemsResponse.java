@@ -15,16 +15,34 @@ package net.wenzuo.atom.api.param;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author Catch
  * @since 2024-01-18
  */
 @Data
-public class ItemsResponse<T> {
+public class ItemsResponse<R> {
 
 	@Schema(description = "列表")
-	private List<T> items;
+	private List<R> items;
+
+	public ItemsResponse() {
+	}
+
+	public ItemsResponse(List<R> items) {
+		this.items = items;
+	}
+
+	public <T> ItemsResponse(List<T> items, Function<T, R> function) {
+		if (items == null || items.isEmpty()) {
+			this.items = new ArrayList<>();
+		} else {
+			this.items = items.stream().map(function).collect(Collectors.toList());
+		}
+	}
 
 }

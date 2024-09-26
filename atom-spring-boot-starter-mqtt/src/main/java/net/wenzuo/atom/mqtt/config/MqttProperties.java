@@ -56,7 +56,7 @@ public class MqttProperties {
 	 */
 	private String password;
 	/**
-	 * 实例客户端 ID
+	 * 实例客户端 ID, 默认为 ${spring.application.name}-${spring.profiles.active}-随机6位字符
 	 */
 	private String clientId;
 
@@ -89,7 +89,7 @@ public class MqttProperties {
 		 */
 		private String password;
 		/**
-		 * 实例客户端 ID
+		 * 实例客户端 ID, 默认为 ${spring.application.name}-${spring.profiles.active}-随机6位字符
 		 */
 		private String clientId;
 

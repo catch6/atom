@@ -12,6 +12,8 @@
 
 package net.wenzuo.atom.mqtt.config;
 
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import net.wenzuo.atom.mqtt.MqttConsumer;
 import net.wenzuo.atom.mqtt.MqttConsumerProcessor;
@@ -21,6 +23,7 @@ import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttSubscription;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -46,6 +49,11 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
 	private final MqttProperties mqttProperties;
 	private final List<MqttSubscriber> mqttSubscribers;
 
+	@Value("${spring.application.name:-atom}")
+	private String applicationName;
+	@Value("${spring.profiles.active:-}")
+	private String activeProfile;
+
 	@Override
 	public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
 		List<MqttProperties.MqttInstance> instances = mqttProperties.getInstances();
@@ -62,6 +70,10 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
 				continue;
 			}
 			try {
+				if (StrUtil.isBlank(instance.getClientId())) {
+					String suffix = RandomUtil.randomString(6);
+					instance.setClientId(applicationName + "-" + activeProfile + "-" + suffix);
+				}
 				String[] urls = instance.getUrl().split(",");
 				MqttClient mqttClient = new MqttClient(urls[0], instance.getClientId(), new MemoryPersistence());
 				MqttConnectionOptions options = new MqttConnectionOptions();

@@ -35,10 +35,10 @@ public class PageResponse<T> {
 	@Schema(description = "页码", example = "1")
 	private long pageNo = 1;
 	/**
-	 * 每页结果数
+	 * 每页结果数(-1:查询全部)
 	 */
-	@Schema(description = "每页结果数", example = "20")
-	private long pageSize = 20;
+	@Schema(description = "每页结果数", example = "15")
+	private long pageSize = 15;
 	/**
 	 * 总页数
 	 */
@@ -63,7 +63,7 @@ public class PageResponse<T> {
 		PageResponse<T> pageResponse = new PageResponse<>();
 		pageResponse.setPageNo(page.getCurrent());
 		pageResponse.setPageSize(page.getSize());
-		pageResponse.setTotalRow(page.getTotal());
+		pageResponse.setTotalRow(page.getSize() < 0 ? page.getRecords().size() : page.getTotal());
 		pageResponse.setTotalPage(page.getPages());
 		pageResponse.setItems(page.getRecords());
 		return pageResponse;
@@ -74,7 +74,7 @@ public class PageResponse<T> {
 		PageResponse<R> pageResponse = new PageResponse<>();
 		pageResponse.setPageNo(page.getCurrent());
 		pageResponse.setPageSize(page.getSize());
-		pageResponse.setTotalRow(page.getTotal());
+		pageResponse.setTotalRow(page.getSize() < 0 ? page.getRecords().size() : page.getTotal());
 		pageResponse.setTotalPage(page.getPages());
 		pageResponse.setItems(page.getRecords().stream().map(function).collect(Collectors.toList()));
 		return pageResponse;

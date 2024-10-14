@@ -14,7 +14,6 @@ package net.wenzuo.atom.api.param;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Min;
 import lombok.Data;
 
 /**
@@ -28,14 +27,12 @@ public class PageRequest {
 	 * 页码
 	 */
 	@Schema(description = "页码", example = "1", defaultValue = "1")
-	@Min(value = 1, message = "页码最小为 1")
 	private long pageNo = 1;
 	/**
-	 * 每页结果数
+	 * 每页结果数(-1:查询全部)
 	 */
-	@Schema(description = "每页结果数", example = "20", defaultValue = "20")
-	@Min(value = 1, message = "每页结果数最小为 1")
-	private long pageSize = 20;
+	@Schema(description = "每页结果数(-1:查询全部)", example = "15", defaultValue = "15")
+	private long pageSize = 15;
 
 	public <T> Page<T> toPage() {
 		return new Page<>(getPageNo(), getPageSize());

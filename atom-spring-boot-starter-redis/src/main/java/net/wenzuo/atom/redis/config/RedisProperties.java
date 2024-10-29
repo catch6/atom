@@ -43,4 +43,23 @@ public class RedisProperties {
 	 */
 	private Boolean redisService = true;
 
+	/**
+	 * key 前缀
+	 */
+	private String prefix;
+	/**
+	 * key 分隔符
+	 */
+	private String delimiter = ":";
+
+	public String getPrefix() {
+		if (prefix == null) {
+			return "";
+		}
+		if (prefix.endsWith(delimiter)) {
+			return prefix;
+		}
+		return prefix + delimiter;
+	}
+
 }

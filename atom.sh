@@ -75,7 +75,16 @@ elif [ "${ACTION}" == "deploy" ]; then
     info "合并 2.x 分支到 main 分支...OK!\n"
 
     info "发布到 maven..."
-    mvn -Possrh -Prelease clean deploy -U -DskipTests
+    RETRY_COUNT=0
+    MAX_RETRIES=5
+    until mvn -Possrh -Prelease clean deploy -U -DskipTests; do
+        RETRY_COUNT=$((RETRY_COUNT + 1))
+        if [ ${RETRY_COUNT} -ge ${MAX_RETRIES} ]; then
+            error "发布到 maven 失败，已重试 ${MAX_RETRIES} 次"
+            exit 1
+        fi
+        info "发布到 maven 失败，正在重试第 ${RETRY_COUNT} 次..."
+    done
     info "发布到 maven...OK!\n"
 
     info "提交代码并推送..."

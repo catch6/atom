@@ -31,13 +31,13 @@ public class TreeUtils {
 	 *
 	 * @param nodes  平铺的节点列表
 	 * @param rootId 根节点的ID
-	 * @param <T>    节点类型
+	 * @param <E>    节点类型
 	 * @return 根节点
 	 */
-	public static <T extends TreeNode<T, P>, P> List<T> buildTree(List<T> nodes, P rootId) {
-		Map<P, List<T>> parentMap = nodes.stream().collect(Collectors.groupingBy(TreeNode::getParentId));
-		for (T node : nodes) {
-			List<T> children = parentMap.get(node.getId());
+	public static <E extends TreeNode<E, K>, K> List<E> buildTree(List<E> nodes, K rootId) {
+		Map<K, List<E>> parentMap = nodes.stream().collect(Collectors.groupingBy(TreeNode::getParentId));
+		for (E node : nodes) {
+			List<E> children = parentMap.get(node.getId());
 			if (children != null) {
 				node.setChildren(children);
 			}
@@ -50,29 +50,24 @@ public class TreeUtils {
 	 *
 	 * @param nodes  平铺的节点列表
 	 * @param rootId 根节点的ID
-	 * @param <T>    节点类型
+	 * @param <E>    节点类型
 	 * @return 根节点
 	 */
-	public static <T extends SortTreeNode<T, P>, P> List<T> buildSortTree(List<T> nodes, P rootId) {
-		List<T> tree = buildTree(nodes, rootId);
-		sortChildren(tree);
-		return tree;
-	}
-
-	/**
-	 * 递归对节点进行排序
-	 *
-	 * @param nodes 节点列表
-	 * @param <T>   节点类型
-	 */
-	public static <T extends SortTreeNode<T, P>, P> void sortChildren(List<T> nodes) {
-		if (nodes == null || nodes.isEmpty()) {
-			return;
+	public static <E extends SortTreeNode<E, K>, K> List<E> buildSortTree(List<E> nodes, K rootId) {
+		Map<K, List<E>> parentMap = nodes.stream().collect(Collectors.groupingBy(TreeNode::getParentId,
+			Collectors.collectingAndThen(
+				Collectors.toList(),
+				list -> list.stream()
+							.sorted(Comparator.comparingInt(SortTreeNode::getSort))
+							.collect(Collectors.toList())
+			)));
+		for (E node : nodes) {
+			List<E> children = parentMap.get(node.getId());
+			if (children != null) {
+				node.setChildren(children);
+			}
 		}
-		nodes.sort(Comparator.comparing(SortTreeNode::getSort));
-		for (SortTreeNode<T, P> node : nodes) {
-			sortChildren(node.getChildren());
-		}
+		return parentMap.get(rootId);
 	}
 
 }

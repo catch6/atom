@@ -18,14 +18,14 @@ import java.util.List;
  * @author Catch
  * @since 2024-10-16
  */
-public interface TreeNode<T, P> {
+public interface TreeNode<E, K> {
 
-	P getId();
+	K getId();
 
-	P getParentId();
+	K getParentId();
 
-	List<T> getChildren();
+	List<E> getChildren();
 
-	void setChildren(List<T> children);
+	void setChildren(List<E> children);
 
 }

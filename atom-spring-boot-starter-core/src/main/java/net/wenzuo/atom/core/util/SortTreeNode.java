@@ -16,7 +16,7 @@ package net.wenzuo.atom.core.util;
  * @author Catch
  * @since 2024-10-16
  */
-public interface SortTreeNode<T, P> extends TreeNode<T, P> {
+public interface SortTreeNode<E, K> extends TreeNode<E, K> {
 
 	Integer getSort();
 

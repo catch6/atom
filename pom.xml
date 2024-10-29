@@ -378,15 +378,63 @@
 	<repositories>
 		<repository>
 			<id>tencent</id>
-			<name>腾讯云Maven镜像</name>
+			<name>腾讯云</name>
 			<url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+		</repository>
+		<repository>
+			<id>aliyun</id>
+			<name>阿里云</name>
+			<url>https://maven.aliyun.com/repository/public</url>
+		</repository>
+		<repository>
+			<id>163</id>
+			<name>网易云</name>
+			<url>http://mirrors.163.com/maven/repository/maven-public/</url>
+		</repository>
+		<repository>
+			<id>huawei</id>
+			<name>华为云</name>
+			<url>https://repo.huaweicloud.com/repository/maven/</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>tencent</id>
-			<name>腾讯云Maven镜像</name>
+			<name>腾讯云</name>
 			<url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>aliyun</id>
+			<name>阿里云</name>
+			<url>https://maven.aliyun.com/repository/public</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>163</id>
+			<name>网易云</name>
+			<url>http://mirrors.163.com/maven/repository/maven-public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>huawei</id>
+			<name>华为云</name>
+			<url>https://repo.huaweicloud.com/repository/maven/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>

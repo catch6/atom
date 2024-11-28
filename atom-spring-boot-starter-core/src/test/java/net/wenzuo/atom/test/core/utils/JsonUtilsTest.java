@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -130,6 +130,7 @@ class JsonUtilsTest {
 		private LocalDate date;
 		private LocalTime time;
 		private BigDecimal price;
+		private Long t;
 
 	}
 

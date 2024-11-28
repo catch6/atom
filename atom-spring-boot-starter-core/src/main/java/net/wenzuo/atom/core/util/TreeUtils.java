@@ -53,12 +53,12 @@ public class TreeUtils {
 	 * @param <E>    节点类型
 	 * @return 根节点
 	 */
-	public static <E extends SortTreeNode<E, K>, K> List<E> buildSortTree(List<E> nodes, K rootId) {
+	public static <E extends SortTreeNode<E, K, S>, K, S extends Comparable<S>> List<E> buildSortTree(List<E> nodes, K rootId) {
 		Map<K, List<E>> parentMap = nodes.stream().collect(Collectors.groupingBy(TreeNode::getParentId,
 			Collectors.collectingAndThen(
 				Collectors.toList(),
 				list -> list.stream()
-							.sorted(Comparator.comparingInt(SortTreeNode::getSort))
+							.sorted(Comparator.comparing(SortTreeNode::getSort))
 							.collect(Collectors.toList())
 			)));
 		for (E node : nodes) {

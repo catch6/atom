@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -42,6 +43,10 @@ public class ResponseUtils {
 	private static final String TYPE_JSON = "application/json";
 	private static final String TYPE_XLS = "application/vnd.ms-excel";
 	private static final String TYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+	private static final Short HEAD_ROW_HEIGHT = 32;
+	private static final Short CONTENT_ROW_HEIGHT = 26;
+	private static final Integer COLUMN_WIDTH = 20;
 
 	@SneakyThrows
 	public static void renderJson(ServletResponse response, Object object) {
@@ -80,10 +85,23 @@ public class ResponseUtils {
 					 .sheet("sheet1")
 					 .head(head)
 					 .registerWriteHandler(horizontalCellStyleStrategy())
-					 .registerWriteHandler(new SimpleRowHeightStyleStrategy((short) 32, (short) 26)) // 头行高32，内容行高26
-					 .registerWriteHandler(new SimpleColumnWidthStyleStrategy(20)) // 列宽20
+					 .registerWriteHandler(new SimpleRowHeightStyleStrategy(HEAD_ROW_HEIGHT, CONTENT_ROW_HEIGHT))
+					 .registerWriteHandler(new SimpleColumnWidthStyleStrategy(COLUMN_WIDTH))
 					 .doWrite(data);
-			EasyExcel.write(out, head).sheet("sheet1").doWrite(data);
+		}
+	}
+
+	@SneakyThrows
+	public static void renderXlsx(HttpServletResponse response, String filename, List<List<String>> header, Collection<?> data) {
+		setXlsxHeader(response, filename);
+		try (ServletOutputStream out = response.getOutputStream()) {
+			EasyExcel.write(out)
+					 .sheet("sheet1")
+					 .head(header)
+					 .registerWriteHandler(horizontalCellStyleStrategy())
+					 .registerWriteHandler(new SimpleRowHeightStyleStrategy(HEAD_ROW_HEIGHT, CONTENT_ROW_HEIGHT))
+					 .registerWriteHandler(new SimpleColumnWidthStyleStrategy(COLUMN_WIDTH))
+					 .doWrite(data);
 		}
 	}
 

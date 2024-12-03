@@ -89,6 +89,8 @@ public class Mqttv3Configuration implements ApplicationListener<ApplicationStart
 				options.setAutomaticReconnect(true);
 				mqttClient.connect(options);
 
+				beanFactory.registerSingleton(MqttProperties.CLIENT_BEAN_PREFIX + instance.getId(), mqttClient);
+
 				List<MqttConsumer> consumers = consumerMap.get(instance.getId());
 				if (consumers == null || consumers.isEmpty()) {
 					continue;
@@ -105,7 +107,6 @@ public class Mqttv3Configuration implements ApplicationListener<ApplicationStart
 					}
 					mqttClient.subscribe(topics, qos, listeners);
 				}
-				beanFactory.registerSingleton(MqttProperties.CLIENT_BEAN_PREFIX + instance.getId(), mqttClient);
 			} catch (Exception e) {
 				throw new RuntimeException("MQTT connect error: " + e.getMessage(), e);
 			}

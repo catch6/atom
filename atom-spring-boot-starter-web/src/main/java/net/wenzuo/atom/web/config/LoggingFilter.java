@@ -26,7 +26,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.util.StreamUtils;
@@ -44,7 +43,6 @@ import java.util.*;
 @Slf4j
 @ConditionalOnProperty(value = "atom.web.logging.enabled", matchIfMissing = true)
 @Order(value = -50)
-@Component
 public class LoggingFilter extends OncePerRequestFilter {
 
 	private static final ThreadLocal<Long> TIMER = new ThreadLocal<>();

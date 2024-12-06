@@ -14,14 +14,17 @@ package net.wenzuo.atom.core.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 /**
  * @author Catch
  * @since 2023-06-05
  */
-@ComponentScan("net.wenzuo.atom.core")
+@Import({
+	CoreAsyncConfiguration.class,
+	CoreJsonConfiguration.class,
+})
 @EnableConfigurationProperties(CoreProperties.class)
 @PropertySource("classpath:application-core.properties")
 @ConditionalOnProperty(value = "atom.core.enabled", matchIfMissing = true)

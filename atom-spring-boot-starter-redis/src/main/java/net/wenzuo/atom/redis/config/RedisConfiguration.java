@@ -12,16 +12,17 @@
 
 package net.wenzuo.atom.redis.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.wenzuo.atom.core.util.JsonUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
-import org.springframework.data.redis.cache.RedisCacheManager;
-import org.springframework.data.redis.cache.RedisCacheWriter;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -37,41 +38,66 @@ public class RedisConfiguration {
 
 	private final RedisProperties redisProperties;
 
+	@ConditionalOnProperty(value = "atom.redis.string-redis-template", matchIfMissing = true)
+	@Bean
+	public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
+		StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
+		stringRedisTemplate.setConnectionFactory(factory);
+
+		StringRedisSerializer keySerializer = prefixStringRedisSerializer();
+		RedisSerializer<String> stringSerializer = RedisSerializer.string();
+
+		stringRedisTemplate.setKeySerializer(keySerializer);
+		stringRedisTemplate.setHashKeySerializer(stringSerializer);
+
+		stringRedisTemplate.setValueSerializer(stringSerializer);
+		stringRedisTemplate.setHashValueSerializer(stringSerializer);
+
+		stringRedisTemplate.setEnableTransactionSupport(true);
+		stringRedisTemplate.afterPropertiesSet();
+
+		return stringRedisTemplate;
+	}
+
 	@ConditionalOnProperty(value = "atom.redis.redis-template", matchIfMissing = true)
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(factory);
 
-		StringRedisSerializer stringSerializer = new StringRedisSerializer();
-		PrefixStringRedisSerializer prefixStringRedisSerializer = new PrefixStringRedisSerializer(redisProperties.getPrefix());
-		RedisSerializer<Object> jacksonSerializer = redisSerializer();
+		StringRedisSerializer keySerializer = prefixStringRedisSerializer();
+		RedisSerializer<String> hashKeySerializer = RedisSerializer.string();
+		RedisSerializer<Object> valueSerializer = jacksonRedisSerializer();
 
-		redisTemplate.setKeySerializer(prefixStringRedisSerializer);
-		redisTemplate.setHashKeySerializer(stringSerializer);
+		redisTemplate.setKeySerializer(keySerializer);
+		redisTemplate.setHashKeySerializer(hashKeySerializer);
 
-		redisTemplate.setValueSerializer(jacksonSerializer);
-		redisTemplate.setHashValueSerializer(jacksonSerializer);
+		redisTemplate.setValueSerializer(valueSerializer);
+		redisTemplate.setHashValueSerializer(valueSerializer);
 
 		redisTemplate.setEnableTransactionSupport(true);
 		redisTemplate.afterPropertiesSet();
 
-		RedisCacheConfiguration.defaultCacheConfig()
-							   .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jacksonSerializer));
 		return redisTemplate;
 	}
 
-	@ConditionalOnProperty(value = "atom.redis.cache-manager", matchIfMissing = true)
 	@Bean
-	public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
-		RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory);
-		RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-																				 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()));
-		return new RedisCacheManager(redisCacheWriter, redisCacheConfiguration);
+	public RedisCacheConfiguration redisCacheConfiguration() {
+		ObjectMapper objectMapper = JsonUtils.objectMapper.copy();
+		objectMapper.activateDefaultTyping(objectMapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+		RedisSerializer<Object> jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+		return RedisCacheConfiguration.defaultCacheConfig()
+									  .computePrefixWith(name -> name + ":")
+									  .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(prefixStringRedisSerializer()))
+									  .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer));
 	}
 
-	private RedisSerializer<Object> redisSerializer() {
+	private RedisSerializer<Object> jacksonRedisSerializer() {
 		return new GenericJackson2JsonRedisSerializer(JsonUtils.objectMapper);
+	}
+
+	private PrefixStringRedisSerializer prefixStringRedisSerializer() {
+		return new PrefixStringRedisSerializer(redisProperties.getPrefix());
 	}
 
 }

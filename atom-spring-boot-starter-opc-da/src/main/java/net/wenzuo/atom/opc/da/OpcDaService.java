@@ -21,7 +21,6 @@ import org.jinterop.dcom.core.JIVariant;
 import org.openscada.opc.lib.da.AutoReconnectController;
 import org.openscada.opc.lib.da.Item;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +32,6 @@ import java.util.function.BiConsumer;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Component
 public class OpcDaService {
 
 	private final OpcDaProperties opcDaProperties;

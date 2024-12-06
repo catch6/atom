@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
@@ -28,7 +27,6 @@ import java.time.LocalDateTime;
 @Slf4j
 @RequiredArgsConstructor
 @ConditionalOnProperty(value = "atom.mybatis-plus.auto-fill", matchIfMissing = false)
-@Component
 public class FillMetaObjectHandler implements MetaObjectHandler {
 
 	private final MybatisPlusProperties mybatisPlusProperties;

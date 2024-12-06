@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.List;
  */
 @Slf4j
 @Getter
-@Component
 public class OpcDaListenerProcessor implements BeanPostProcessor {
 
 	private final List<OpcDaConsumer> consumers;

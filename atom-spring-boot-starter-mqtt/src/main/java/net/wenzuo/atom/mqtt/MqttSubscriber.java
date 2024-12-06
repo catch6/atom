@@ -37,10 +37,10 @@ public interface MqttSubscriber {
 	/**
 	 * QoS
 	 *
-	 * @return QoS列表, 如果length为1, 则所有主题的QoS都为第一个值, 默认所有QoS为1
+	 * @return QoS列表, 如果length为1, 则所有主题的QoS都为第一个值, 默认所有QoS为0
 	 */
 	default int[] qos() {
-		return new int[]{1};
+		return new int[]{0};
 	}
 
 	/**

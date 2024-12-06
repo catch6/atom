@@ -13,17 +13,18 @@
 package net.wenzuo.atom.redis.config;
 
 import lombok.RequiredArgsConstructor;
+import net.wenzuo.atom.redis.service.impl.RedisServiceImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 /**
  * @author Catch
  * @since 2023-06-14
  */
+@Import({RedisConfiguration.class, RedisServiceImpl.class})
 @RequiredArgsConstructor
-@ComponentScan("net.wenzuo.atom.redis")
 @EnableConfigurationProperties(RedisProperties.class)
 @PropertySource("classpath:application-redis.properties")
 @ConditionalOnProperty(value = "atom.redis.enabled", matchIfMissing = true)

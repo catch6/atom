@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.List;
  */
 @Slf4j
 @Getter
-@Component
 public class MqttListenerProcessor implements BeanPostProcessor {
 
 	private final List<MqttConsumer> consumers;
@@ -40,7 +38,7 @@ public class MqttListenerProcessor implements BeanPostProcessor {
 
 	@Override
 	public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
-		Method[] methods = bean.getClass().getMethods();
+		Method[] methods = bean.getClass().getDeclaredMethods();
 		for (Method method : methods) {
 			if (method.isAnnotationPresent(MqttListener.class)) {
 				MqttListener listener = method.getAnnotation(MqttListener.class);

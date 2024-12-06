@@ -19,11 +19,12 @@ import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import lombok.RequiredArgsConstructor;
+import net.wenzuo.atom.jwt.service.impl.JwtServiceImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
 import java.util.Base64;
 
@@ -31,8 +32,8 @@ import java.util.Base64;
  * @author Catch
  * @since 2023-06-06
  */
+@Import(JwtServiceImpl.class)
 @RequiredArgsConstructor
-@ComponentScan("net.wenzuo.atom.jwt")
 @EnableConfigurationProperties(JwtProperties.class)
 @ConditionalOnProperty(value = "atom.jwt.enabled", matchIfMissing = true)
 public class JwtAutoConfiguration {

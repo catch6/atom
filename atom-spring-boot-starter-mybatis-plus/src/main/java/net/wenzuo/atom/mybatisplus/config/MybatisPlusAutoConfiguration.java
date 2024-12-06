@@ -18,15 +18,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 /**
  * @author Catch
  * @since 2023-06-06
  */
+@Import(FillMetaObjectHandler.class)
 @RequiredArgsConstructor
-@ComponentScan("net.wenzuo.atom.mybatisplus")
 @EnableConfigurationProperties(MybatisPlusProperties.class)
 @PropertySource("classpath:application-mybatis-plus.properties")
 @ConditionalOnProperty(value = "atom.mybatis-plus.enabled", matchIfMissing = true)

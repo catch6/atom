@@ -17,15 +17,15 @@ import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.support.GenericApplicationContext;
 
 /**
  * @author Catch
  * @since 2023-08-13
  */
+@Import(KafkaService.class)
 @RequiredArgsConstructor
-@ComponentScan("net.wenzuo.atom.kafka")
 @EnableConfigurationProperties(KafkaProperties.class)
 @ConditionalOnProperty(value = "atom.kafka.enabled", matchIfMissing = true)
 public class KafkaAutoConfiguration {

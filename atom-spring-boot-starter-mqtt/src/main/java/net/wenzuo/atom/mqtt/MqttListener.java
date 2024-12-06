@@ -40,8 +40,8 @@ public @interface MqttListener {
 	/**
 	 * QoS
 	 *
-	 * @return QoS, 默认为1
+	 * @return QoS, 默认为 0
 	 */
-	int[] qos() default 1;
+	int[] qos() default 0;
 
 }

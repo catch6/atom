@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.util.JsonUtils;
 import net.wenzuo.atom.core.util.ServiceException;
 import net.wenzuo.atom.jwt.service.JwtService;
-import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.Optional;
@@ -29,7 +28,6 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Service
 public class JwtServiceImpl implements JwtService {
 
 	private final JWSSigner jwsSigner;

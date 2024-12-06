@@ -14,14 +14,12 @@ package net.wenzuo.atom.doc.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
 /**
  * @author Catch
  * @since 2023-11-05
  */
-@ComponentScan("net.wenzuo.atom.doc")
 @EnableConfigurationProperties(DocProperties.class)
 @PropertySource("classpath:application-doc.properties")
 @ConditionalOnProperty(value = "atom.doc.enabled", matchIfMissing = true)

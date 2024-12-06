@@ -21,7 +21,6 @@ import net.wenzuo.atom.scheduling.service.TaskService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
-import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,7 +34,6 @@ import java.util.regex.Pattern;
  * @since 2024-07-17
  */
 @Slf4j
-@Service
 public class TaskServiceImpl implements TaskService {
 
 	private final Validator validator;

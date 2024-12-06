@@ -13,18 +13,19 @@
 package net.wenzuo.atom.scheduling.config;
 
 import lombok.RequiredArgsConstructor;
+import net.wenzuo.atom.scheduling.service.impl.TaskServiceImpl;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author Catch
  * @since 2024-07-17
  */
+@Import(TaskServiceImpl.class)
 @EnableScheduling
 @RequiredArgsConstructor
-@ComponentScan("net.wenzuo.atom.scheduling")
 @EnableConfigurationProperties(SchedulingProperties.class)
 @ConditionalOnProperty(value = "atom.scheduling.enabled", matchIfMissing = true)
 public class SchedulingAutoConfiguration {

@@ -47,75 +47,75 @@ import java.util.Map;
 @Configuration
 public class Mqttv3Configuration implements ApplicationListener<ApplicationStartedEvent>, Ordered {
 
-	private final MqttProperties mqttProperties;
-	private final List<MqttSubscriber> mqttSubscribers;
+    private final MqttProperties mqttProperties;
+    private final List<MqttSubscriber> mqttSubscribers;
 
-	@Value("${spring.application.name:-atom}")
-	private String applicationName;
-	@Value("${spring.profiles.active:-}")
-	private String activeProfile;
+    @Value("${spring.application.name:-atom}")
+    private String applicationName;
+    @Value("${spring.profiles.active:-}")
+    private String activeProfile;
 
-	@Override
-	public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
-		List<MqttProperties.MqttInstance> instances = mqttProperties.getInstances();
-		if (instances == null || instances.isEmpty()) {
-			return;
-		}
+    @Override
+    public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
+        List<MqttProperties.MqttInstance> instances = mqttProperties.getInstances();
+        if (instances == null || instances.isEmpty()) {
+            return;
+        }
 
-		ConfigurableApplicationContext applicationContext = event.getApplicationContext();
-		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-		Map<String, List<MqttConsumer>> consumerMap = MqttConsumerProcessor.processConsumerMap(applicationContext, mqttProperties, mqttSubscribers);
+        ConfigurableApplicationContext applicationContext = event.getApplicationContext();
+        ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
+        Map<String, List<MqttConsumer>> consumerMap = MqttConsumerProcessor.processConsumerMap(applicationContext, mqttProperties, mqttSubscribers);
 
-		for (MqttProperties.MqttInstance instance : instances) {
-			if (!instance.getEnabled()) {
-				continue;
-			}
-			try {
-				if (StrUtil.isBlank(instance.getClientId())) {
-					String suffix = RandomUtil.randomString(6);
-					instance.setClientId(applicationName + "-" + activeProfile + "-" + suffix);
-				}
+        for (MqttProperties.MqttInstance instance : instances) {
+            if (!instance.getEnabled()) {
+                continue;
+            }
+            try {
+                if (StrUtil.isBlank(instance.getClientId())) {
+                    String suffix = RandomUtil.randomString(6);
+                    instance.setClientId(applicationName + "-" + activeProfile + "-" + suffix);
+                }
 
-				String[] urls = instance.getUrl().split(",");
-				MqttClient mqttClient = new MqttClient(urls[0], instance.getClientId(), new MemoryPersistence());
-				MqttConnectOptions options = new MqttConnectOptions();
-				options.setServerURIs(urls);
-				if (instance.getUsername() != null) {
-					options.setUserName(instance.getUsername());
-				}
-				if (instance.getPassword() != null) {
-					options.setPassword(instance.getPassword().toCharArray());
-				}
-				options.setAutomaticReconnect(true);
-				mqttClient.connect(options);
+                String[] urls = instance.getUrl().split(",");
+                MqttClient mqttClient = new MqttClient(urls[0], instance.getClientId(), new MemoryPersistence());
+                MqttConnectOptions options = new MqttConnectOptions();
+                options.setServerURIs(urls);
+                if (instance.getUsername() != null) {
+                    options.setUserName(instance.getUsername());
+                }
+                if (instance.getPassword() != null) {
+                    options.setPassword(instance.getPassword().toCharArray());
+                }
+                options.setAutomaticReconnect(true);
+                mqttClient.connect(options);
 
-				beanFactory.registerSingleton(MqttProperties.CLIENT_BEAN_PREFIX + instance.getId(), mqttClient);
+                beanFactory.registerSingleton(MqttProperties.CLIENT_BEAN_PREFIX + instance.getId(), mqttClient);
 
-				List<MqttConsumer> consumers = consumerMap.get(instance.getId());
-				if (consumers == null || consumers.isEmpty()) {
-					continue;
-				}
-				for (MqttConsumer consumer : consumers) {
-					String[] topics = consumer.getTopics();
-					if (topics == null || topics.length == 0) {
-						continue;
-					}
-					int[] qos = consumer.getQos();
-					IMqttMessageListener[] listeners = new IMqttMessageListener[topics.length];
-					for (int i = 0; i < topics.length; i++) {
-						listeners[i] = (topic, message) -> consumer.getConsumer().accept(topic, new String(message.getPayload(), StandardCharsets.UTF_8));
-					}
-					mqttClient.subscribe(topics, qos, listeners);
-				}
-			} catch (Exception e) {
-				throw new RuntimeException("MQTT connect error: " + e.getMessage(), e);
-			}
-		}
-	}
+                List<MqttConsumer> consumers = consumerMap.get(instance.getId());
+                if (consumers == null || consumers.isEmpty()) {
+                    continue;
+                }
+                for (MqttConsumer consumer : consumers) {
+                    String[] topics = consumer.getTopics();
+                    if (topics == null || topics.length == 0) {
+                        continue;
+                    }
+                    int[] qos = consumer.getQos();
+                    IMqttMessageListener[] listeners = new IMqttMessageListener[topics.length];
+                    for (int i = 0; i < topics.length; i++) {
+                        listeners[i] = (topic, message) -> consumer.getConsumer().accept(topic, new String(message.getPayload(), StandardCharsets.UTF_8));
+                    }
+                    mqttClient.subscribe(topics, qos, listeners);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("MQTT connect error: " + e.getMessage(), e);
+            }
+        }
+    }
 
-	@Override
-	public int getOrder() {
-		return mqttProperties.getOrder();
-	}
+    @Override
+    public int getOrder() {
+        return mqttProperties.getOrder();
+    }
 
 }

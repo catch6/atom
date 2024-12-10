@@ -14,13 +14,19 @@ package net.wenzuo.atom.mqtt;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.core.MethodIntrospector;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.NonNull;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Catch
@@ -28,31 +34,87 @@ import java.util.List;
  */
 @Slf4j
 @Getter
-public class MqttListenerProcessor implements BeanPostProcessor {
+public class MqttListenerProcessor implements BeanPostProcessor, Ordered {
 
-	private final List<MqttConsumer> consumers;
+    private final List<MqttConsumer> consumers;
 
-	public MqttListenerProcessor() {
-		consumers = new ArrayList<>();
-	}
+    private final Set<Class<?>> nonAnnotatedClasses = Collections.newSetFromMap(new ConcurrentHashMap<>(64));
 
-	@Override
-	public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
-		Method[] methods = bean.getClass().getDeclaredMethods();
-		for (Method method : methods) {
-			if (method.isAnnotationPresent(MqttListener.class)) {
-				MqttListener listener = method.getAnnotation(MqttListener.class);
-				MqttConsumer consumer = new MqttConsumer(listener.id(), listener.topics(), listener.qos(), (topic, value) -> {
-					try {
-						method.invoke(bean, topic, value);
-					} catch (Exception e) {
-						log.error("MQTT invoke error", e);
-					}
-				});
-				consumers.add(consumer);
-			}
-		}
-		return bean;
-	}
+    public MqttListenerProcessor() {
+        consumers = new ArrayList<>();
+    }
+
+    @Override
+    public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
+        return bean;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
+        if (nonAnnotatedClasses.contains(bean.getClass())) {
+            return bean;
+        }
+        Class<?> targetClass = AopUtils.getTargetClass(bean);
+        Map<Method, MqttListener> annotatedMethods = MethodIntrospector.selectMethods(
+            targetClass,
+            (MethodIntrospector.MetadataLookup<MqttListener>) method -> AnnotatedElementUtils.findMergedAnnotation(method, MqttListener.class)
+        );
+        if (annotatedMethods.isEmpty()) {
+            return bean;
+        }
+        for (Map.Entry<Method, MqttListener> entry : annotatedMethods.entrySet()) {
+            Method method = entry.getKey();
+            MqttListener listener = entry.getValue();
+            Method methodToUse = checkProxy(method, bean);
+            MqttConsumer consumer = new MqttConsumer(listener.id(), listener.topics(), listener.qos(), (topic, value) -> {
+                try {
+                    methodToUse.invoke(bean, topic, value);
+                } catch (Exception e) {
+                    log.error("MQTT invoke error", e);
+                }
+            });
+            consumers.add(consumer);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("{} @MqttListener methods processed on bean '{}': {}", annotatedMethods.size(), beanName, annotatedMethods);
+        }
+        return bean;
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
+
+    private Method checkProxy(Method methodArg, Object bean) {
+        Method method = methodArg;
+        if (AopUtils.isJdkDynamicProxy(bean)) {
+            try {
+                // Found a @MqttListener method on the target class for this JDK proxy ->
+                // is it also present on the proxy itself?
+                method = bean.getClass().getMethod(method.getName(), method.getParameterTypes());
+                Class<?>[] proxiedInterfaces = ((Advised) bean).getProxiedInterfaces();
+                for (Class<?> iface : proxiedInterfaces) {
+                    try {
+                        method = iface.getMethod(method.getName(), method.getParameterTypes());
+                        break;
+                    } catch (@SuppressWarnings("unused") NoSuchMethodException noMethod) {
+                        // NOSONAR
+                    }
+                }
+            } catch (SecurityException ex) {
+                ReflectionUtils.handleReflectionException(ex);
+            } catch (NoSuchMethodException ex) {
+                throw new IllegalStateException(String.format(
+                    "@MqttListener method '%s' found on bean target class '%s', " +
+                        "but not found in any interface(s) for bean JDK proxy. Either " +
+                        "pull the method up to an interface or switch to subclass (CGLIB) " +
+                        "proxies by setting proxy-target-class/proxyTargetClass " +
+                        "attribute to 'true'", method.getName(),
+                    method.getDeclaringClass().getSimpleName()), ex);
+            }
+        }
+        return method;
+    }
 
 }

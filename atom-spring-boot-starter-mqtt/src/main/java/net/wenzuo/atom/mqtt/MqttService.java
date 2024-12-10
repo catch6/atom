@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.mqtt.config.MqttProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Catch
@@ -23,6 +24,7 @@ import org.springframework.context.ApplicationContext;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class MqttService {
 
 	public static final int DEFAULT_QOS = 1;

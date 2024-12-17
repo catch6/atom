@@ -43,48 +43,53 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 public class CoreAsyncConfiguration implements AsyncConfigurer {
 
-	private final TaskExecutionProperties taskExecutionProperties;
+    private final TaskExecutionProperties taskExecutionProperties;
 
-	@Override
-	public Executor getAsyncExecutor() {
-		TaskExecutionProperties.Pool pool = taskExecutionProperties.getPool();
-		TaskExecutionProperties.Shutdown shutdown = taskExecutionProperties.getShutdown();
-		TaskDecorator taskDecorator = (runnable) -> {
-			Map<String, String> contextMap = MDC.getCopyOfContextMap();
-			final Map<String, String> ctxMap = new HashMap<>(contextMap);
-			if (!ctxMap.containsKey("Trace-Id")) {
-				String traceId = NanoIdUtils.nanoId();
-				ctxMap.put("Trace-Id", traceId);
-			}
-			return () -> {
-				try {
-					MDC.setContextMap(ctxMap);
-					runnable.run();
-				} finally {
-					MDC.clear();
-				}
-			};
-		};
+    @Override
+    public Executor getAsyncExecutor() {
+        TaskExecutionProperties.Pool pool = taskExecutionProperties.getPool();
+        TaskExecutionProperties.Shutdown shutdown = taskExecutionProperties.getShutdown();
+        TaskDecorator taskDecorator = (runnable) -> {
+            Map<String, String> contextMap = MDC.getCopyOfContextMap();
+            final Map<String, String> ctxMap;
+            if (contextMap != null) {
+                ctxMap = new HashMap<>(contextMap);
+            } else {
+                ctxMap = new HashMap<>();
+            }
+            if (!ctxMap.containsKey("Trace-Id")) {
+                String traceId = NanoIdUtils.nanoId();
+                ctxMap.put("Trace-Id", traceId);
+            }
+            return () -> {
+                try {
+                    MDC.setContextMap(ctxMap);
+                    runnable.run();
+                } finally {
+                    MDC.clear();
+                }
+            };
+        };
 
-		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutorBuilder().queueCapacity(pool.getQueueCapacity())
-																			 .corePoolSize(pool.getCoreSize())
-																			 .maxPoolSize(pool.getMaxSize())
-																			 .allowCoreThreadTimeOut(pool.isAllowCoreThreadTimeout())
-																			 .keepAlive(pool.getKeepAlive())
-																			 .awaitTermination(shutdown.isAwaitTermination())
-																			 .awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod())
-																			 .threadNamePrefix(taskExecutionProperties.getThreadNamePrefix())
-																			 .taskDecorator(taskDecorator)
-																			 .build();
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutorBuilder().queueCapacity(pool.getQueueCapacity())
+                                                                             .corePoolSize(pool.getCoreSize())
+                                                                             .maxPoolSize(pool.getMaxSize())
+                                                                             .allowCoreThreadTimeOut(pool.isAllowCoreThreadTimeout())
+                                                                             .keepAlive(pool.getKeepAlive())
+                                                                             .awaitTermination(shutdown.isAwaitTermination())
+                                                                             .awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod())
+                                                                             .threadNamePrefix(taskExecutionProperties.getThreadNamePrefix())
+                                                                             .taskDecorator(taskDecorator)
+                                                                             .build();
 
-		executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
-		executor.initialize();
-		return executor;
-	}
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.initialize();
+        return executor;
+    }
 
-	@Override
-	public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
-		return (t, method, params) -> log.error("Async exception: " + t.getMessage() + ", method: " + method.getName() + ", params: " + JsonUtils.toJson(params), t);
-	}
+    @Override
+    public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
+        return (t, method, params) -> log.error("Async exception: " + t.getMessage() + ", method: " + method.getName() + ", params: " + JsonUtils.toJson(params), t);
+    }
 
 }

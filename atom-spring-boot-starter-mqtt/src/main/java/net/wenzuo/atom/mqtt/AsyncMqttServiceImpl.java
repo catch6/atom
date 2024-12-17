@@ -20,6 +20,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * @author Catch
  * @since 2024-06-25
@@ -83,11 +85,11 @@ public class AsyncMqttServiceImpl implements MqttService {
             Object mqttClient = applicationContext.getBean(MqttProperties.CLIENT_BEAN_PREFIX + id);
             String className = mqttClient.getClass().getName();
             if ("org.eclipse.paho.mqttv5.client.MqttClient".equals(className)) {
-                ((org.eclipse.paho.mqttv5.client.MqttClient) mqttClient).publish(topic, message.getBytes(), qos, retained);
+                ((org.eclipse.paho.mqttv5.client.MqttClient) mqttClient).publish(topic, message.getBytes(StandardCharsets.UTF_8), qos, retained);
                 return;
             }
             if ("org.eclipse.paho.client.mqttv3.MqttClient".equals(className)) {
-                ((org.eclipse.paho.client.mqttv3.MqttClient) mqttClient).publish(topic, message.getBytes(), qos, retained);
+                ((org.eclipse.paho.client.mqttv3.MqttClient) mqttClient).publish(topic, message.getBytes(StandardCharsets.UTF_8), qos, retained);
                 return;
             }
             throw new RuntimeException("MQTT client not supported: " + className);

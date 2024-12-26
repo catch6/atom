@@ -26,56 +26,57 @@ import java.util.function.BiConsumer;
 @Data
 public class MqttConsumer {
 
-	/**
-	 * 实例 ID, 为空则使用 {@link MqttProperties#getId()}
-	 */
-	private String id;
+    /**
+     * 实例 ID, 为空则使用 {@link MqttProperties#getId()}
+     */
+    private String id;
 
-	/**
-	 * 订阅主题
-	 */
-	private String[] topics;
+    /**
+     * 订阅主题
+     */
+    private String[] topics;
 
-	/**
-	 * QoS列表, 如果length为1, 则所有主题的QoS都为第一个值, 默认所有QoS为1
-	 */
-	private int[] qos;
-	/**
-	 * 消费对象
-	 */
-	private BiConsumer<String, String> consumer;
+    /**
+     * QoS列表, 如果length为1, 则所有主题的QoS都为第一个值, 默认所有QoS为1
+     */
+    private int[] qos;
+    /**
+     * 消费对象
+     */
+    private BiConsumer<String, String> consumer;
 
-	public MqttConsumer() {
-	}
+    public MqttConsumer() {
+    }
 
-	public MqttConsumer(String id, String[] topics, int[] qos, BiConsumer<String, String> consumer) {
-		this.id = id;
-		this.topics = topics;
-		this.qos = qos;
-		this.consumer = consumer;
-	}
+    public MqttConsumer(String id, String[] topics, int[] qos, BiConsumer<String, String> consumer) {
+        this.id = id;
+        this.topics = topics;
+        this.qos = qos;
+        this.consumer = consumer;
+    }
 
-	public void initialize() {
-		check();
-		alignLength();
-	}
+    public void initialize() {
+        check();
+        alignLength();
+    }
 
-	public void check() {
-		Assert.notNull(id, "MQTT id must not be null");
-		Assert.notEmpty(topics, "MQTT topics must not be empty");
-		Assert.isTrue(qos != null && qos.length > 0, "MQTT qos must not be empty");
-	}
+    public void check() {
+        Assert.notNull(id, "MQTT id must not be null");
+        Assert.notEmpty(topics, "MQTT topics must not be empty");
+        Assert.isTrue(qos != null && qos.length > 0, "MQTT qos must not be empty");
+    }
 
-	public void alignLength() {
-		if (qos.length == topics.length) {
-			return;
-		}
-		if (qos.length == 1) {
-			int[] targetQos = new int[topics.length];
-			Arrays.fill(targetQos, qos[0]);
-			qos = targetQos;
-		}
-		throw new RuntimeException("MQTT qos length must be 1 or equal to topics length");
-	}
+    public void alignLength() {
+        if (qos.length == topics.length) {
+            return;
+        }
+        if (qos.length == 1) {
+            int[] targetQos = new int[topics.length];
+            Arrays.fill(targetQos, qos[0]);
+            qos = targetQos;
+            return;
+        }
+        throw new RuntimeException("MQTT qos length must be 1 or equal to topics length");
+    }
 
 }

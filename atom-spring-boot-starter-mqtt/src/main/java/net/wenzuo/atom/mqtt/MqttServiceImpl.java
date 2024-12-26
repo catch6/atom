@@ -12,13 +12,10 @@
 
 package net.wenzuo.atom.mqtt;
 
-import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.mqtt.config.MqttProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Async;
 
 import java.nio.charset.StandardCharsets;
 
@@ -28,7 +25,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class AsyncMqttServiceImpl implements MqttService {
+public class MqttServiceImpl implements MqttService {
 
     public static final int DEFAULT_QOS = 1;
     public static final boolean DEFAULT_RETAINED = false;
@@ -36,46 +33,41 @@ public class AsyncMqttServiceImpl implements MqttService {
     private final ApplicationContext applicationContext;
     private final MqttProperties mqttProperties;
 
-    @Lazy
-    @Resource
-    private MqttService mqttService;
-
     @Override
     public void send(String topic, String message) {
-        mqttService.send(mqttProperties.getId(), topic, message, DEFAULT_QOS, DEFAULT_RETAINED);
+        send(mqttProperties.getId(), topic, message, DEFAULT_QOS, DEFAULT_RETAINED);
     }
 
     @Override
     public void send(String topic, String message, int qos) {
-        mqttService.send(mqttProperties.getId(), topic, message, qos, DEFAULT_RETAINED);
+        send(mqttProperties.getId(), topic, message, qos, DEFAULT_RETAINED);
     }
 
     @Override
     public void send(String topic, String message, boolean retained) {
-        mqttService.send(mqttProperties.getId(), topic, message, DEFAULT_QOS, retained);
+        send(mqttProperties.getId(), topic, message, DEFAULT_QOS, retained);
     }
 
     @Override
     public void send(String topic, String message, int qos, boolean retained) {
-        mqttService.send(mqttProperties.getId(), topic, message, qos, retained);
+        send(mqttProperties.getId(), topic, message, qos, retained);
     }
 
     @Override
     public void send(String id, String topic, String message) {
-        mqttService.send(id, topic, message, DEFAULT_QOS, DEFAULT_RETAINED);
+        send(id, topic, message, DEFAULT_QOS, DEFAULT_RETAINED);
     }
 
     @Override
     public void send(String id, String topic, String message, int qos) {
-        mqttService.send(id, topic, message, qos, DEFAULT_RETAINED);
+        send(id, topic, message, qos, DEFAULT_RETAINED);
     }
 
     @Override
     public void send(String id, String topic, String message, boolean retained) {
-        mqttService.send(id, topic, message, DEFAULT_QOS, retained);
+        send(id, topic, message, DEFAULT_QOS, retained);
     }
 
-    @Async
     @Override
     public void send(String id, String topic, String message, int qos, boolean retained) {
         if (log.isDebugEnabled()) {

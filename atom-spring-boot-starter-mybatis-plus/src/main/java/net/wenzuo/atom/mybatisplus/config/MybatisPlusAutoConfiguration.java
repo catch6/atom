@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -32,13 +32,13 @@ import org.springframework.context.annotation.PropertySource;
 @ConditionalOnProperty(value = "atom.mybatis-plus.enabled", matchIfMissing = true)
 public class MybatisPlusAutoConfiguration {
 
-	@ConditionalOnProperty(value = "atom.mybatis-plus.pagination", matchIfMissing = true)
-	@Bean
-	public MybatisPlusInterceptor mybatisPlusInterceptor() {
-		MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-		PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor();
-		interceptor.addInnerInterceptor(paginationInnerInterceptor);
-		return interceptor;
-	}
+    @ConditionalOnProperty(value = "atom.mybatis-plus.pagination", matchIfMissing = true)
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor();
+        interceptor.addInnerInterceptor(paginationInnerInterceptor);
+        return interceptor;
+    }
 
 }

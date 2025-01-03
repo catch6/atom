@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -31,11 +31,16 @@ public class LongDeserializer extends JsonDeserializer<Long> {
 
     @Override
     public Long deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
+        String value = parser.getText();
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
         JsonToken token = parser.getCurrentToken();
         if (token.isBoolean()) {
             return parser.getBooleanValue() ? 1L : 0L;
         }
-        return parser.getValueAsLong();
+        value = value.trim();
+        return Long.parseLong(value);
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -31,12 +31,16 @@ public class IntegerDeserializer extends JsonDeserializer<Integer> {
 
     @Override
     public Integer deserialize(JsonParser parser, DeserializationContext ctx) throws IOException {
-        // 只处理布尔类型
+        String value = parser.getText();
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
         JsonToken token = parser.getCurrentToken();
         if (token.isBoolean()) {
             return parser.getBooleanValue() ? 1 : 0;
         }
-        return parser.getValueAsInt();
+        value = value.trim();
+        return Integer.parseInt(value);
     }
 
 }

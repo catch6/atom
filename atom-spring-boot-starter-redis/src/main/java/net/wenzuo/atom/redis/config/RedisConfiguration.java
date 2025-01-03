@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -12,8 +12,6 @@
 
 package net.wenzuo.atom.redis.config;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.wenzuo.atom.core.util.JsonUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,10 +21,7 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializationContext;
-import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.*;
 
 /**
  * @author Catch
@@ -36,68 +31,65 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfiguration {
 
-	private final RedisProperties redisProperties;
+    private final RedisProperties redisProperties;
 
-	@ConditionalOnProperty(value = "atom.redis.string-redis-template", matchIfMissing = true)
-	@Bean
-	public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
-		StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
-		stringRedisTemplate.setConnectionFactory(factory);
+    @ConditionalOnProperty(value = "atom.redis.string-redis-template", matchIfMissing = true)
+    @Bean
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
+        StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
+        stringRedisTemplate.setConnectionFactory(factory);
 
-		StringRedisSerializer keySerializer = prefixStringRedisSerializer();
-		RedisSerializer<String> stringSerializer = RedisSerializer.string();
+        StringRedisSerializer keySerializer = prefixStringRedisSerializer();
+        RedisSerializer<String> stringSerializer = RedisSerializer.string();
 
-		stringRedisTemplate.setKeySerializer(keySerializer);
-		stringRedisTemplate.setHashKeySerializer(stringSerializer);
+        stringRedisTemplate.setKeySerializer(keySerializer);
+        stringRedisTemplate.setHashKeySerializer(stringSerializer);
 
-		stringRedisTemplate.setValueSerializer(stringSerializer);
-		stringRedisTemplate.setHashValueSerializer(stringSerializer);
+        stringRedisTemplate.setValueSerializer(stringSerializer);
+        stringRedisTemplate.setHashValueSerializer(stringSerializer);
 
-		stringRedisTemplate.setEnableTransactionSupport(true);
-		stringRedisTemplate.afterPropertiesSet();
+        stringRedisTemplate.setEnableTransactionSupport(true);
+        stringRedisTemplate.afterPropertiesSet();
 
-		return stringRedisTemplate;
-	}
+        return stringRedisTemplate;
+    }
 
-	@ConditionalOnProperty(value = "atom.redis.redis-template", matchIfMissing = true)
-	@Bean
-	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
-		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(factory);
+    @ConditionalOnProperty(value = "atom.redis.redis-template", matchIfMissing = true)
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(factory);
 
-		StringRedisSerializer keySerializer = prefixStringRedisSerializer();
-		RedisSerializer<String> hashKeySerializer = RedisSerializer.string();
-		RedisSerializer<Object> valueSerializer = jacksonRedisSerializer();
+        StringRedisSerializer keySerializer = prefixStringRedisSerializer();
+        RedisSerializer<String> hashKeySerializer = RedisSerializer.string();
+        RedisSerializer<Object> valueSerializer = jacksonRedisSerializer();
 
-		redisTemplate.setKeySerializer(keySerializer);
-		redisTemplate.setHashKeySerializer(hashKeySerializer);
+        redisTemplate.setKeySerializer(keySerializer);
+        redisTemplate.setHashKeySerializer(hashKeySerializer);
 
-		redisTemplate.setValueSerializer(valueSerializer);
-		redisTemplate.setHashValueSerializer(valueSerializer);
+        redisTemplate.setValueSerializer(valueSerializer);
+        redisTemplate.setHashValueSerializer(valueSerializer);
 
-		redisTemplate.setEnableTransactionSupport(true);
-		redisTemplate.afterPropertiesSet();
+        redisTemplate.setEnableTransactionSupport(true);
+        redisTemplate.afterPropertiesSet();
 
-		return redisTemplate;
-	}
+        return redisTemplate;
+    }
 
-	@Bean
-	public RedisCacheConfiguration redisCacheConfiguration() {
-		ObjectMapper objectMapper = JsonUtils.objectMapper.copy();
-		objectMapper.activateDefaultTyping(objectMapper.getPolymorphicTypeValidator(), ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-		RedisSerializer<Object> jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-		return RedisCacheConfiguration.defaultCacheConfig()
-									  .computePrefixWith(name -> name + ":")
-									  .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(prefixStringRedisSerializer()))
-									  .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer));
-	}
+    @Bean
+    public RedisCacheConfiguration redisCacheConfiguration() {
+        return RedisCacheConfiguration.defaultCacheConfig()
+                                      .computePrefixWith(name -> name + ":")
+                                      .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(prefixStringRedisSerializer()))
+                                      .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jacksonRedisSerializer()));
+    }
 
-	private RedisSerializer<Object> jacksonRedisSerializer() {
-		return new GenericJackson2JsonRedisSerializer(JsonUtils.objectMapper);
-	}
+    private RedisSerializer<Object> jacksonRedisSerializer() {
+        return new GenericJackson2JsonRedisSerializer(JsonUtils.objectMapper);
+    }
 
-	private PrefixStringRedisSerializer prefixStringRedisSerializer() {
-		return new PrefixStringRedisSerializer(redisProperties.getPrefix());
-	}
+    private PrefixStringRedisSerializer prefixStringRedisSerializer() {
+        return new PrefixStringRedisSerializer(redisProperties.getPrefix());
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -23,38 +23,43 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "atom.redis")
 public class RedisProperties {
 
-	/**
-	 * 是否启用 redis 模块
-	 */
-	private Boolean enabled = true;
+    /**
+     * 是否启用 redis 模块
+     */
+    private Boolean enabled = true;
 
-	/**
-	 * 是否启用 redisTemplate
-	 */
-	private Boolean redisTemplate = true;
+    /**
+     * 是否启用 redisTemplate
+     */
+    private Boolean redisTemplate = true;
 
-	/**
-	 * 是否启用 RedisService
-	 */
-	private Boolean redisService = true;
+    /**
+     * 是否启用 RedisService
+     */
+    private Boolean redisService = true;
 
-	/**
-	 * key 前缀
-	 */
-	private String prefix;
-	/**
-	 * key 分隔符
-	 */
-	private String delimiter = ":";
+    /**
+     * 是否启用 CacheService
+     */
+    private Boolean cacheService = true;
 
-	public String getPrefix() {
-		if (prefix == null) {
-			return "";
-		}
-		if (prefix.endsWith(delimiter)) {
-			return prefix;
-		}
-		return prefix + delimiter;
-	}
+    /**
+     * key 前缀
+     */
+    private String prefix;
+    /**
+     * key 分隔符
+     */
+    private String delimiter = ":";
+
+    public String getPrefix() {
+        if (prefix == null) {
+            return "";
+        }
+        if (prefix.endsWith(delimiter)) {
+            return prefix;
+        }
+        return prefix + delimiter;
+    }
 
 }

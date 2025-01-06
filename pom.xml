@@ -87,7 +87,7 @@
     <hutool-all.version>5.8.35</hutool-all.version>
     <guava.version>33.4.0-jre</guava.version>
     <knife4j-openapi3-jakarta-spring-boot-starter.version>4.5.0</knife4j-openapi3-jakarta-spring-boot-starter.version>
-    <springdoc-openapi-starter-webmvc-ui.version>2.7.0</springdoc-openapi-starter-webmvc-ui.version>
+    <springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
     <swagger-annotations-jakarta.version>2.2.27</swagger-annotations-jakarta.version>
     <easyexcel.version>4.0.3</easyexcel.version>
     <nacos-client.version>2.4.3</nacos-client.version>

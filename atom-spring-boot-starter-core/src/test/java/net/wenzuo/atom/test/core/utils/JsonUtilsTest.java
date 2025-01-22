@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -12,159 +12,374 @@
 
 package net.wenzuo.atom.test.core.utils;
 
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.util.json.JsonDesensitization;
-import net.wenzuo.atom.core.util.DesensitizationType;
-import net.wenzuo.atom.core.util.json.JsonDecimalFormat;
+import com.fasterxml.jackson.core.type.TypeReference;
 import net.wenzuo.atom.core.util.JsonUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
-/**
- * @author Catch
- * @since 2023-06-06
- */
-@Slf4j
-class JsonUtilsTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Test
-    void toJson() {
-        VO vo = new VO();
-        vo.setDateTime(LocalDateTime.now());
-        vo.setDate(LocalDate.now());
-        vo.setTime(LocalTime.now());
-        String result = JsonUtils.toJson(vo);
-        log.info("result: {}", result);
+@Execution(ExecutionMode.CONCURRENT)
+public class JsonUtilsTest {
+
+    private static class User {
+
+        private String name;
+        private int age;
+        private LocalDate birthDate;
+        private LocalDateTime lastLogin;
+        private LocalTime lastActivity;
+        private BigDecimal balance;
+
+        // Getters and setters
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age = age;
+        }
+
+        public LocalDate getBirthDate() {
+            return birthDate;
+        }
+
+        public void setBirthDate(LocalDate birthDate) {
+            this.birthDate = birthDate;
+        }
+
+        public LocalDateTime getLastLogin() {
+            return lastLogin;
+        }
+
+        public void setLastLogin(LocalDateTime lastLogin) {
+            this.lastLogin = lastLogin;
+        }
+
+        public LocalTime getLastActivity() {
+            return lastActivity;
+        }
+
+        public void setLastActivity(LocalTime lastActivity) {
+            this.lastActivity = lastActivity;
+        }
+
+        public BigDecimal getBalance() {
+            return balance;
+        }
+
+        public void setBalance(BigDecimal balance) {
+            this.balance = balance;
+        }
+
+    }
+
+    private static class NestedUser {
+
+        private User user;
+        private String role;
+
+        // Getters and setters
+        public User getUser() {
+            return user;
+        }
+
+        public void setUser(User user) {
+            this.user = user;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+    }
+
+    @BeforeEach
+    public void setUp() {
+        // 如果需要，可以在此处进行任何设置
     }
 
     @Test
-    void toObject() {
-        List<VO> list = new ArrayList<>();
-        VO vo1 = new VO();
-        vo1.setDateTime(LocalDateTime.now());
-        vo1.setDate(LocalDate.now());
-        vo1.setTime(LocalTime.now());
-        list.add(vo1);
-        VO vo2 = new VO();
-        vo2.setDateTime(LocalDateTime.now());
-        vo2.setDate(LocalDate.now());
-        vo2.setTime(LocalTime.now());
-        list.add(vo2);
-        String jsonString = JsonUtils.toJson(list);
-        List<VO> vos = JsonUtils.toObject(jsonString, List.class, VO.class);
-        Set<VO> voSet = JsonUtils.toObject(jsonString, Set.class, VO.class);
-        log.info("vos: {}", vos);
-        log.info("voSet: {}", voSet);
+    public void toObject_EmptyJson_ReturnsNull() {
+        User user = JsonUtils.toObject("", User.class);
+        assertNull(user);
     }
 
     @Test
-    void toPrettyJson() {
-        VO vo = new VO();
-        vo.setDateTime(LocalDateTime.now());
-        vo.setDate(LocalDate.now());
-        vo.setTime(LocalTime.now());
-        String result = JsonUtils.toPrettyJson(vo);
-        log.info("result: {}", result);
+    public void toObject_ValidJson_ReturnsObject() {
+        String json = "{\"name\":\"John\", \"age\":30, \"birthDate\":\"2000-01-01\", \"lastLogin\":\"2023-10-01 12:00:00\", \"lastActivity\":\"12:00:00\", \"balance\":100.50}";
+        User user = JsonUtils.toObject(json, User.class);
+        assertNotNull(user);
+        assertEquals("John", user.getName());
+        assertEquals(30, user.getAge());
+        assertEquals(LocalDate.of(2000, 1, 1), user.getBirthDate());
+        assertEquals(LocalDateTime.of(2023, 10, 1, 12, 0, 0), user.getLastLogin());
+        assertEquals(LocalTime.of(12, 0, 0), user.getLastActivity());
+        assertEquals(new BigDecimal("100.50"), user.getBalance());
     }
 
     @Test
-    void test() {
-        String str = "hello";
-        String object = JsonUtils.toObject(str, String.class);
-        log.info("object: {}", object);
-        String json = JsonUtils.toJson(str);
-        log.info("json: {}", json);
-        String prettyJson = JsonUtils.toPrettyJson(str);
-        log.info("prettyJson: {}", prettyJson);
+    public void toObject_InvalidJson_ThrowsException() {
+        String invalidJson = "{\"name\":\"John\", \"age\":30"; // 缺少闭合大括号
+        assertThrows(RuntimeException.class, () -> JsonUtils.toObject(invalidJson, User.class));
     }
 
     @Test
-    void testDesensitization() {
-        VO2 vo = new VO2();
-        String result = JsonUtils.toJson(vo);
-        log.info("result: {}", result);
+    public void toObject_CharSequence_ReturnsJsonString() {
+        String json = "This is a JSON string";
+        String result = JsonUtils.toObject(json, String.class);
+        assertEquals(json, result);
     }
 
     @Test
-    void testLong() {
-        VO vo = new VO();
-        vo.setId(1111L);
-        String result = JsonUtils.toJson(vo);
-        log.info("result: {}", result);
-        VO vo1 = JsonUtils.toObject(result, VO.class);
-        log.info("vo1: {}", vo1);
+    public void toObject_NestedObject_ReturnsNestedObject() {
+        String json = "{\"user\":{\"name\":\"John\", \"age\":30}, \"role\":\"admin\"}";
+        NestedUser nestedUser = JsonUtils.toObject(json, NestedUser.class);
+        assertNotNull(nestedUser);
+        assertNotNull(nestedUser.getUser());
+        assertEquals("John", nestedUser.getUser().getName());
+        assertEquals(30, nestedUser.getUser().getAge());
+        assertEquals("admin", nestedUser.getRole());
     }
 
     @Test
-    void testBigDecimal() {
-        VO vo = new VO();
-        vo.setId(1234L);
-        vo.setPrice(new BigDecimal("1234.34534"));
-        String plainString = vo.getPrice().toPlainString();
-        log.info("plainString: {}", plainString);
-        String string = vo.getPrice().toString();
-        log.info("string: {}", string);
-        String result = JsonUtils.toJson(vo);
-        log.info("result: {}", result);
+    public void toObject_Array_ReturnsArray() {
+        String json = "[{\"name\":\"John\", \"age\":30}, {\"name\":\"Jane\", \"age\":25}]";
+        List<User> users = JsonUtils.toObject(json, new TypeReference<List<User>>() {
+        });
+        assertNotNull(users);
+        assertEquals(2, users.size());
+        assertEquals("John", users.get(0).getName());
+        assertEquals(30, users.get(0).getAge());
+        assertEquals("Jane", users.get(1).getName());
+        assertEquals(25, users.get(1).getAge());
     }
 
     @Test
-    public void test5() {
-        Integer aTrue = JsonUtils.toObject("true", Integer.TYPE);
-        log.info("aTrue: {}", aTrue);
-        BigDecimal aTrue1 = JsonUtils.toObject("true", BigDecimal.class);
-        log.info("aTrue1: {}", aTrue1);
-        Boolean aTrue2 = JsonUtils.toObject("true", Boolean.class);
-        log.info("aTrue2: {}", aTrue2);
-
-        Integer a1 = JsonUtils.toObject("1", Integer.class);
-        log.info("a1: {}", a1);
-
-        Integer a2 = JsonUtils.toObject("1.1", Integer.class);
-        log.info("a2: {}", a2);
-
-        int i11 = JsonUtils.toObject("true", int.class);
-        log.info("i11: {}", i11);
-
-        BigDecimal a3 = JsonUtils.toObject("1.1", BigDecimal.class);
-        log.info("a3: {}", a3);
-
+    public void toObject_DateTime_ReturnsDateTime() {
+        String json = "{\"birthDate\":\"2000-01-01\", \"lastLogin\":\"2023-10-01 12:00:00\", \"lastActivity\":\"12:00:00\"}";
+        User user = JsonUtils.toObject(json, User.class);
+        assertNotNull(user);
+        assertEquals(LocalDate.of(2000, 1, 1), user.getBirthDate());
+        assertEquals(LocalDateTime.of(2023, 10, 1, 12, 0, 0), user.getLastLogin());
+        assertEquals(LocalTime.of(12, 0, 0), user.getLastActivity());
     }
 
-    @Data
-    static class VO {
-
-        @JsonDecimalFormat("0.00")
-        private long id;
-        private LocalDateTime dateTime;
-        private LocalDate date;
-        private LocalTime time;
-        @JsonDecimalFormat("0.000")
-        private BigDecimal price;
-        private Long t;
-
+    @Test
+    public void toObject_InputStream_ReturnsObject() {
+        String json = "{\"name\":\"John\", \"age\":30, \"birthDate\":\"2000-01-01\", \"lastLogin\":\"2023-10-01 12:00:00\", \"lastActivity\":\"12:00:00\", \"balance\":100.50}";
+        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
+        User user = JsonUtils.toObject(inputStream, User.class);
+        assertNotNull(user);
+        assertEquals("John", user.getName());
+        assertEquals(30, user.getAge());
+        assertEquals(LocalDate.of(2000, 1, 1), user.getBirthDate());
+        assertEquals(LocalDateTime.of(2023, 10, 1, 12, 0, 0), user.getLastLogin());
+        assertEquals(LocalTime.of(12, 0, 0), user.getLastActivity());
+        assertEquals(new BigDecimal("100.50"), user.getBalance());
     }
 
-    @Data
-    static class VO2 {
+    @Test
+    public void toObject_InputStream_CharSequence_ReturnsJsonString() {
+        String json = "This is a JSON string";
+        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
+        String result = JsonUtils.toObject(inputStream, String.class);
+        assertEquals(json, result);
+    }
 
-        @JsonDesensitization(value = DesensitizationType.USER_ID)
-        private Long idl = 1111L;
-        @JsonDesensitization(value = DesensitizationType.USER_ID)
-        private String ids = "111";
-        @JsonDesensitization(value = DesensitizationType.CUSTOM, start = 1, end = 2)
-        private String custom = "hello";
-        @JsonDesensitization(value = DesensitizationType.ADDRESS)
-        private String address = "北京市朝阳区";
+    @Test
+    public void toObject_InputStream_Null_ReturnsNull() {
+        User user = JsonUtils.toObject((InputStream) null, User.class);
+        assertNull(user);
+    }
 
+    @Test
+    public void toObject_GenericClass_ReturnsObject() {
+        String json = "{\"name\":\"John\", \"age\":30}";
+        User user = JsonUtils.toObject(json, User.class);
+        assertNotNull(user);
+        assertEquals("John", user.getName());
+        assertEquals(30, user.getAge());
+    }
+
+    @Test
+    public void toObject_GenericClass_Array_ReturnsArray() {
+        String json = "[{\"name\":\"John\", \"age\":30}, {\"name\":\"Jane\", \"age\":25}]";
+        List<User> users = JsonUtils.toObject(json, List.class, User.class);
+        assertNotNull(users);
+        assertEquals(2, users.size());
+        assertEquals("John", users.get(0).getName());
+        assertEquals(30, users.get(0).getAge());
+        assertEquals("Jane", users.get(1).getName());
+        assertEquals(25, users.get(1).getAge());
+    }
+
+    @Test
+    public void toObject_GenericClass_InputStream_ReturnsObject() {
+        String json = "{\"name\":\"John\", \"age\":30}";
+        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
+        User user = JsonUtils.toObject(inputStream, User.class);
+        assertNotNull(user);
+        assertEquals("John", user.getName());
+        assertEquals(30, user.getAge());
+    }
+
+    @Test
+    public void toObject_GenericClass_InputStream_Array_ReturnsArray() {
+        String json = "[{\"name\":\"John\", \"age\":30}, {\"name\":\"Jane\", \"age\":25}]";
+        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
+        List<User> users = JsonUtils.toObject(inputStream, List.class, User.class);
+        assertNotNull(users);
+        assertEquals(2, users.size());
+        assertEquals("John", users.get(0).getName());
+        assertEquals(30, users.get(0).getAge());
+        assertEquals("Jane", users.get(1).getName());
+        assertEquals(25, users.get(1).getAge());
+    }
+
+    @Test
+    public void toObject_GenericClass_Type_ReturnsObject() {
+        String json = "{\"name\":\"John\", \"age\":30}";
+        Type type = new TypeReference<User>() {
+        }.getType();
+        User user = JsonUtils.toObject(json, type);
+        assertNotNull(user);
+        assertEquals("John", user.getName());
+        assertEquals(30, user.getAge());
+    }
+
+    @Test
+    public void toObject_GenericClass_Type_InputStream_ReturnsObject() {
+        String json = "{\"name\":\"John\", \"age\":30}";
+        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
+        Type type = new TypeReference<User>() {
+        }.getType();
+        User user = JsonUtils.toObject(inputStream, type);
+        assertNotNull(user);
+        assertEquals("John", user.getName());
+        assertEquals(30, user.getAge());
+    }
+
+    @Test
+    public void toObject_GenericClass_TypeReference_ReturnsObject() {
+        String json = "{\"name\":\"John\", \"age\":30}";
+        TypeReference<User> typeReference = new TypeReference<User>() {
+        };
+        User user = JsonUtils.toObject(json, typeReference);
+        assertNotNull(user);
+        assertEquals("John", user.getName());
+        assertEquals(30, user.getAge());
+    }
+
+    @Test
+    public void toObject_GenericClass_TypeReference_InputStream_ReturnsObject() {
+        String json = "{\"name\":\"John\", \"age\":30}";
+        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
+        TypeReference<User> typeReference = new TypeReference<User>() {
+        };
+        User user = JsonUtils.toObject(inputStream, typeReference);
+        assertNotNull(user);
+        assertEquals("John", user.getName());
+        assertEquals(30, user.getAge());
+    }
+
+    @Test
+    public void toJson_NullObject_ReturnsNull() {
+        String json = JsonUtils.toJson(null);
+        assertNull(json);
+    }
+
+    @Test
+    public void toJson_CharSequence_ReturnsJsonString() {
+        String json = JsonUtils.toJson("This is a JSON string");
+        assertEquals("This is a JSON string", json);
+    }
+
+    @Test
+    public void toJson_Number_ReturnsJsonString() {
+        String json = JsonUtils.toJson(123);
+        assertEquals("123", json);
+    }
+
+    @Test
+    public void toJson_Object_ReturnsJsonString() {
+        User user = new User();
+        user.setName("John");
+        user.setAge(30);
+        user.setBirthDate(LocalDate.of(2000, 1, 1));
+        user.setLastLogin(LocalDateTime.of(2023, 10, 1, 12, 0, 0));
+        user.setLastActivity(LocalTime.of(12, 0, 0));
+        user.setBalance(new BigDecimal("100.50"));
+
+        String json = JsonUtils.toJson(user);
+        assertNotNull(json);
+        assertTrue(json.contains("\"name\":\"John\""));
+        assertTrue(json.contains("\"age\":30"));
+        assertTrue(json.contains("\"birthDate\":\"2000-01-01\""));
+        assertTrue(json.contains("\"lastLogin\":\"2023-10-01 12:00:00\""));
+        assertTrue(json.contains("\"lastActivity\":\"12:00:00\""));
+        assertTrue(json.contains("\"balance\":\"100.50\""));
+    }
+
+    @Test
+    public void toJson_NestedObject_ReturnsJsonString() {
+        User user = new User();
+        user.setName("John");
+        user.setAge(30);
+
+        NestedUser nestedUser = new NestedUser();
+        nestedUser.setUser(user);
+        nestedUser.setRole("admin");
+
+        String json = JsonUtils.toJson(nestedUser);
+        assertNotNull(json);
+        assertTrue(json.contains("\"name\":\"John\""));
+        assertTrue(json.contains("\"age\":30"));
+        assertTrue(json.contains("\"role\":\"admin\""));
+    }
+
+    @Test
+    public void toJson_Array_ReturnsJsonString() {
+        User user1 = new User();
+        user1.setName("John");
+        user1.setAge(30);
+
+        User user2 = new User();
+        user2.setName("Jane");
+        user2.setAge(25);
+
+        List<User> users = Arrays.asList(user1, user2);
+
+        String json = JsonUtils.toJson(users);
+        assertNotNull(json);
+        assertTrue(json.contains("\"name\":\"John\""));
+        assertTrue(json.contains("\"age\":30"));
+        assertTrue(json.contains("\"name\":\"Jane\""));
+        assertTrue(json.contains("\"age\":25"));
     }
 
 }

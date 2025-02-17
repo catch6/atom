@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -13,16 +13,26 @@
 package net.wenzuo.atom.api.param;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Catch
- * @since 2024-01-18
+ * @since 2025-02-18
  */
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class KeywordsRequest {
+public class CodeNameVO {
 
-	@Schema(description = "关键字")
-	private String keywords;
+    @Schema(description = "编码")
+	private String code;
 
+	@Schema(description = "名称")
+	private String name;
+
+    public static CodeNameVO of(String code,String name) {
+        return new CodeNameVO(code, name);
+    }
 }

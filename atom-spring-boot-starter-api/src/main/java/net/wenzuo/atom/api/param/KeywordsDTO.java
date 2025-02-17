@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -12,30 +12,24 @@
 
 package net.wenzuo.atom.api.param;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Catch
- * @since 2022-09-08
+ * @since 2024-01-18
  */
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
-public class PageRequest {
+public class KeywordsDTO {
 
-	/**
-	 * 页码
-	 */
-	@Schema(description = "页码", example = "1", defaultValue = "1")
-	private long pageNo = 1;
-	/**
-	 * 每页结果数(-1:查询全部)
-	 */
-	@Schema(description = "每页结果数(-1:查询全部)", example = "15", defaultValue = "15")
-	private long pageSize = 15;
+	@Schema(description = "关键字")
+	private String keywords;
 
-	public <T> Page<T> toPage() {
-		return new Page<>(getPageNo(), getPageSize());
+	public static KeywordsDTO of(String keywords) {
+		return new KeywordsDTO(keywords);
 	}
-
 }

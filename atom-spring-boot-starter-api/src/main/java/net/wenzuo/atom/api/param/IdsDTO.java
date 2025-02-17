@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -13,23 +13,29 @@
 package net.wenzuo.atom.api.param;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * @author Catch
- * @since 2023-07-07
+ * @since 2023-07-25
  */
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class IdName {
+public class IdsDTO {
 
-	@Schema(description = "ID")
-	private Long id;
+	@Schema(description = "ID列表")
+	@NotNull(message = "ID列表不能为空")
+	@Size(min = 1, message = "ID列表不能为空")
+	private List<Long> ids;
 
-	@Schema(description = "名称")
-	private String name;
-
+	public static IdsDTO of(List<Long> ids) {
+		return new IdsDTO(ids);
+	}
 }

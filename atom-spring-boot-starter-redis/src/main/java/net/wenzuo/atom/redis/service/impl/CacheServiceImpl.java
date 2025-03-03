@@ -15,11 +15,13 @@ package net.wenzuo.atom.redis.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.util.JsonUtils;
+import net.wenzuo.atom.redis.config.RedisProperties;
 import net.wenzuo.atom.redis.service.CacheService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
@@ -37,18 +39,57 @@ public class CacheServiceImpl implements CacheService {
     private static final String NULL_VALUE = "";
 
     private final StringRedisTemplate stringRedisTemplate;
+    private final RedisProperties redisProperties;
 
     @Override
     public <T> T cache(String key, Supplier<T> supplier, Class<T> target) {
-        return cache(key, supplier, json -> JsonUtils.toObject(json, target));
+        return cache(key, supplier, null, json -> JsonUtils.toObject(json, target));
+    }
+
+    @Override
+    public <T> T cache(String key, Supplier<T> supplier, Duration timeout, Class<T> target) {
+        return cache(key, supplier, timeout, json -> JsonUtils.toObject(json, target));
     }
 
     @Override
     public <T> T cache(String key, Supplier<T> supplier, Class<?> wrapper, Class<?>... inners) {
-        return cache(key, supplier, json -> JsonUtils.toObject(json, wrapper, inners));
+        return cache(key, supplier, null, json -> JsonUtils.toObject(json, wrapper, inners));
     }
 
-    private <T> T cache(String key, Supplier<T> supplier, Function<String, T> deserializer) {
+    @Override
+    public <T> T cache(String key, Supplier<T> supplier, Duration timeout, Class<?> wrapper, Class<?>... inners) {
+        return cache(key, supplier, timeout, json -> JsonUtils.toObject(json, wrapper, inners));
+    }
+
+    @Override
+    public <T> T keep(String key, Supplier<T> supplier, Class<T> target) {
+        return keep(key, supplier, json -> JsonUtils.toObject(json, target));
+    }
+
+    @Override
+    public <T> T keep(String key, Supplier<T> supplier, Class<?> wrapper, Class<?>... inners) {
+        return keep(key, supplier, json -> JsonUtils.toObject(json, wrapper, inners));
+    }
+
+    private <T> T cache(String key, Supplier<T> supplier, Duration timeout, Function<String, T> deserializer) {
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        String json = ops.get(key);
+        if (json != null) {
+            return deserializer.apply(json);
+        }
+        T data = supplier.get();
+        if (timeout == null) {
+            timeout = redisProperties.getCacheServiceTimeout();
+        }
+        if (data == null) {
+            ops.set(key, NULL_VALUE, timeout);
+        } else {
+            ops.set(key, JsonUtils.toJson(data), timeout);
+        }
+        return data;
+    }
+
+    private <T> T keep(String key, Supplier<T> supplier, Function<String, T> deserializer) {
         ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
         String json = ops.get(key);
         if (json != null) {

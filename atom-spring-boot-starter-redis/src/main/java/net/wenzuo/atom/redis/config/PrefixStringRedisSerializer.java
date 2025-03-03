@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -14,6 +14,7 @@ package net.wenzuo.atom.redis.config;
 
 import org.springframework.data.redis.serializer.SerializationException;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.lang.NonNull;
 
 import java.nio.charset.Charset;
 
@@ -23,43 +24,42 @@ import java.nio.charset.Charset;
  */
 public class PrefixStringRedisSerializer extends StringRedisSerializer {
 
-	private final String prefix;
+    private final String prefix;
 
-	public PrefixStringRedisSerializer() {
-		super();
-		this.prefix = "";
-	}
+    public PrefixStringRedisSerializer() {
+        super();
+        this.prefix = "";
+    }
 
-	public PrefixStringRedisSerializer(String prefix) {
-		super();
-		this.prefix = prefix;
-	}
+    public PrefixStringRedisSerializer(String prefix) {
+        super();
+        this.prefix = prefix;
+    }
 
-	public PrefixStringRedisSerializer(Charset charset) {
-		super(charset);
-		this.prefix = "";
-	}
+    public PrefixStringRedisSerializer(Charset charset) {
+        super(charset);
+        this.prefix = "";
+    }
 
-	public PrefixStringRedisSerializer(Charset charset, String prefix) {
-		super(charset);
-		this.prefix = prefix;
-	}
+    public PrefixStringRedisSerializer(Charset charset, String prefix) {
+        super(charset);
+        this.prefix = prefix;
+    }
 
-	@Override
-	public byte[] serialize(String value) throws SerializationException {
-		return super.serialize(prefix + value);
-	}
+    @NonNull
+    @Override
+    public byte[] serialize(String value) throws SerializationException {
+        return super.serialize(prefix + value);
+    }
 
-	@Override
-	public String deserialize(byte[] bytes) throws SerializationException {
-		String deserialized = super.deserialize(bytes);
-		if (deserialized == null) {
-			return null;
-		}
-		if (deserialized.startsWith(prefix)) {
-			return deserialized.substring(prefix.length());
-		}
-		return deserialized;
-	}
+    @NonNull
+    @Override
+    public String deserialize(byte[] bytes) throws SerializationException {
+        String deserialized = super.deserialize(bytes);
+        if (deserialized.startsWith(prefix)) {
+            return deserialized.substring(prefix.length());
+        }
+        return deserialized;
+    }
 
 }

@@ -15,6 +15,8 @@ package net.wenzuo.atom.redis.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.time.Duration;
+
 /**
  * @author Catch
  * @since 2023-06-06
@@ -42,6 +44,10 @@ public class RedisProperties {
      * 是否启用 CacheService
      */
     private Boolean cacheService = true;
+    /**
+     * Cache超时时间，默认 30 分钟
+     */
+    private Duration cacheServiceTimeout = Duration.ofMinutes(30);
 
     /**
      * key 前缀

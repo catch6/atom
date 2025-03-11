@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -66,7 +66,7 @@ public class BigDecimalSerializer extends JsonSerializer<BigDecimal> implements 
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException {
         if (property == null) {
-            return provider.findNullValueSerializer(null);
+            return BigDecimalSerializer.instance;
         }
         JsonDecimalFormat annotation = property.getAnnotation(JsonDecimalFormat.class);
         if (annotation == null) {

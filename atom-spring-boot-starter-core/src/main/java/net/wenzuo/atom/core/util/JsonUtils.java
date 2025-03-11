@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -28,8 +28,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.util.json.BigDecimalSerializer;
 import net.wenzuo.atom.core.util.json.BigDecimalDeserializer;
+import net.wenzuo.atom.core.util.json.BigDecimalSerializer;
 import net.wenzuo.atom.core.util.json.IntegerDeserializer;
 import net.wenzuo.atom.core.util.json.LongDeserializer;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;

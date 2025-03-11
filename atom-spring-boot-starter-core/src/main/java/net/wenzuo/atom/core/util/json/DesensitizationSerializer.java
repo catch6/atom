@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -23,8 +23,6 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import net.wenzuo.atom.core.util.DesensitizationType;
 
 import java.io.IOException;
@@ -33,15 +31,24 @@ import java.io.IOException;
  * @author Catch
  * @since 2023-08-25
  */
-@AllArgsConstructor
-@NoArgsConstructor
 public class DesensitizationSerializer extends JsonSerializer<Object> implements ContextualSerializer {
+
+    public static final DesensitizationSerializer instance = new DesensitizationSerializer();
 
     private DesensitizationType type;
 
     private Integer start;
 
     private Integer end;
+
+    public DesensitizationSerializer() {
+    }
+
+    public DesensitizationSerializer(DesensitizationType type, Integer start, Integer end) {
+        this.type = type;
+        this.start = start;
+        this.end = end;
+    }
 
     @Override
     public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) throws IOException {
@@ -113,7 +120,7 @@ public class DesensitizationSerializer extends JsonSerializer<Object> implements
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException {
         if (property == null) {
-            return provider.findNullValueSerializer(null);
+            return DesensitizationSerializer.instance;
         }
         // 获取定义的注解
         JsonDesensitization annotation = property.getAnnotation(JsonDesensitization.class);

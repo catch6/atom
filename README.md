@@ -49,10 +49,10 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 ```xml
 <!-- 指定parent -->
 <parent>
-	<groupId>net.wenzuo</groupId>
-	<artifactId>atom</artifactId>
-	<version>2.4.35</version>
-	<relativePath/>
+  <groupId>net.wenzuo</groupId>
+  <artifactId>atom</artifactId>
+  <version>3.0.0</version>
+  <relativePath/>
 </parent>
 ```
 
@@ -61,8 +61,8 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 ```xml
 <!-- 按需引入相关模块 -->
 <dependency>
-	<groupId>net.wenzuo</groupId>
-	<artifactId>modules...</artifactId>
+  <groupId>net.wenzuo</groupId>
+  <artifactId>modules...</artifactId>
 </dependency>
 ```
 

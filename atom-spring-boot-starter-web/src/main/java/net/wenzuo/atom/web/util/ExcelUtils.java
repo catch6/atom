@@ -920,11 +920,13 @@ public abstract class ExcelUtils {
                     font.setFontHeightInPoints((short) 14);
                 } else { // 内容
                     row.setHeightInPoints(30);
-                    if (row.getRowNum() % 2 == 0) {
-                        bgColor = new XSSFColor(new byte[]{(byte) 242, (byte) 245, (byte) 249});
-                    } else {
-                        bgColor = new XSSFColor(new byte[]{(byte) 227, (byte) 232, (byte) 240});
-                    }
+                    // 斑马线
+                    // if (row.getRowNum() % 2 == 0) {
+                    //     bgColor = new XSSFColor(new byte[]{(byte) 242, (byte) 245, (byte) 249});
+                    // } else {
+                    //     bgColor = new XSSFColor(new byte[]{(byte) 227, (byte) 232, (byte) 240});
+                    // }
+                    bgColor = new XSSFColor(new byte[]{(byte) 227, (byte) 232, (byte) 240});
                     textColor = new XSSFColor(new byte[]{(byte) 0, (byte) 0, (byte) 0});
                     font.setFontName("宋体");
                     font.setColor(textColor);

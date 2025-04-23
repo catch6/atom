@@ -14,6 +14,7 @@ package net.wenzuo.atom.test.web.util;
 
 import cn.idev.excel.annotation.ExcelProperty;
 import cn.idev.excel.annotation.write.style.ColumnWidth;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.web.util.ExcelUtils;
@@ -24,7 +25,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Catch
@@ -46,7 +49,7 @@ class ExcelUtilsTest {
     }
 
     @Test
-    void write() throws FileNotFoundException {
+    void write() {
         File file = new File("/Users/zhanghao/Downloads/导出.xlsx");
         List<Row> rows = new ArrayList<>();
         for (int i = 0; i < 200; i++) {
@@ -62,6 +65,100 @@ class ExcelUtilsTest {
             rows.add(row);
         }
         ExcelUtils.write(file, Row.class, rows);
+    }
+
+    @Test
+    void fillListObject() {
+        File file = new File("/Users/zhanghao/Downloads/模板list+object-1.xlsx");
+        File template = new File("/Users/zhanghao/Downloads/模板list+object.xlsx");
+        List<Row> rows = new ArrayList<>();
+        for (int i = 0; i < 200; i++) {
+            Row row = new Row();
+            String no = String.valueOf(i + 1);
+            row.setNo(no);
+            row.setCode("0000" + no);
+            row.setName("电表" + no);
+            row.setStart(new BigDecimal("0.00"));
+            row.setEnd(new BigDecimal("100.00"));
+            row.setUsed(row.getEnd().subtract(row.getStart()));
+            row.setAmount(row.getUsed().multiply(new BigDecimal("1")));
+            rows.add(row);
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("title", "电费统计报表（2025.3.1-2025.3.31）");
+        map.put("totalAmount", new BigDecimal("1000.00"));
+
+        ExcelUtils.fill(file, template, rows, map);
+    }
+
+    @Test
+    void fillListObject2() {
+        File file = new File("/Users/zhanghao/Downloads/模板list+object-2.xlsx");
+        File template = new File("/Users/zhanghao/Downloads/模板list+object.xlsx");
+        List<Row> rows = new ArrayList<>();
+        for (int i = 0; i < 200; i++) {
+            Row row = new Row();
+            String no = String.valueOf(i + 1);
+            row.setNo(no);
+            row.setCode("0000" + no);
+            row.setName("电表" + no);
+            row.setStart(new BigDecimal("0.00"));
+            row.setEnd(new BigDecimal("100.00"));
+            row.setUsed(row.getEnd().subtract(row.getStart()));
+            row.setAmount(row.getUsed().multiply(new BigDecimal("1")));
+            rows.add(row);
+        }
+        FillDTO dto = new FillDTO("电费统计报表（2025.3.1-2025.3.31）", new BigDecimal("1000.00"));
+
+        ExcelUtils.fill(file, template, rows, dto);
+    }
+
+    @Test
+    void fillList() {
+        File file = new File("/Users/zhanghao/Downloads/模板list1.xlsx");
+        File template = new File("/Users/zhanghao/Downloads/模板list.xlsx");
+        List<Row> rows = new ArrayList<>();
+        for (int i = 0; i < 200; i++) {
+            Row row = new Row();
+            String no = String.valueOf(i + 1);
+            row.setNo(no);
+            row.setCode("0000" + no);
+            row.setName("电表" + no);
+            row.setStart(new BigDecimal("0.00"));
+            row.setEnd(new BigDecimal("100.00"));
+            row.setUsed(row.getEnd().subtract(row.getStart()));
+            row.setAmount(row.getUsed().multiply(new BigDecimal("1")));
+            rows.add(row);
+        }
+
+        ExcelUtils.fill(file, template, rows);
+    }
+
+    @Test
+    void fillObject() {
+        File file = new File("/Users/zhanghao/Downloads/模板object-1.xlsx");
+        File template = new File("/Users/zhanghao/Downloads/模板object.xlsx");
+        Map<String, Object> map = new HashMap<>();
+        map.put("title", "电费统计报表（2025.3.1-2025.3.31）");
+        map.put("totalAmount", new BigDecimal("1000.00"));
+        ExcelUtils.fill(file, template, map);
+    }
+
+    @Test
+    void fillObject2() {
+        File file = new File("/Users/zhanghao/Downloads/模板object-2.xlsx");
+        File template = new File("/Users/zhanghao/Downloads/模板object.xlsx");
+        FillDTO dto = new FillDTO("电费统计报表（2025.3.1-2025.3.31）", new BigDecimal("1000.00"));
+        ExcelUtils.fill(file, template, dto);
+    }
+
+    @AllArgsConstructor
+    @Data
+    public static class FillDTO {
+
+        private String title;
+        private BigDecimal totalAmount;
+
     }
 
     @Data

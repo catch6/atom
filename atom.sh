@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2022-2023 Catch(catchlife6@163.com).
+# Copyright (c) 2022-2025 Catch(catchlife6@163.com).
 # Atom is licensed under Mulan PSL v2.
 # You can use this software according to the terms and conditions of the Mulan PSL v2.
 # You may obtain a copy of Mulan PSL v2 at:
@@ -70,9 +70,9 @@ elif [ "${ACTION}" == "deploy" ]; then
     git pull origin main
     info "拉取 main 分支...OK!\n"
 
-    info "合并 2.x 分支到 main 分支..."
-    git merge 2.x
-    info "合并 2.x 分支到 main 分支...OK!\n"
+    info "合并 3.x 分支到 main 分支..."
+    git merge 3.x
+    info "合并 3.x 分支到 main 分支...OK!\n"
 
     info "发布到 maven..."
     RETRY_COUNT=0
@@ -115,13 +115,13 @@ elif [ "${ACTION}" == "deploy" ]; then
     git push origin "${VERSION}"
     info "推送 tag...OK!\n"
 
-    info "切换到 2.x 分支..."
-    git checkout 2.x
-    info "切换到 2.x 分支...OK!\n"
+    info "切换到 3.x 分支..."
+    git checkout 3.x
+    info "切换到 3.x 分支...OK!\n"
 
-    info "将 main 分支合并到 2.x 分支..."
+    info "将 main 分支合并到 3.x 分支..."
     git merge main
-    info "将 main 分支合并到 2.x 分支...OK!\n"
+    info "将 main 分支合并到 3.x 分支...OK!\n"
 
     info "新版本..."
     MAJOR=$(cut -d. -f1 <<< "${VERSION}")
@@ -144,7 +144,7 @@ elif [ "${ACTION}" == "deploy" ]; then
     info "提交代码并推送..."
     git add .
     git commit -m "版本: ${NEW_VERSION}"
-    git push origin 2.x
+    git push origin 3.x
     info "提交代码并推送...OK!\n"
 
     echo "进行 ${NEW_VERSION} 版本的开发..."

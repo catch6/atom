@@ -48,9 +48,19 @@ import java.util.function.Supplier;
 @SuppressWarnings("rawtypes")
 public abstract class ExcelUtils {
 
-    private static final Short HEAD_ROW_HEIGHT = 32;
-    private static final Short CONTENT_ROW_HEIGHT = 26;
-    private static final Integer COLUMN_WIDTH = 20;
+    /**
+     * 设置 Excel 响应头
+     *
+     * @param response HttpServletResponse
+     * @param filename 导出文件名，不包含后缀名，如:电费统计报表
+     */
+    public static void setDownloadFilename(HttpServletResponse response, String filename) {
+        filename = (StrUtil.isEmpty(filename) ? "表格" : filename) + ".xlsx";
+        filename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + filename + ";filename*=UTF-8''" + filename);
+    }
 
     public static <T> List<T> read(File file, Class<T> head) {
         return FastExcel.read(file, head, null).sheet().doReadSync();
@@ -293,223 +303,219 @@ public abstract class ExcelUtils {
     }
 
     public static void write(File file, Collection<?> data) {
-        FastExcel.write(file).sheet().doWrite(data);
+        FastExcel.write(file).sheet().registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(File file, Collection<?> data, Integer sheetNo) {
-        FastExcel.write(file).sheet(sheetNo).doWrite(data);
+        FastExcel.write(file).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(File file, Collection<?> data, String sheetName) {
-        FastExcel.write(file).sheet(sheetName).doWrite(data);
+        FastExcel.write(file).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(File file, List<List<String>> head, Collection<?> data) {
-        FastExcel.write(file).head(head).sheet().doWrite(data);
+        FastExcel.write(file).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(File file, List<List<String>> head, Collection<?> data, Integer sheetNo) {
-        FastExcel.write(file).head(head).sheet(sheetNo).doWrite(data);
+        FastExcel.write(file).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(File file, List<List<String>> head, Collection<?> data, String sheetName) {
-        FastExcel.write(file).head(head).sheet(sheetName).doWrite(data);
+        FastExcel.write(file).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(File file, Class<?> head, Collection<?> data) {
-        FastExcel.write(file)
-                 .head(head)
-                 .sheet()
-                 .registerWriteHandler(defaultCellStyle())
-                 .doWrite(data);
+        FastExcel.write(file).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(File file, Class<?> head, Collection<?> data, Integer sheetNo) {
-        FastExcel.write(file).head(head).sheet(sheetNo).doWrite(data);
+        FastExcel.write(file).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(File file, Class<?> head, Collection<?> data, String sheetName) {
-        FastExcel.write(file).head(head).sheet(sheetName).doWrite(data);
+        FastExcel.write(file).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(File file, Supplier<Collection<?>> supplier) {
-        FastExcel.write(file).sheet().doWrite(supplier);
+        FastExcel.write(file).sheet().registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(File file, Supplier<Collection<?>> supplier, Integer sheetNo) {
-        FastExcel.write(file).sheet(sheetNo).doWrite(supplier);
+        FastExcel.write(file).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(File file, Supplier<Collection<?>> supplier, String sheetName) {
-        FastExcel.write(file).sheet(sheetName).doWrite(supplier);
+        FastExcel.write(file).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(File file, List<List<String>> head, Supplier<Collection<?>> supplier) {
-        FastExcel.write(file).head(head).sheet().doWrite(supplier);
+        FastExcel.write(file).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(File file, List<List<String>> head, Supplier<Collection<?>> supplier, Integer sheetNo) {
-        FastExcel.write(file).head(head).sheet(sheetNo).doWrite(supplier);
+        FastExcel.write(file).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(File file, List<List<String>> head, Supplier<Collection<?>> supplier, String sheetName) {
-        FastExcel.write(file).head(head).sheet(sheetName).doWrite(supplier);
+        FastExcel.write(file).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(File file, Class<?> head, Supplier<Collection<?>> supplier) {
-        FastExcel.write(file).head(head).sheet().doWrite(supplier);
+        FastExcel.write(file).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(File file, Class<?> head, Supplier<Collection<?>> supplier, Integer sheetNo) {
-        FastExcel.write(file).head(head).sheet(sheetNo).doWrite(supplier);
+        FastExcel.write(file).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(File file, Class<?> head, Supplier<Collection<?>> supplier, String sheetName) {
-        FastExcel.write(file).head(head).sheet(sheetName).doWrite(supplier);
+        FastExcel.write(file).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(OutputStream outputStream, Collection<?> data) {
-        FastExcel.write(outputStream).sheet().doWrite(data);
+        FastExcel.write(outputStream).sheet().registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(OutputStream outputStream, Collection<?> data, Integer sheetNo) {
-        FastExcel.write(outputStream).sheet(sheetNo).doWrite(data);
+        FastExcel.write(outputStream).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(OutputStream outputStream, Collection<?> data, String sheetName) {
-        FastExcel.write(outputStream).sheet(sheetName).doWrite(data);
+        FastExcel.write(outputStream).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(OutputStream outputStream, List<List<String>> head, Collection<?> data) {
-        FastExcel.write(outputStream).head(head).sheet().doWrite(data);
+        FastExcel.write(outputStream).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(OutputStream outputStream, List<List<String>> head, Collection<?> data, Integer sheetNo) {
-        FastExcel.write(outputStream).head(head).sheet(sheetNo).doWrite(data);
+        FastExcel.write(outputStream).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(OutputStream outputStream, List<List<String>> head, Collection<?> data, String sheetName) {
-        FastExcel.write(outputStream).head(head).sheet(sheetName).doWrite(data);
+        FastExcel.write(outputStream).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(OutputStream outputStream, Class<?> head, Collection<?> data) {
-        FastExcel.write(outputStream).head(head).sheet().doWrite(data);
+        FastExcel.write(outputStream).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(OutputStream outputStream, Class<?> head, Collection<?> data, Integer sheetNo) {
-        FastExcel.write(outputStream).head(head).sheet(sheetNo).doWrite(data);
+        FastExcel.write(outputStream).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(OutputStream outputStream, Class<?> head, Collection<?> data, String sheetName) {
-        FastExcel.write(outputStream).head(head).sheet(sheetName).doWrite(data);
+        FastExcel.write(outputStream).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(OutputStream outputStream, Supplier<Collection<?>> supplier) {
-        FastExcel.write(outputStream).sheet().doWrite(supplier);
+        FastExcel.write(outputStream).sheet().registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(OutputStream outputStream, Supplier<Collection<?>> supplier, Integer sheetNo) {
-        FastExcel.write(outputStream).sheet(sheetNo).doWrite(supplier);
+        FastExcel.write(outputStream).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(OutputStream outputStream, Supplier<Collection<?>> supplier, String sheetName) {
-        FastExcel.write(outputStream).sheet(sheetName).doWrite(supplier);
+        FastExcel.write(outputStream).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(OutputStream outputStream, List<List<String>> head, Supplier<Collection<?>> supplier) {
-        FastExcel.write(outputStream).head(head).sheet().doWrite(supplier);
+        FastExcel.write(outputStream).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(OutputStream outputStream, List<List<String>> head, Supplier<Collection<?>> supplier, Integer sheetNo) {
-        FastExcel.write(outputStream).head(head).sheet(sheetNo).doWrite(supplier);
+        FastExcel.write(outputStream).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(OutputStream outputStream, List<List<String>> head, Supplier<Collection<?>> supplier, String sheetName) {
-        FastExcel.write(outputStream).head(head).sheet(sheetName).doWrite(supplier);
+        FastExcel.write(outputStream).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(OutputStream outputStream, Class<?> head, Supplier<Collection<?>> supplier) {
-        FastExcel.write(outputStream).head(head).sheet().doWrite(supplier);
+        FastExcel.write(outputStream).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(OutputStream outputStream, Class<?> head, Supplier<Collection<?>> supplier, Integer sheetNo) {
-        FastExcel.write(outputStream).head(head).sheet(sheetNo).doWrite(supplier);
+        FastExcel.write(outputStream).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(OutputStream outputStream, Class<?> head, Supplier<Collection<?>> supplier, String sheetName) {
-        FastExcel.write(outputStream).head(head).sheet(sheetName).doWrite(supplier);
+        FastExcel.write(outputStream).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(String path, Collection<?> data) {
-        FastExcel.write(path).sheet().doWrite(data);
+        FastExcel.write(path).sheet().registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(String path, Collection<?> data, Integer sheetNo) {
-        FastExcel.write(path).sheet(sheetNo).doWrite(data);
+        FastExcel.write(path).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(String path, Collection<?> data, String sheetName) {
-        FastExcel.write(path).sheet(sheetName).doWrite(data);
+        FastExcel.write(path).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(String path, List<List<String>> head, Collection<?> data) {
-        FastExcel.write(path).head(head).sheet().doWrite(data);
+        FastExcel.write(path).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(String path, List<List<String>> head, Collection<?> data, Integer sheetNo) {
-        FastExcel.write(path).head(head).sheet(sheetNo).doWrite(data);
+        FastExcel.write(path).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(String path, List<List<String>> head, Collection<?> data, String sheetName) {
-        FastExcel.write(path).head(head).sheet(sheetName).doWrite(data);
+        FastExcel.write(path).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(String path, Class<?> head, Collection<?> data) {
-        FastExcel.write(path).head(head).sheet().doWrite(data);
+        FastExcel.write(path).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(String path, Class<?> head, Collection<?> data, Integer sheetNo) {
-        FastExcel.write(path).head(head).sheet(sheetNo).doWrite(data);
+        FastExcel.write(path).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(String path, Class<?> head, Collection<?> data, String sheetName) {
-        FastExcel.write(path).head(head).sheet(sheetName).doWrite(data);
+        FastExcel.write(path).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(data);
     }
 
     public static void write(String path, Supplier<Collection<?>> supplier) {
-        FastExcel.write(path).sheet().doWrite(supplier);
+        FastExcel.write(path).sheet().registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(String path, Supplier<Collection<?>> supplier, Integer sheetNo) {
-        FastExcel.write(path).sheet(sheetNo).doWrite(supplier);
+        FastExcel.write(path).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(String path, Supplier<Collection<?>> supplier, String sheetName) {
-        FastExcel.write(path).sheet(sheetName).doWrite(supplier);
+        FastExcel.write(path).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(String path, List<List<String>> head, Supplier<Collection<?>> supplier) {
-        FastExcel.write(path).head(head).sheet().doWrite(supplier);
+        FastExcel.write(path).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(String path, List<List<String>> head, Supplier<Collection<?>> supplier, Integer sheetNo) {
-        FastExcel.write(path).head(head).sheet(sheetNo).doWrite(supplier);
+        FastExcel.write(path).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(String path, List<List<String>> head, Supplier<Collection<?>> supplier, String sheetName) {
-        FastExcel.write(path).head(head).sheet(sheetName).doWrite(supplier);
+        FastExcel.write(path).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(String path, Class<?> head, Supplier<Collection<?>> supplier) {
-        FastExcel.write(path).head(head).sheet().doWrite(supplier);
+        FastExcel.write(path).head(head).sheet().registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(String path, Class<?> head, Supplier<Collection<?>> supplier, Integer sheetNo) {
-        FastExcel.write(path).head(head).sheet(sheetNo).doWrite(supplier);
+        FastExcel.write(path).head(head).sheet(sheetNo).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void write(String path, Class<?> head, Supplier<Collection<?>> supplier, String sheetName) {
-        FastExcel.write(path).head(head).sheet(sheetName).doWrite(supplier);
+        FastExcel.write(path).head(head).sheet(sheetName).registerWriteHandler(defaultCellStyle()).doWrite(supplier);
     }
 
     public static void fill(File file, File template, Collection<?> list) {
@@ -861,20 +867,6 @@ public abstract class ExcelUtils {
             writer.fill(list, config, writeSheet);
             writer.fill(object, writeSheet);
         }
-    }
-
-    /**
-     * 设置 Excel 响应头
-     *
-     * @param response HttpServletResponse
-     * @param filename 导出文件名，不包含后缀名，如:电费统计报表
-     */
-    public static void setFilename(HttpServletResponse response, String filename) {
-        filename = (StrUtil.isEmpty(filename) ? "表格" : filename) + ".xlsx";
-        filename = URLEncoder.encode(filename, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + filename + ";filename*=UTF-8''" + filename);
     }
 
     private static CellWriteHandler defaultCellStyle() {

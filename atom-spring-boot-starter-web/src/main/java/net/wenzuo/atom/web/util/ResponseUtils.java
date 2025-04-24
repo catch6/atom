@@ -23,31 +23,29 @@ import java.nio.charset.StandardCharsets;
  * @author Catch
  * @since 2022-03-04
  */
-public class ResponseUtils {
+public abstract class ResponseUtils {
 
-	private static final String TYPE_JSON = "application/json";
+    private static final String TYPE_JSON = "application/json";
 
+    @SneakyThrows
+    public static void renderJson(ServletResponse response, Object object) {
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentType(TYPE_JSON);
+        try (PrintWriter writer = response.getWriter()) {
+            String json = JsonUtils.toJson(object);
+            response.setContentLength(json.length());
+            writer.print(json);
+        }
+    }
 
-	@SneakyThrows
-	public static void renderJson(ServletResponse response, Object object) {
-		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		response.setContentType(TYPE_JSON);
-		try (PrintWriter writer = response.getWriter()) {
-			String json = JsonUtils.toJson(object);
-			response.setContentLength(json.length());
-			writer.print(json);
-		}
-	}
-
-	@SneakyThrows
-	public static void renderJson(ServletResponse response, String json) {
-		response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-		response.setContentType(TYPE_JSON);
-		try (PrintWriter writer = response.getWriter()) {
-			response.setContentLength(json.length());
-			writer.print(json);
-		}
-	}
-
+    @SneakyThrows
+    public static void renderJson(ServletResponse response, String json) {
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setContentType(TYPE_JSON);
+        try (PrintWriter writer = response.getWriter()) {
+            response.setContentLength(json.length());
+            writer.print(json);
+        }
+    }
 
 }

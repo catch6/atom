@@ -42,6 +42,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
+ * Excel 工具类，基于 FastExcel 进行封装，提供简化的读写和模板填充操作。
+ * <p>
+ * 主要简化了 FastExcel 的链式调用，提供更直观的静态方法。
+ *
  * @author Catch
  * @since 2025-03-02
  */
@@ -49,10 +53,12 @@ import java.util.function.Supplier;
 public abstract class ExcelUtils {
 
     /**
-     * 设置 Excel 响应头
+     * 设置 Excel 文件下载的响应头。
+     * <p>
+     * 包括设置内容类型、字符编码以及文件名（处理中文乱码）。
      *
-     * @param response HttpServletResponse
-     * @param filename 导出文件名，不包含后缀名，如:电费统计报表
+     * @param response HttpServletResponse 对象，用于设置响应头。
+     * @param filename 导出文件名，不包含后缀名，如 "电费统计报表"。如果为空，默认为 "表格"。
      */
     public static void setDownloadFilename(HttpServletResponse response, String filename) {
         filename = (StrUtil.isEmpty(filename) ? "表格" : filename) + ".xlsx";

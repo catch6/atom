@@ -918,7 +918,7 @@ public abstract class ExcelUtils {
                     font.setFontHeightInPoints((short) 14);
                 } else { // 内容
                     row.setHeightInPoints(30);
-                    // 斑马线
+                    // // 斑马线
                     // if (row.getRowNum() % 2 == 0) {
                     //     bgColor = new XSSFColor(new byte[]{(byte) 242, (byte) 245, (byte) 249});
                     // } else {

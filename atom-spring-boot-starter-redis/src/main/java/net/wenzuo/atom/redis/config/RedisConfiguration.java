@@ -21,7 +21,10 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.serializer.*;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * @author Catch
@@ -48,7 +51,6 @@ public class RedisConfiguration {
         stringRedisTemplate.setValueSerializer(stringSerializer);
         stringRedisTemplate.setHashValueSerializer(stringSerializer);
 
-        stringRedisTemplate.setEnableTransactionSupport(true);
         stringRedisTemplate.afterPropertiesSet();
 
         return stringRedisTemplate;

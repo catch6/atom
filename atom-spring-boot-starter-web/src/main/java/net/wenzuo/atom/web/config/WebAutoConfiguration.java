@@ -22,7 +22,7 @@ import org.springframework.context.annotation.PropertySource;
  * @author Catch
  * @since 2023-06-06
  */
-@Import({CorsConfiguration.class, LoggingFilter.class, WebExceptionHandler.class})
+@Import({CorsConfiguration.class, TraceIdFilter.class, LoggingFilter.class, WebExceptionHandler.class})
 @ComponentScan("net.wenzuo.atom.web")
 @EnableConfigurationProperties({CorsProperties.class, LoggingProperties.class, WebProperties.class})
 @PropertySource("classpath:application-web.properties")

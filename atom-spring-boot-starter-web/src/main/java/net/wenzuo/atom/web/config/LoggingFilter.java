@@ -19,8 +19,6 @@ import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import net.wenzuo.atom.core.util.NanoIdUtils;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
@@ -45,150 +43,145 @@ import java.util.*;
 @Order(value = -50)
 public class LoggingFilter extends OncePerRequestFilter {
 
-	private static final ThreadLocal<Long> TIMER = new ThreadLocal<>();
-	private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
-	private static final String TRACE_ID = "Trace-Id";
-	private static final String OPTIONS = "OPTIONS";
+    private static final ThreadLocal<Long> TIMER = new ThreadLocal<>();
+    private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
+    private static final String OPTIONS = "OPTIONS";
 
-	@Resource
-	private LoggingProperties loggingProperties;
+    @Resource
+    private LoggingProperties loggingProperties;
 
-	@Value("${server.servlet.context-path:}")
-	private String contextPath;
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
 
-	@Value("${spring.mvc.servlet.path:}")
-	private String servletPath;
+    @Value("${spring.mvc.servlet.path:}")
+    private String servletPath;
 
-	@Override
-	protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
-		if (!log.isInfoEnabled()) {
-			return true;
-		}
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
+        if (!log.isInfoEnabled()) {
+            return true;
+        }
 
-		String method = request.getMethod();
-		if (OPTIONS.contains(method)) {
-			return true;
-		}
+        String method = request.getMethod();
+        if (OPTIONS.contains(method)) {
+            return true;
+        }
 
-		// 排除 Server-Sent Events (SSE) 的请求
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains(MediaType.TEXT_EVENT_STREAM_VALUE)) {
-			return true;
-		}
+        // 排除 Server-Sent Events (SSE) 的请求
+        String accept = request.getHeader("Accept");
+        if (accept != null && accept.contains(MediaType.TEXT_EVENT_STREAM_VALUE)) {
+            return true;
+        }
 
-		String uri = request.getRequestURI().substring(contextPath.length() + servletPath.length());
-		for (String path : loggingProperties.getInternalExcludePath()) {
-			if (PATH_MATCHER.match(path, uri)) {
-				return true;
-			}
-		}
-		for (String path : loggingProperties.getExcludePath()) {
-			if (PATH_MATCHER.match(path, uri)) {
-				return true;
-			}
-		}
-		for (String path : loggingProperties.getIncludePath()) {
-			if (PATH_MATCHER.match(path, uri)) {
-				return false;
-			}
-		}
-		return true;
-	}
+        String uri = request.getRequestURI().substring(contextPath.length() + servletPath.length());
+        for (String path : loggingProperties.getInternalExcludePath()) {
+            if (PATH_MATCHER.match(path, uri)) {
+                return true;
+            }
+        }
+        for (String path : loggingProperties.getExcludePath()) {
+            if (PATH_MATCHER.match(path, uri)) {
+                return true;
+            }
+        }
+        for (String path : loggingProperties.getIncludePath()) {
+            if (PATH_MATCHER.match(path, uri)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	@Override
-	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-		TIMER.set(System.currentTimeMillis());
-		String traceId = NanoIdUtils.nanoId();
-		response.setHeader(TRACE_ID, traceId);
-		MDC.put(TRACE_ID, traceId);
+    @Override
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        TIMER.set(System.currentTimeMillis());
 
-		HttpServletRequest requestToUse = loggingRequest(request);
-		HttpServletResponse responseToUse = response;
+        HttpServletRequest requestToUse = loggingRequest(request);
+        HttpServletResponse responseToUse = response;
 
-		if (!(responseToUse instanceof CachedResponseWrapper)) {
-			responseToUse = new CachedResponseWrapper(response);
-		}
-		try {
-			filterChain.doFilter(requestToUse, responseToUse);
-		} finally {
-			loggingResponse((CachedResponseWrapper) responseToUse);
-			TIMER.remove();
-			MDC.remove(TRACE_ID);
-		}
-	}
+        if (!(responseToUse instanceof CachedResponseWrapper)) {
+            responseToUse = new CachedResponseWrapper(response);
+        }
+        try {
+            filterChain.doFilter(requestToUse, responseToUse);
+        } finally {
+            loggingResponse((CachedResponseWrapper) responseToUse);
+            TIMER.remove();
+        }
+    }
 
-	private HttpServletRequest loggingRequest(HttpServletRequest request) throws IOException {
-		HttpServletRequest requestToUse = request;
-		StringBuilder msg = new StringBuilder();
-		msg.append("REQUEST: ")
-		   .append(requestToUse.getMethod()).append(' ')
-		   .append(requestToUse.getRequestURI());
+    private HttpServletRequest loggingRequest(HttpServletRequest request) throws IOException {
+        HttpServletRequest requestToUse = request;
+        StringBuilder msg = new StringBuilder();
+        msg.append("REQUEST: ")
+           .append(requestToUse.getMethod()).append(' ')
+           .append(requestToUse.getRequestURI());
 
-		// String queryString = requestToUse.getQueryString();
-		// if (queryString != null) {
-		// 	msg.append('?').append(URLDecoder.decode(queryString, StandardCharsets.UTF_8));
-		// }
+        // String queryString = requestToUse.getQueryString();
+        // if (queryString != null) {
+        // 	msg.append('?').append(URLDecoder.decode(queryString, StandardCharsets.UTF_8));
+        // }
 
-		StringBuilder payload = new StringBuilder();
-		Map<String, String[]> form = requestToUse.getParameterMap();
-		Set<String> keySet = form.keySet();
-		if (!keySet.isEmpty()) {
-			payload.append("?");
-		}
-		for (Iterator<String> nameIterator = form.keySet().iterator(); nameIterator.hasNext(); ) {
-			String name = nameIterator.next();
-			List<String> values = Arrays.asList(form.get(name));
-			for (Iterator<String> valueIterator = values.iterator(); valueIterator.hasNext(); ) {
-				String value = valueIterator.next();
-				payload.append(name);
-				if (value != null) {
-					payload.append('=')
-						   .append(value);
-					if (valueIterator.hasNext()) {
-						payload.append('&');
-					}
-				}
-			}
-			if (nameIterator.hasNext()) {
-				payload.append('&');
-			}
-		}
+        StringBuilder payload = new StringBuilder();
+        Map<String, String[]> form = requestToUse.getParameterMap();
+        Set<String> keySet = form.keySet();
+        if (!keySet.isEmpty()) {
+            payload.append("?");
+        }
+        for (Iterator<String> nameIterator = form.keySet().iterator(); nameIterator.hasNext(); ) {
+            String name = nameIterator.next();
+            List<String> values = Arrays.asList(form.get(name));
+            for (Iterator<String> valueIterator = values.iterator(); valueIterator.hasNext(); ) {
+                String value = valueIterator.next();
+                payload.append(name);
+                if (value != null) {
+                    payload.append('=')
+                           .append(value);
+                    if (valueIterator.hasNext()) {
+                        payload.append('&');
+                    }
+                }
+            }
+            if (nameIterator.hasNext()) {
+                payload.append('&');
+            }
+        }
 
-		String contentType = requestToUse.getContentType();
-		if (contentType != null && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
-			if (!(requestToUse instanceof CachedRequestWrapper)) {
-				requestToUse = new CachedRequestWrapper(request);
-			}
-			try (ServletInputStream inputStream = requestToUse.getInputStream()) {
-				payload.append(' ').append(StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8));
-			}
-		}
+        String contentType = requestToUse.getContentType();
+        if (contentType != null && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
+            if (!(requestToUse instanceof CachedRequestWrapper)) {
+                requestToUse = new CachedRequestWrapper(request);
+            }
+            try (ServletInputStream inputStream = requestToUse.getInputStream()) {
+                payload.append(' ').append(StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8));
+            }
+        }
 
-		if (!payload.isEmpty()) {
-			msg.append(payload);
-		}
-		log.info(msg.toString());
-		return requestToUse;
-	}
+        if (!payload.isEmpty()) {
+            msg.append(payload);
+        }
+        log.info(msg.toString());
+        return requestToUse;
+    }
 
-	private void loggingResponse(CachedResponseWrapper wrapper) throws IOException {
-		StringBuilder msg = new StringBuilder();
-		long time = System.currentTimeMillis() - TIMER.get();
-		msg.append("RESPONSE: ").append(time).append("ms");
-		msg.append(' ').append(wrapper.getStatus());
+    private void loggingResponse(CachedResponseWrapper wrapper) throws IOException {
+        StringBuilder msg = new StringBuilder();
+        long time = System.currentTimeMillis() - TIMER.get();
+        msg.append("RESPONSE: ").append(time).append("ms");
+        msg.append(' ').append(wrapper.getStatus());
 
-		String contentType = wrapper.getContentType();
-		if (contentType != null && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
-			String payload;
-			try (InputStream is = wrapper.getContentInputStream()) {
-				payload = StreamUtils.copyToString(is, StandardCharsets.UTF_8);
-			}
-			if (!payload.isEmpty()) {
-				msg.append(' ').append(payload);
-			}
-		}
-		wrapper.copyBodyToResponse();
-		log.info(msg.toString());
-	}
+        String contentType = wrapper.getContentType();
+        if (contentType != null && contentType.contains(MediaType.APPLICATION_JSON_VALUE)) {
+            String payload;
+            try (InputStream is = wrapper.getContentInputStream()) {
+                payload = StreamUtils.copyToString(is, StandardCharsets.UTF_8);
+            }
+            if (!payload.isEmpty()) {
+                msg.append(' ').append(payload);
+            }
+        }
+        wrapper.copyBodyToResponse();
+        log.info(msg.toString());
+    }
 
 }

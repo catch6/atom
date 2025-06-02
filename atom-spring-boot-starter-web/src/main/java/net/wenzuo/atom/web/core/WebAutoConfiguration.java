@@ -10,19 +10,17 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.config;
+package net.wenzuo.atom.web.core;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 /**
  * @author Catch
  * @since 2023-06-06
  */
-@Import({CorsConfiguration.class, TraceIdFilter.class, LoggingFilter.class, WebExceptionHandler.class})
 @ComponentScan("net.wenzuo.atom.web")
 @EnableConfigurationProperties({CorsProperties.class, LoggingProperties.class, WebProperties.class})
 @PropertySource("classpath:application-web.properties")

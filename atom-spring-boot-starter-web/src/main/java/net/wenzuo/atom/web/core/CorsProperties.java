@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.config;
+package net.wenzuo.atom.web.core;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

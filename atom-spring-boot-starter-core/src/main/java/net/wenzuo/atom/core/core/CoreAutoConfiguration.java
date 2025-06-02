@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.config;
+package net.wenzuo.atom.core.core;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,8 +22,9 @@ import org.springframework.context.annotation.PropertySource;
  * @since 2023-06-05
  */
 @Import({
-	CoreAsyncConfiguration.class,
-	CoreJsonConfiguration.class,
+    CoreJsonConfiguration.class,
+    TraceIdTaskDecorator.class,
+    CoreTraceConfiguration.class
 })
 @EnableConfigurationProperties(CoreProperties.class)
 @PropertySource("classpath:application-core.properties")

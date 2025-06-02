@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.config;
+package net.wenzuo.atom.web.core;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,23 +29,23 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class CorsConfiguration {
 
-	private final CorsProperties corsProperties;
+    private final CorsProperties corsProperties;
 
-	@Bean
-	@ConditionalOnMissingBean
-	public CorsFilter corsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		for (CorsProperties.Config config : corsProperties.getConfigs()) {
-			org.springframework.web.cors.CorsConfiguration corsConfig = new org.springframework.web.cors.CorsConfiguration();
-			corsConfig.setAllowCredentials(config.getAllowCredentials());
-			corsConfig.setAllowedOrigins(config.getAllowedOrigins());
-			corsConfig.setAllowedOriginPatterns(config.getAllowedOriginPatterns());
-			corsConfig.setAllowedHeaders(config.getAllowedHeaders());
-			corsConfig.setAllowedMethods(config.getAllowedMethods());
-			corsConfig.setExposedHeaders(config.getExposedHeaders());
-			source.registerCorsConfiguration(config.getPattern(), corsConfig);
-		}
-		return new CorsFilter(source);
-	}
+    @Bean
+    @ConditionalOnMissingBean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        for (CorsProperties.Config config : corsProperties.getConfigs()) {
+            org.springframework.web.cors.CorsConfiguration corsConfig = new org.springframework.web.cors.CorsConfiguration();
+            corsConfig.setAllowCredentials(config.getAllowCredentials());
+            corsConfig.setAllowedOrigins(config.getAllowedOrigins());
+            corsConfig.setAllowedOriginPatterns(config.getAllowedOriginPatterns());
+            corsConfig.setAllowedHeaders(config.getAllowedHeaders());
+            corsConfig.setAllowedMethods(config.getAllowedMethods());
+            corsConfig.setExposedHeaders(config.getExposedHeaders());
+            source.registerCorsConfiguration(config.getPattern(), corsConfig);
+        }
+        return new CorsFilter(source);
+    }
 
 }

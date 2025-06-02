@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.config;
+package net.wenzuo.atom.core.core;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -23,19 +23,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "atom.core")
 public class CoreProperties {
 
-	/**
-	 * 是否启用 core 模块
-	 */
-	private boolean enabled = true;
+    /**
+     * 是否启用 core 模块
+     */
+    private boolean enabled = true;
 
-	/**
-	 * 是否启用异步
-	 */
-	private boolean async = true;
+    /**
+     * 是否启用 trace 模块
+     */
+    private boolean trace = true;
 
-	/**
-	 * 是否启用json
-	 */
-	private boolean json = true;
+    /**
+     * 是否启用json
+     */
+    private boolean json = true;
 
 }

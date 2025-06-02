@@ -10,7 +10,7 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.web.config;
+package net.wenzuo.atom.web.core;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -23,14 +23,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "atom.web")
 public class WebProperties {
 
-	/**
-	 * 是否启用 web 模块
-	 */
-	private Boolean enabled = true;
+    /**
+     * 是否启用 web 模块
+     */
+    private Boolean enabled = true;
 
-	/**
-	 * 是否启用全局异常处理
-	 */
-	private Boolean exceptionHandler = true;
+    /**
+     * 是否启用全局异常处理
+     */
+    private Boolean exceptionHandler = true;
 
 }

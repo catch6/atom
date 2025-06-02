@@ -10,10 +10,9 @@
  * See the Mulan PSL v2 for more details.
  */
 
-package net.wenzuo.atom.core.config;
+package net.wenzuo.atom.core.core;
 
 import net.wenzuo.atom.core.util.JsonUtils;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -27,10 +26,9 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(value = "atom.core.json", matchIfMissing = true)
 public class CoreJsonConfiguration {
 
-	@ConditionalOnMissingBean
-	@Bean
-	public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
-		return JsonUtils.customize();
-	}
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
+        return JsonUtils.customize();
+    }
 
 }

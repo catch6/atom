@@ -12,7 +12,6 @@
 
 package net.wenzuo.atom.mqtt.config;
 
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import net.wenzuo.atom.mqtt.MqttConsumer;
@@ -71,8 +70,7 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
             }
             try {
                 if (StrUtil.isBlank(instance.getClientId())) {
-                    String suffix = RandomUtil.randomString(6);
-                    instance.setClientId(applicationName + "-" + activeProfile + "-" + suffix);
+                    instance.setClientId(applicationName + "-" + activeProfile);
                 }
                 String[] urls = instance.getUrl().split(",");
                 MqttClient mqttClient = new MqttClient(urls[0], instance.getClientId(), new MemoryPersistence());

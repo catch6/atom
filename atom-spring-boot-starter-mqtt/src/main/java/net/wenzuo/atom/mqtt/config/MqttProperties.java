@@ -27,90 +27,90 @@ import java.util.List;
 @Data
 public class MqttProperties {
 
-	public static final String CLIENT_BEAN_PREFIX = "mqttClient-";
+    public static final String CLIENT_BEAN_PREFIX = "mqttClient-";
 
-	/**
-	 * 是否启用
-	 */
-	private Boolean enabled = true;
+    /**
+     * 是否启用
+     */
+    private Boolean enabled = true;
 
-	/**
-	 * 加载顺序, 默认 Ordered.LOWEST_PRECEDENCE
-	 */
-	private Integer order = Ordered.LOWEST_PRECEDENCE;
+    /**
+     * 加载顺序, 默认 Ordered.LOWEST_PRECEDENCE
+     */
+    private Integer order = Ordered.LOWEST_PRECEDENCE;
 
-	/**
-	 * 实例 ID
-	 */
-	private String id = "default";
-	/**
-	 * 实例服务器地址
-	 */
-	private String url;
-	/**
-	 * 实例服务器用户名
-	 */
-	private String username;
-	/**
-	 * 实例服务器密码
-	 */
-	private String password;
-	/**
-	 * 实例客户端 ID, 默认为 ${spring.application.name}-${spring.profiles.active}-随机6位字符
-	 */
-	private String clientId;
+    /**
+     * 实例 ID
+     */
+    private String id = "default";
+    /**
+     * 实例服务器地址
+     */
+    private String url;
+    /**
+     * 实例服务器用户名
+     */
+    private String username;
+    /**
+     * 实例服务器密码
+     */
+    private String password;
+    /**
+     * 实例客户端 ID, 默认为 ${spring.application.name}-${spring.profiles.active}
+     */
+    private String clientId;
 
-	/**
-	 * MQTT 实例配置
-	 */
-	private List<MqttInstance> instances;
+    /**
+     * MQTT 实例配置
+     */
+    private List<MqttInstance> instances;
 
-	@Data
-	public static class MqttInstance {
+    @Data
+    public static class MqttInstance {
 
-		/**
-		 * 实例 ID
-		 */
-		private String id;
-		/**
-		 * 实例是否启用
-		 */
-		private Boolean enabled = true;
-		/**
-		 * 实例服务器地址
-		 */
-		private String url;
-		/**
-		 * 实例服务器用户名
-		 */
-		private String username;
-		/**
-		 * 实例服务器密码
-		 */
-		private String password;
-		/**
-		 * 实例客户端 ID, 默认为 ${spring.application.name}-${spring.profiles.active}-随机6位字符
-		 */
-		private String clientId;
+        /**
+         * 实例 ID
+         */
+        private String id;
+        /**
+         * 实例是否启用
+         */
+        private Boolean enabled = true;
+        /**
+         * 实例服务器地址
+         */
+        private String url;
+        /**
+         * 实例服务器用户名
+         */
+        private String username;
+        /**
+         * 实例服务器密码
+         */
+        private String password;
+        /**
+         * 实例客户端 ID, 默认为 ${spring.application.name}-${spring.profiles.active}-随机6位字符
+         */
+        private String clientId;
 
-	}
+    }
 
-	public List<MqttInstance> getInstances() {
-		List<MqttInstance> instances = new ArrayList<>();
-		if (id != null && url != null) {
-			MqttInstance instance = new MqttInstance();
-			instance.setId(id);
-			instance.setEnabled(enabled);
-			instance.setUrl(url);
-			instance.setUsername(username);
-			instance.setPassword(password);
-			instance.setClientId(clientId);
-			instances.add(instance);
-		}
-		if (this.instances != null && !instances.isEmpty()) {
-			instances.addAll(this.instances);
-		}
-		return instances;
-	}
+    public List<MqttInstance> getInstances() {
+        List<MqttInstance> instances = new ArrayList<>();
+        if (id != null && url != null) {
+            MqttInstance instance = new MqttInstance();
+            instance.setId(id);
+            instance.setEnabled(enabled);
+            instance.setUrl(url);
+            instance.setUsername(username);
+            instance.setPassword(password);
+            instance.setClientId(clientId);
+            instances.add(instance);
+        }
+        if (this.instances != null && !instances.isEmpty()) {
+            instances.addAll(this.instances);
+        }
+        return instances;
+    }
 
 }

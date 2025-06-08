@@ -12,7 +12,6 @@
 
 package net.wenzuo.atom.mqtt.config;
 
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,8 +71,7 @@ public class Mqttv3Configuration implements ApplicationListener<ApplicationStart
             }
             try {
                 if (StrUtil.isBlank(instance.getClientId())) {
-                    String suffix = RandomUtil.randomString(6);
-                    instance.setClientId(applicationName + "-" + activeProfile + "-" + suffix);
+                    instance.setClientId(applicationName + "-" + activeProfile);
                 }
 
                 String[] urls = instance.getUrl().split(",");

@@ -13,6 +13,8 @@
 package net.wenzuo.atom.test.core.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import net.wenzuo.atom.core.util.JsonUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,10 +33,12 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Slf4j
 @Execution(ExecutionMode.CONCURRENT)
 public class JsonUtilsTest {
 
-    private static class User {
+    @Data
+    public static class User {
 
         private String name;
         private int age;
@@ -42,55 +46,6 @@ public class JsonUtilsTest {
         private LocalDateTime lastLogin;
         private LocalTime lastActivity;
         private BigDecimal balance;
-
-        // Getters and setters
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
-        }
-
-        public LocalDate getBirthDate() {
-            return birthDate;
-        }
-
-        public void setBirthDate(LocalDate birthDate) {
-            this.birthDate = birthDate;
-        }
-
-        public LocalDateTime getLastLogin() {
-            return lastLogin;
-        }
-
-        public void setLastLogin(LocalDateTime lastLogin) {
-            this.lastLogin = lastLogin;
-        }
-
-        public LocalTime getLastActivity() {
-            return lastActivity;
-        }
-
-        public void setLastActivity(LocalTime lastActivity) {
-            this.lastActivity = lastActivity;
-        }
-
-        public BigDecimal getBalance() {
-            return balance;
-        }
-
-        public void setBalance(BigDecimal balance) {
-            this.balance = balance;
-        }
 
     }
 
@@ -380,6 +335,19 @@ public class JsonUtilsTest {
         assertTrue(json.contains("\"age\":30"));
         assertTrue(json.contains("\"name\":\"Jane\""));
         assertTrue(json.contains("\"age\":25"));
+    }
+
+    @Test
+    public void tsToLocalDateTime() {
+        long t = System.currentTimeMillis();
+        log.info("t: {}", t);
+        LocalDateTime time = JsonUtils.toObject(String.valueOf(t), LocalDateTime.class);
+        log.info("time: {}", time);
+
+        int ts = (int) (t / 1000);
+        log.info("ts: {}", ts);
+        time = JsonUtils.toObject(String.valueOf(ts), LocalDateTime.class);
+        log.info("time: {}", time);
     }
 
 }

@@ -30,7 +30,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
             registry.addInterceptor(loggingInterceptor)
                     .addPathPatterns(loggingProperties.getIncludePath())
                     .excludePathPatterns(loggingProperties.getInternalExcludePath())
-                    .excludePathPatterns(loggingProperties.getExcludePath());
+                    .excludePathPatterns(loggingProperties.getExcludePath())
+                    .order(Ordered.HIGHEST_PRECEDENCE + 100);
         }
     }
 

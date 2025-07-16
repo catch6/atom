@@ -77,7 +77,7 @@ elif [ "${ACTION}" == "deploy" ]; then
     info "发布到 maven..."
     RETRY_COUNT=0
     MAX_RETRIES=5
-    until mvn -Possrh -Prelease clean deploy -U -DskipTests; do
+    until mvn -Pmindit -Prelease clean deploy -U -DskipTests; do
         RETRY_COUNT=$((RETRY_COUNT + 1))
         if [ ${RETRY_COUNT} -ge ${MAX_RETRIES} ]; then
             error "发布到 maven 失败，已重试 ${MAX_RETRIES} 次"

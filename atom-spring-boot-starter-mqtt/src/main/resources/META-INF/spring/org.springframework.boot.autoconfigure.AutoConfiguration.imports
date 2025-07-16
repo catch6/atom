@@ -1,1 +1,1 @@
-net.wenzuo.atom.mqtt.config.MqttAutoConfiguration
+cn.mindit.atom.mqtt.config.MqttAutoConfiguration

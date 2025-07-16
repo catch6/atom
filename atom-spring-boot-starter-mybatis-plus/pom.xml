@@ -16,20 +16,43 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>net.wenzuo</groupId>
+    <groupId>cn.mindit</groupId>
     <artifactId>atom</artifactId>
     <version>${revision}</version>
   </parent>
+
+  <name>atom</name>
+  <description>Atom is a Spring Boot starter project, providing a set of reusable components and configurations to help developers quickly build modern, scalable, and maintainable Java applications.</description>
+  <url>https://github.com/catch6/atom</url>
+
+  <scm>
+    <url>https://github.com/catch6/atom</url>
+    <connection>scm:git:git://github.com/catch6/atom.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/catch6/atom.git</developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>Catch</id>
+      <name>Catch</name>
+      <email>catchlife6@163.com</email>
+      <url>https://github.com/catch6</url>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+8</timezone>
+    </developer>
+  </developers>
 
   <artifactId>atom-spring-boot-starter-mybatis-plus</artifactId>
 
   <dependencies>
     <dependency>
-      <groupId>net.wenzuo</groupId>
+      <groupId>cn.mindit</groupId>
       <artifactId>atom-spring-boot-starter-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>net.wenzuo</groupId>
+      <groupId>cn.mindit</groupId>
       <artifactId>atom-spring-boot-starter-api</artifactId>
     </dependency>
 

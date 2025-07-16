@@ -13,13 +13,13 @@ public class LightingConfig {
 	@PostConstruct
 	public void init() {
 		taskService.setTasks(List.of(
-			new Task("Task1", "0/5 * * * * ?", "net.wenzuo.iot.auth.service.LightingService", "turnOn", ""),
-			new Task("Task2", "0/5 * * * * ?", "net.wenzuo.iot.auth.service.LightingService", "turnOff", "")
+			new Task("Task1", "0/5 * * * * ?", "cn.mindit.iot.auth.service.LightingService", "turnOn", ""),
+			new Task("Task2", "0/5 * * * * ?", "cn.mindit.iot.auth.service.LightingService", "turnOff", "")
 		));
 
 		// taskService.addTasks(List.of(
-		// 	new Task("Task1","0/5 * * * * ?","net.wenzuo.iot.auth.service.LightingService","turnOn",""),
-		// 	new Task("Task2","0/5 * * * * ?","net.wenzuo.iot.auth.service.LightingService","turnOff",""),
+		// 	new Task("Task1","0/5 * * * * ?","cn.mindit.iot.auth.service.LightingService","turnOn",""),
+		// 	new Task("Task2","0/5 * * * * ?","cn.mindit.iot.auth.service.LightingService","turnOff",""),
 		// ));
 
 		// taskService.removeTask("Task1");

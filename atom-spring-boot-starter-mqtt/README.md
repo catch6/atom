@@ -3,7 +3,7 @@
 ```xml
 <!-- 指定parent -->
 <dependency>
-	<groupId>net.wenzuo</groupId>
+	<groupId>cn.mindit</groupId>
 	<artifactId>atom-spring-boot-starter-mqtt</artifactId>
 </dependency>
 ```

@@ -1,1 +1,1 @@
-net.wenzuo.atom.redis.config.RedisAutoConfiguration
+cn.mindit.atom.redis.config.RedisAutoConfiguration

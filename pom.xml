@@ -22,7 +22,30 @@
     <relativePath/>
   </parent>
 
-  <groupId>net.wenzuo</groupId>
+  <name>atom</name>
+  <description>Atom is a Spring Boot starter project, providing a set of reusable components and configurations to help developers quickly build modern, scalable, and maintainable Java applications.</description>
+  <url>https://github.com/catch6/atom</url>
+
+  <scm>
+    <url>https://github.com/catch6/atom</url>
+    <connection>scm:git:git://github.com/catch6/atom.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/catch6/atom.git</developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>Catch</id>
+      <name>Catch</name>
+      <email>catchlife6@163.com</email>
+      <url>https://github.com/catch6</url>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+8</timezone>
+    </developer>
+  </developers>
+
+  <groupId>cn.mindit</groupId>
   <artifactId>atom</artifactId>
   <version>${revision}</version>
   <packaging>pom</packaging>
@@ -54,30 +77,10 @@
     <module>atom-spring-boot-starter-opc-da</module>
   </modules>
 
-  <scm>
-    <url>https://github.com/catch6/atom</url>
-    <connection>scm:git:git://github.com/catch6/atom.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/catch6/atom.git</developerConnection>
-    <tag>HEAD</tag>
-  </scm>
-
-  <developers>
-    <developer>
-      <id>Catch</id>
-      <name>Catch</name>
-      <email>catchlife6@163.com</email>
-      <url>https://github.com/catch6</url>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>+8</timezone>
-    </developer>
-  </developers>
-
   <properties>
     <java.version>21</java.version>
 
-    <revision>3.0.8</revision>
+    <revision>3.1.0</revision>
     <spring-cloud-dependencies.version>2024.0.1</spring-cloud-dependencies.version>
     <spring-cloud-alibaba-dependencies.version>2023.0.3.2</spring-cloud-alibaba-dependencies.version>
     <spring-modulith-bom.version>1.3.4</spring-modulith-bom.version>
@@ -103,7 +106,8 @@
     <milo.version>0.6.15</milo.version>
 
     <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
-    <flatten-maven-plugin.version>1.7.0</flatten-maven-plugin.version>
+    <flatten-maven-plugin.version>1.7.1</flatten-maven-plugin.version>
+    <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
     <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
     <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
     <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
@@ -149,82 +153,82 @@
 
       <!-- atom 依赖 -->
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-api</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-core</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-doc</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-jwt</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-mqtt</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-mybatis-plus</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-opc-da</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-opc-ua</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-redis</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-scheduling</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-boot-starter-web</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-cloud-starter-consul</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-cloud-starter-feign</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-cloud-starter-kafka</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-cloud-starter-nacos-config</artifactId>
         <version>${revision}</version>
       </dependency>
       <dependency>
-        <groupId>net.wenzuo</groupId>
+        <groupId>cn.mindit</groupId>
         <artifactId>atom-spring-cloud-starter-nacos-discovery</artifactId>
         <version>${revision}</version>
       </dependency>
@@ -448,65 +452,21 @@
   <profiles>
     <profile>
       <id>release</id>
-      <distributionManagement>
-        <snapshotRepository>
-          <id>ossrh</id>
-          <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-          <id>ossrh</id>
-          <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-      </distributionManagement>
       <build>
         <plugins>
+          <!-- 编译插件 -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <version>${maven-compiler-plugin.version}</version>
           </plugin>
+          <!-- 单元测试插件 -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <version>${maven-surefire-plugin.version}</version>
           </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>flatten-maven-plugin</artifactId>
-            <version>${flatten-maven-plugin.version}</version>
-            <configuration>
-              <updatePomFile>true</updatePomFile>
-              <flattenMode>resolveCiFriendliesOnly</flattenMode>
-            </configuration>
-            <executions>
-              <execution>
-                <id>flatten</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>flatten</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>flatten.clean</id>
-                <phase>clean</phase>
-                <goals>
-                  <goal>clean</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>${nexus-staging-maven-plugin.version}</version>
-            <extensions>true</extensions>
-            <configuration>
-              <serverId>ossrh</serverId>
-              <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-              <stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>
-              <autoReleaseAfterClose>true</autoReleaseAfterClose>
-            </configuration>
-          </plugin>
+          <!--   source源码插件 -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
@@ -520,6 +480,7 @@
               </execution>
             </executions>
           </plugin>
+          <!--   javadoc插件 -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
@@ -538,10 +499,59 @@
               </execution>
             </executions>
           </plugin>
+          <!-- Maven revision 插件 -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>flatten-maven-plugin</artifactId>
+            <version>${flatten-maven-plugin.version}</version>
+            <configuration>
+              <updatePomFile>true</updatePomFile>
+              <flattenMode>resolveCiFriendliesOnly</flattenMode>
+              <pomElements>
+                <name>keep</name>
+                <description>keep</description>
+                <url>keep</url>
+                <scm>keep</scm>
+                <developers>keep</developers>
+              </pomElements>
+            </configuration>
+            <executions>
+              <execution>
+                <id>flatten</id>
+                <phase>process-resources</phase>
+                <goals>
+                  <goal>flatten</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>flatten.clean</id>
+                <phase>clean</phase>
+                <goals>
+                  <goal>clean</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!--   central发布插件    -->
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>${central-publishing-maven-plugin.version}</version>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>mindit</publishingServerId>
+              <autoPublish>true</autoPublish>
+              <!-- <waitUntil>published</waitUntil> -->
+            </configuration>
+          </plugin>
+          <!-- gpg插件 -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
             <version>${maven-gpg-plugin.version}</version>
+            <configuration>
+              <keyname>cn.mindit</keyname>
+            </configuration>
             <executions>
               <execution>
                 <id>sign-artifacts</id>

@@ -3,7 +3,7 @@
 ```xml
 <!-- 指定parent -->
 <dependency>
-	<groupId>net.wenzuo</groupId>
+	<groupId>cn.mindit</groupId>
 	<artifactId>atom-spring-boot-starter-opc-da</artifactId>
 </dependency>
 ```
@@ -60,7 +60,7 @@ public void message(Item item, ItemState value) {
 
 ```java
 
-import net.wenzuo.atom.opc.da.OpcDaService;
+import cn.mindit.atom.opc.da.OpcDaService;
 
 @RequiredArgsConstructor
 @RequestMapping("/")

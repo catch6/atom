@@ -1,8 +1,8 @@
 <h1 align="center">Atom</h1>
 
 <p align="center">
-	<a target="_blank" href="https://central.sonatype.com/artifact/net.wenzuo/atom">
-        <img alt="Atom" src="https://img.shields.io/maven-central/v/net.wenzuo/atom?label=Atom">
+	<a target="_blank" href="https://central.sonatype.com/artifact/cn.mindit/atom">
+        <img alt="Atom" src="https://img.shields.io/maven-central/v/cn.mindit/atom?label=Atom">
 	</a>
 	<a target="_blank" href="https://www.oracle.com/technetwork/java/javase/downloads/index.html">
 		<img alt="Jdk" src="https://img.shields.io/badge/Jdk-17+-blue.svg" />
@@ -49,10 +49,10 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 ```xml
 <!-- 指定parent -->
 <parent>
-	<groupId>net.wenzuo</groupId>
-	<artifactId>atom</artifactId>
-	<version>3.0.8</version>
-	<relativePath/>
+  <groupId>cn.mindit</groupId>
+  <artifactId>atom</artifactId>
+  <version>3.1.0</version>
+  <relativePath/>
 </parent>
 ```
 
@@ -61,7 +61,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 ```xml
 <!-- 按需引入相关模块 -->
 <dependency>
-  <groupId>net.wenzuo</groupId>
+  <groupId>cn.mindit</groupId>
   <artifactId>modules...</artifactId>
 </dependency>
 ```
@@ -80,7 +80,7 @@ atom:
     enabled: true # 是否启用doc模块
   jwt:
     enabled: true # 是否启用jwt模块
-    secret: # JWT密钥, 可通过 net.wenzuo.atom.jwt.GenerateKey 生成随机密钥
+    secret: # JWT密钥, 可通过 cn.mindit.atom.jwt.GenerateKey 生成随机密钥
   mqtt:
     enabled: true # 是否启用 MQTT 模块
     id: default # 实例 ID

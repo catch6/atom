@@ -77,7 +77,7 @@
     </encoder>
   </appender>
 
-  <!--net.wenzuo.atom.web.handler.WebExceptionHandler 已打印错误日志,避免重复打印-->
+  <!--cn.mindit.atom.web.handler.WebExceptionHandler 已打印错误日志,避免重复打印-->
   <logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="OFF"/>
   <!-- 屏蔽 nacos 大量心跳日志 -->
   <logger name="com.alibaba.nacos" level="WARN"/>

@@ -1,1 +1,1 @@
-net.wenzuo.atom.jwt.config.JwtAutoConfiguration
+cn.mindit.atom.jwt.config.JwtAutoConfiguration

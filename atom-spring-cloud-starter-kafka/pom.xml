@@ -21,7 +21,7 @@
     <version>${revision}</version>
   </parent>
 
-  <name>atom</name>
+  <name>atom-spring-cloud-starter-kafka</name>
   <description>Atom is a Spring Boot starter project, providing a set of reusable components and configurations to help developers quickly build modern, scalable, and maintainable Java applications.</description>
   <url>https://github.com/catch6/atom</url>
 

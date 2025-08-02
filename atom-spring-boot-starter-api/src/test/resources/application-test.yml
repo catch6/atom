@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: atom-spring-boot-starter-api-test
+  main:
+    allow-bean-definition-overriding: true
+
+# 测试配置
+logging:
+  level:
+    cn.mindit.atom.api: DEBUG
+    org.springframework.validation: DEBUG

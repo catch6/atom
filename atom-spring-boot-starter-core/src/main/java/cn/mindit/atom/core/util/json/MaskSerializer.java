@@ -12,8 +12,9 @@
 
 package cn.mindit.atom.core.util.json;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.DesensitizedUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.mindit.atom.core.util.MaskType;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.WritableTypeId;
@@ -23,7 +24,6 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-import cn.mindit.atom.core.util.DesensitizationType;
 
 import java.io.IOException;
 
@@ -31,20 +31,20 @@ import java.io.IOException;
  * @author Catch
  * @since 2023-08-25
  */
-public class DesensitizationSerializer extends JsonSerializer<Object> implements ContextualSerializer {
+public class MaskSerializer extends JsonSerializer<Object> implements ContextualSerializer {
 
-    public static final DesensitizationSerializer instance = new DesensitizationSerializer();
+    public static final MaskSerializer instance = new MaskSerializer();
 
-    private DesensitizationType type;
+    private MaskType type;
 
     private Integer start;
 
     private Integer end;
 
-    public DesensitizationSerializer() {
+    public MaskSerializer() {
     }
 
-    public DesensitizationSerializer(DesensitizationType type, Integer start, Integer end) {
+    public MaskSerializer(MaskType type, Integer start, Integer end) {
         this.type = type;
         this.start = start;
         this.end = end;
@@ -55,37 +55,26 @@ public class DesensitizationSerializer extends JsonSerializer<Object> implements
         if (value == null) {
             return;
         }
-        if (value.toString().isEmpty()) {
+        String valueStr = value.toString();
+        if (valueStr.isEmpty()) {
             gen.writeString("");
             return;
         }
         switch (type) {
             // 自定义类型脱敏
-            case CUSTOM -> gen.writeString(CharSequenceUtil.hide(value.toString(), start, end));
-
-            // userId脱敏
-            case USER_ID -> {
-                if (value instanceof Number) {
-                    gen.writeNumber(String.valueOf(DesensitizedUtil.userId()));
-                } else {
-                    gen.writeString(String.valueOf(DesensitizedUtil.userId()));
-                }
-            }
+            case CUSTOM -> gen.writeString(StrUtil.hide(valueStr, start, end));
 
             // 中文姓名脱敏
-            case CHINESE_NAME -> gen.writeString(DesensitizedUtil.chineseName(value.toString()));
-
-            // 身份证脱敏
-            case ID_CARD -> gen.writeString(DesensitizedUtil.idCardNum(value.toString(), 3, 4));
+            case NAME -> gen.writeString(StrUtil.hide(valueStr, 1, valueStr.length()));
 
             // 手机号脱敏
-            case MOBILE_PHONE -> gen.writeString(DesensitizedUtil.mobilePhone(value.toString()));
+            case PHONE -> gen.writeString(StrUtil.hide(valueStr, 3, valueStr.length() - 4));
 
-            // 固定电话脱敏
-            case FIXED_PHONE -> gen.writeString(DesensitizedUtil.fixedPhone(value.toString()));
+            // 身份证脱敏
+            case ID_CARD -> gen.writeString(StrUtil.hide(valueStr, 3, valueStr.length() - 4));
 
-            // 地址脱敏
-            case ADDRESS -> gen.writeString(DesensitizedUtil.address(value.toString(), 6));
+            // 银行卡脱敏
+            case BANK_CARD -> gen.writeString("**** **** **** " + valueStr.substring(valueStr.length() - 4));
 
             // 邮箱脱敏
             case EMAIL -> gen.writeString(DesensitizedUtil.email(value.toString()));
@@ -93,8 +82,20 @@ public class DesensitizationSerializer extends JsonSerializer<Object> implements
             // 密码脱敏
             case PASSWORD -> gen.writeString(DesensitizedUtil.password(value.toString()));
 
-            // 银行卡脱敏
-            case BANK_CARD -> gen.writeString(DesensitizedUtil.bankCard(value.toString()));
+            // 固定电话脱敏
+            case FIXED_PHONE -> gen.writeString(DesensitizedUtil.fixedPhone(value.toString()));
+
+            // 地址脱敏
+            case ADDRESS -> gen.writeString(DesensitizedUtil.address(value.toString(), 6));
+
+            // ID 脱敏
+            case ID -> {
+                if (value instanceof Number) {
+                    gen.writeNumber(0);
+                } else {
+                    gen.writeString("0");
+                }
+            }
 
             // 中国车牌脱敏
             case CAR_LICENSE -> gen.writeString(DesensitizedUtil.carLicense(value.toString()));
@@ -120,15 +121,15 @@ public class DesensitizationSerializer extends JsonSerializer<Object> implements
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException {
         if (property == null) {
-            return DesensitizationSerializer.instance;
+            return MaskSerializer.instance;
         }
         // 获取定义的注解
-        JsonDesensitization annotation = property.getAnnotation(JsonDesensitization.class);
+        JsonMask annotation = property.getAnnotation(JsonMask.class);
         if (annotation == null) {
-            annotation = property.getContextAnnotation(JsonDesensitization.class);
+            annotation = property.getContextAnnotation(JsonMask.class);
         }
         if (annotation != null) {
-            return new DesensitizationSerializer(annotation.value(), annotation.start(), annotation.end());
+            return new MaskSerializer(annotation.value(), annotation.start(), annotation.end());
         }
         return provider.findValueSerializer(property.getType(), property);
     }

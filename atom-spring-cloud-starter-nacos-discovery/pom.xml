@@ -22,7 +22,7 @@
   </parent>
 
   <name>atom-spring-cloud-starter-nacos-discovery</name>
-  <description>Atom is a Spring Boot starter project, providing a set of reusable components and configurations to help developers quickly build modern, scalable, and maintainable Java applications.</description>
+  <description>Atom Nacos发现模块，提供服务注册与发现功能，支持动态服务发现和健康检查。</description>
   <url>https://github.com/catch6/atom</url>
 
   <scm>

@@ -22,7 +22,7 @@
   </parent>
 
   <name>atom-spring-boot-starter-mybatis-plus</name>
-  <description>Atom is a Spring Boot starter project, providing a set of reusable components and configurations to help developers quickly build modern, scalable, and maintainable Java applications.</description>
+  <description>Atom MyBatis Plus模块，提供数据库访问和ORM支持，简化数据库操作，提升数据访问层开发效率。</description>
   <url>https://github.com/catch6/atom</url>
 
   <scm>

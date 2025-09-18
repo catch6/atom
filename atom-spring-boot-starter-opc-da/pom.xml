@@ -22,7 +22,7 @@
   </parent>
 
   <name>atom-spring-boot-starter-opc-da</name>
-  <description>Atom is a Spring Boot starter project, providing a set of reusable components and configurations to help developers quickly build modern, scalable, and maintainable Java applications.</description>
+  <description>Atom OPC DA模块，提供OPC DA协议连接和数据访问，支持工业自动化系统与传统OPC服务器通信。</description>
   <url>https://github.com/catch6/atom</url>
 
   <scm>

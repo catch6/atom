@@ -39,3 +39,8 @@ build/
 logs/
 tmp.sh
 *-local.yml
+
+.serena
+ATOM_ANALYSIS_REPORT.md
+.claude
+dependency-tree.txt

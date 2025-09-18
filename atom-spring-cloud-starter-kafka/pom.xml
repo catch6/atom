@@ -22,7 +22,7 @@
   </parent>
 
   <name>atom-spring-cloud-starter-kafka</name>
-  <description>Atom is a Spring Boot starter project, providing a set of reusable components and configurations to help developers quickly build modern, scalable, and maintainable Java applications.</description>
+  <description>Atom Kafka消息队列模块，提供消息生产和消费支持，实现高吞吐量的分布式消息处理。</description>
   <url>https://github.com/catch6/atom</url>
 
   <scm>

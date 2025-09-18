@@ -22,7 +22,7 @@
   </parent>
 
   <name>atom-spring-boot-starter-opc-ua</name>
-  <description>Atom is a Spring Boot starter project, providing a set of reusable components and configurations to help developers quickly build modern, scalable, and maintainable Java applications.</description>
+  <description>Atom OPC UA模块，提供OPC UA协议连接和数据访问，支持现代工业自动化系统和设备互联互通。</description>
   <url>https://github.com/catch6/atom</url>
 
   <scm>

@@ -22,7 +22,7 @@
   </parent>
 
   <name>atom-spring-boot-starter-core</name>
-  <description>Atom is a Spring Boot starter project, providing a set of reusable components and configurations to help developers quickly build modern, scalable, and maintainable Java applications.</description>
+  <description>Atom核心基础模块，提供通用工具类、异常处理、基础配置等核心功能，为其他模块提供基础支持。</description>
   <url>https://github.com/catch6/atom</url>
 
   <scm>

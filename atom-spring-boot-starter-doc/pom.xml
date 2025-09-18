@@ -22,7 +22,7 @@
   </parent>
 
   <name>atom-spring-boot-starter-doc</name>
-  <description>Atom is a Spring Boot starter project, providing a set of reusable components and configurations to help developers quickly build modern, scalable, and maintainable Java applications.</description>
+  <description>Atom API文档模块，集成Knife4j提供API文档自动生成和交互式测试界面，提升API开发效率。</description>
   <url>https://github.com/catch6/atom</url>
 
   <scm>

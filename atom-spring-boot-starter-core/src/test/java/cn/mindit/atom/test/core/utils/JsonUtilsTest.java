@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
- * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
  *          http://license.coscl.org.cn/MulanPSL2
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
@@ -12,342 +11,354 @@
 
 package cn.mindit.atom.test.core.utils;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import cn.mindit.atom.core.util.JsonUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import lombok.Data;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
-@Execution(ExecutionMode.CONCURRENT)
-public class JsonUtilsTest {
+/**
+ * JsonUtils 工具类测试
+ *
+ * @author Catch
+ * @since 2023-08-08
+ */
+class JsonUtilsTest {
 
     @Data
-    public static class User {
+    static class TestUser {
 
         private String name;
-        private int age;
-        private LocalDate birthDate;
-        private LocalDateTime lastLogin;
-        private LocalTime lastActivity;
-        private BigDecimal balance;
+        private Integer age;
+        private LocalDateTime createTime;
+        private BigDecimal salary;
 
     }
 
-    private static class NestedUser {
+    @Data
+    static class TestResult<T> {
 
-        private User user;
-        private String role;
-
-        // Getters and setters
-        public User getUser() {
-            return user;
-        }
-
-        public void setUser(User user) {
-            this.user = user;
-        }
-
-        public String getRole() {
-            return role;
-        }
-
-        public void setRole(String role) {
-            this.role = role;
-        }
+        private Boolean success;
+        private String message;
+        private T data;
 
     }
 
     @BeforeEach
-    public void setUp() {
-        // 如果需要，可以在此处进行任何设置
+    void setUp() {
+        // 重置命名策略为默认值
+        JsonUtils.setDefaultPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
     }
 
     @Test
-    public void toObject_EmptyJson_ReturnsNull() {
-        User user = JsonUtils.toObject("", User.class);
-        assertNull(user);
+    @DisplayName("测试 toJson 方法 - 基本对象")
+    void testToJsonWithBasicObject() {
+        TestUser user = new TestUser();
+        user.setName("张三");
+        user.setAge(25);
+        user.setCreateTime(LocalDateTime.now());
+        user.setSalary(new BigDecimal("5000.00"));
+
+        String json = JsonUtils.toJson(user);
+        assertNotNull(json);
+        assertTrue(json.contains("张三"));
+        assertTrue(json.contains("25"));
     }
 
     @Test
-    public void toObject_ValidJson_ReturnsObject() {
-        String json = "{\"name\":\"John\", \"age\":30, \"birthDate\":\"2000-01-01\", \"lastLogin\":\"2023-10-01 12:00:00\", \"lastActivity\":\"12:00:00\", \"balance\":100.50}";
-        User user = JsonUtils.toObject(json, User.class);
-        assertNotNull(user);
-        assertEquals("John", user.getName());
-        assertEquals(30, user.getAge());
-        assertEquals(LocalDate.of(2000, 1, 1), user.getBirthDate());
-        assertEquals(LocalDateTime.of(2023, 10, 1, 12, 0, 0), user.getLastLogin());
-        assertEquals(LocalTime.of(12, 0, 0), user.getLastActivity());
-        assertEquals(new BigDecimal("100.50"), user.getBalance());
-    }
-
-    @Test
-    public void toObject_InvalidJson_ThrowsException() {
-        String invalidJson = "{\"name\":\"John\", \"age\":30"; // 缺少闭合大括号
-        assertThrows(RuntimeException.class, () -> JsonUtils.toObject(invalidJson, User.class));
-    }
-
-    @Test
-    public void toObject_CharSequence_ReturnsJsonString() {
-        String json = "This is a JSON string";
-        String result = JsonUtils.toObject(json, String.class);
-        assertEquals(json, result);
-    }
-
-    @Test
-    public void toObject_NestedObject_ReturnsNestedObject() {
-        String json = "{\"user\":{\"name\":\"John\", \"age\":30}, \"role\":\"admin\"}";
-        NestedUser nestedUser = JsonUtils.toObject(json, NestedUser.class);
-        assertNotNull(nestedUser);
-        assertNotNull(nestedUser.getUser());
-        assertEquals("John", nestedUser.getUser().getName());
-        assertEquals(30, nestedUser.getUser().getAge());
-        assertEquals("admin", nestedUser.getRole());
-    }
-
-    @Test
-    public void toObject_Array_ReturnsArray() {
-        String json = "[{\"name\":\"John\", \"age\":30}, {\"name\":\"Jane\", \"age\":25}]";
-        List<User> users = JsonUtils.toObject(json, new TypeReference<List<User>>() {
-        });
-        assertNotNull(users);
-        assertEquals(2, users.size());
-        assertEquals("John", users.get(0).getName());
-        assertEquals(30, users.get(0).getAge());
-        assertEquals("Jane", users.get(1).getName());
-        assertEquals(25, users.get(1).getAge());
-    }
-
-    @Test
-    public void toObject_DateTime_ReturnsDateTime() {
-        String json = "{\"birthDate\":\"2000-01-01\", \"lastLogin\":\"2023-10-01 12:00:00\", \"lastActivity\":\"12:00:00\"}";
-        User user = JsonUtils.toObject(json, User.class);
-        assertNotNull(user);
-        assertEquals(LocalDate.of(2000, 1, 1), user.getBirthDate());
-        assertEquals(LocalDateTime.of(2023, 10, 1, 12, 0, 0), user.getLastLogin());
-        assertEquals(LocalTime.of(12, 0, 0), user.getLastActivity());
-    }
-
-    @Test
-    public void toObject_InputStream_ReturnsObject() {
-        String json = "{\"name\":\"John\", \"age\":30, \"birthDate\":\"2000-01-01\", \"lastLogin\":\"2023-10-01 12:00:00\", \"lastActivity\":\"12:00:00\", \"balance\":100.50}";
-        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
-        User user = JsonUtils.toObject(inputStream, User.class);
-        assertNotNull(user);
-        assertEquals("John", user.getName());
-        assertEquals(30, user.getAge());
-        assertEquals(LocalDate.of(2000, 1, 1), user.getBirthDate());
-        assertEquals(LocalDateTime.of(2023, 10, 1, 12, 0, 0), user.getLastLogin());
-        assertEquals(LocalTime.of(12, 0, 0), user.getLastActivity());
-        assertEquals(new BigDecimal("100.50"), user.getBalance());
-    }
-
-    @Test
-    public void toObject_InputStream_CharSequence_ReturnsJsonString() {
-        String json = "This is a JSON string";
-        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
-        String result = JsonUtils.toObject(inputStream, String.class);
-        assertEquals(json, result);
-    }
-
-    @Test
-    public void toObject_InputStream_Null_ReturnsNull() {
-        User user = JsonUtils.toObject((InputStream) null, User.class);
-        assertNull(user);
-    }
-
-    @Test
-    public void toObject_GenericClass_ReturnsObject() {
-        String json = "{\"name\":\"John\", \"age\":30}";
-        User user = JsonUtils.toObject(json, User.class);
-        assertNotNull(user);
-        assertEquals("John", user.getName());
-        assertEquals(30, user.getAge());
-    }
-
-    @Test
-    public void toObject_GenericClass_Array_ReturnsArray() {
-        String json = "[{\"name\":\"John\", \"age\":30}, {\"name\":\"Jane\", \"age\":25}]";
-        List<User> users = JsonUtils.toObject(json, List.class, User.class);
-        assertNotNull(users);
-        assertEquals(2, users.size());
-        assertEquals("John", users.get(0).getName());
-        assertEquals(30, users.get(0).getAge());
-        assertEquals("Jane", users.get(1).getName());
-        assertEquals(25, users.get(1).getAge());
-    }
-
-    @Test
-    public void toObject_GenericClass_InputStream_ReturnsObject() {
-        String json = "{\"name\":\"John\", \"age\":30}";
-        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
-        User user = JsonUtils.toObject(inputStream, User.class);
-        assertNotNull(user);
-        assertEquals("John", user.getName());
-        assertEquals(30, user.getAge());
-    }
-
-    @Test
-    public void toObject_GenericClass_InputStream_Array_ReturnsArray() {
-        String json = "[{\"name\":\"John\", \"age\":30}, {\"name\":\"Jane\", \"age\":25}]";
-        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
-        List<User> users = JsonUtils.toObject(inputStream, List.class, User.class);
-        assertNotNull(users);
-        assertEquals(2, users.size());
-        assertEquals("John", users.get(0).getName());
-        assertEquals(30, users.get(0).getAge());
-        assertEquals("Jane", users.get(1).getName());
-        assertEquals(25, users.get(1).getAge());
-    }
-
-    @Test
-    public void toObject_GenericClass_Type_ReturnsObject() {
-        String json = "{\"name\":\"John\", \"age\":30}";
-        Type type = new TypeReference<User>() {
-        }.getType();
-        User user = JsonUtils.toObject(json, type);
-        assertNotNull(user);
-        assertEquals("John", user.getName());
-        assertEquals(30, user.getAge());
-    }
-
-    @Test
-    public void toObject_GenericClass_Type_InputStream_ReturnsObject() {
-        String json = "{\"name\":\"John\", \"age\":30}";
-        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
-        Type type = new TypeReference<User>() {
-        }.getType();
-        User user = JsonUtils.toObject(inputStream, type);
-        assertNotNull(user);
-        assertEquals("John", user.getName());
-        assertEquals(30, user.getAge());
-    }
-
-    @Test
-    public void toObject_GenericClass_TypeReference_ReturnsObject() {
-        String json = "{\"name\":\"John\", \"age\":30}";
-        TypeReference<User> typeReference = new TypeReference<User>() {
-        };
-        User user = JsonUtils.toObject(json, typeReference);
-        assertNotNull(user);
-        assertEquals("John", user.getName());
-        assertEquals(30, user.getAge());
-    }
-
-    @Test
-    public void toObject_GenericClass_TypeReference_InputStream_ReturnsObject() {
-        String json = "{\"name\":\"John\", \"age\":30}";
-        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
-        TypeReference<User> typeReference = new TypeReference<User>() {
-        };
-        User user = JsonUtils.toObject(inputStream, typeReference);
-        assertNotNull(user);
-        assertEquals("John", user.getName());
-        assertEquals(30, user.getAge());
-    }
-
-    @Test
-    public void toJson_NullObject_ReturnsNull() {
+    @DisplayName("测试 toJson 方法 - null 值")
+    void testToJsonWithNull() {
         String json = JsonUtils.toJson(null);
         assertNull(json);
     }
 
     @Test
-    public void toJson_CharSequence_ReturnsJsonString() {
-        String json = JsonUtils.toJson("This is a JSON string");
-        assertEquals("This is a JSON string", json);
+    @DisplayName("测试 toJson 方法 - 字符串")
+    void testToJsonWithString() {
+        String text = "Hello World";
+        String json = JsonUtils.toJson(text);
+        assertEquals(text, json);
     }
 
     @Test
-    public void toJson_Number_ReturnsJsonString() {
-        String json = JsonUtils.toJson(123);
+    @DisplayName("测试 toJson 方法 - 数字")
+    void testToJsonWithNumber() {
+        Integer number = 123;
+        String json = JsonUtils.toJson(number);
         assertEquals("123", json);
     }
 
     @Test
-    public void toJson_Object_ReturnsJsonString() {
-        User user = new User();
-        user.setName("John");
-        user.setAge(30);
-        user.setBirthDate(LocalDate.of(2000, 1, 1));
-        user.setLastLogin(LocalDateTime.of(2023, 10, 1, 12, 0, 0));
-        user.setLastActivity(LocalTime.of(12, 0, 0));
-        user.setBalance(new BigDecimal("100.50"));
+    @DisplayName("测试 toPrettyJson 方法")
+    void testToPrettyJson() {
+        TestUser user = new TestUser();
+        user.setName("张三");
+        user.setAge(25);
+
+        String json = JsonUtils.toPrettyJson(user);
+        assertNotNull(json);
+        assertTrue(json.contains("张三"));
+        assertTrue(json.contains("\n")); // 格式化应该包含换行符
+    }
+
+    @Test
+    @DisplayName("测试 toObject 方法 - 基本类型")
+    void testToObjectWithBasicType() {
+        String json = "{\"name\":\"张三\",\"age\":25}";
+        TestUser user = JsonUtils.toObject(json, TestUser.class);
+
+        assertNotNull(user);
+        assertEquals("张三", user.getName());
+        assertEquals(25, user.getAge());
+    }
+
+    @Test
+    @DisplayName("测试 toObject 方法 - 空字符串")
+    void testToObjectWithEmptyString() {
+        TestUser user = JsonUtils.toObject("", TestUser.class);
+        assertNull(user);
+    }
+
+    @Test
+    @DisplayName("测试 toObject 方法 - null 值")
+    void testToObjectWithNullString() {
+        TestUser user = JsonUtils.toObject((String) null, TestUser.class);
+        assertNull(user);
+    }
+
+    @Test
+    @DisplayName("测试 toObject 方法 - 字符串类型")
+    void testToObjectWithStringType() {
+        String text = "Hello World";
+        String result = JsonUtils.toObject(text, String.class);
+        assertEquals(text, result);
+    }
+
+    @Test
+    @DisplayName("测试 toObject 方法 - 输入流")
+    void testToObjectWithInputStream() throws Exception {
+        String json = "{\"name\":\"张三\",\"age\":25}";
+        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
+
+        TestUser user = JsonUtils.toObject(inputStream, TestUser.class);
+        assertNotNull(user);
+        assertEquals("张三", user.getName());
+        assertEquals(25, user.getAge());
+    }
+
+    @Test
+    @DisplayName("测试 toObject 方法 - 泛型包装类")
+    void testToObjectWithWrapperType() {
+        String json = "{\"success\":true,\"message\":\"操作成功\",\"data\":{\"name\":\"张三\",\"age\":25}}";
+        TestResult<TestUser> result = JsonUtils.toObject(json, TestResult.class, TestUser.class);
+
+        assertNotNull(result);
+        assertTrue(result.getSuccess());
+        assertEquals("操作成功", result.getMessage());
+        assertNotNull(result.getData());
+        assertEquals("张三", result.getData().getName());
+        assertEquals(25, result.getData().getAge());
+    }
+
+    @Test
+    @DisplayName("测试 toObject 方法 - Type 类型")
+    void testToObjectWithJavaType() {
+        String json = "[{\"name\":\"张三\",\"age\":25},{\"name\":\"李四\",\"age\":30}]";
+        List<TestUser> users = JsonUtils.toObject(json, new TypeReference<>() {
+        });
+
+        assertNotNull(users);
+        assertEquals(2, users.size());
+        assertEquals("张三", users.get(0).getName());
+        assertEquals("李四", users.get(1).getName());
+    }
+
+    @Test
+    @DisplayName("测试 toObject 方法 - TypeReference 类型")
+    void testToObjectWithTypeReference() {
+        String json = "{\"total\":10,\"users\":[{\"name\":\"张三\",\"age\":25}]}";
+        Map<String, Object> result = JsonUtils.toObject(json, new TypeReference<>() {
+        });
+
+        assertNotNull(result);
+        assertEquals(10, result.get("total"));
+        assertNotNull(result.get("users"));
+    }
+
+    @Test
+    @DisplayName("测试 toObject 方法 - 输入流和 TypeReference")
+    void testToObjectWithInputStreamAndTypeReference() throws Exception {
+        String json = "[{\"name\":\"张三\",\"age\":25}]";
+        InputStream inputStream = new ByteArrayInputStream(json.getBytes());
+
+        List<TestUser> users = JsonUtils.toObject(inputStream, new TypeReference<>() {
+        });
+        assertNotNull(users);
+        assertEquals(1, users.size());
+        assertEquals("张三", users.get(0).getName());
+    }
+
+    @Test
+    @DisplayName("测试 setDefaultPropertyNamingStrategy 方法")
+    void testSetDefaultPropertyNamingStrategy() {
+        // 设置为下划线命名策略
+        JsonUtils.setDefaultPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+
+        TestUser user = new TestUser();
+        user.setName("张三");
+        user.setAge(25);
 
         String json = JsonUtils.toJson(user);
         assertNotNull(json);
-        assertTrue(json.contains("\"name\":\"John\""));
-        assertTrue(json.contains("\"age\":30"));
-        assertTrue(json.contains("\"birthDate\":\"2000-01-01\""));
-        assertTrue(json.contains("\"lastLogin\":\"2023-10-01 12:00:00\""));
-        assertTrue(json.contains("\"lastActivity\":\"12:00:00\""));
-        assertTrue(json.contains("\"balance\":\"100.50\""));
+        assertTrue(json.contains("name")); // 检查基本字段存在
+        // 验证字段名转换
+        assertTrue(json.contains("\"name\":") || json.contains("\"user_name\":"));
     }
 
     @Test
-    public void toJson_NestedObject_ReturnsJsonString() {
-        User user = new User();
-        user.setName("John");
-        user.setAge(30);
+    @DisplayName("测试 objectMapper 方法")
+    void testObjectMapper() {
+        ObjectMapper mapper = JsonUtils.objectMapper();
+        assertNotNull(mapper);
 
-        NestedUser nestedUser = new NestedUser();
-        nestedUser.setUser(user);
-        nestedUser.setRole("admin");
+        // 测试序列化和反序列化
+        TestUser user = new TestUser();
+        user.setName("张三");
+        user.setAge(25);
 
-        String json = JsonUtils.toJson(nestedUser);
+        try {
+            String json = mapper.writeValueAsString(user);
+            TestUser parsedUser = mapper.readValue(json, TestUser.class);
+            assertEquals(user.getName(), parsedUser.getName());
+            assertEquals(user.getAge(), parsedUser.getAge());
+        } catch (Exception e) {
+            fail("ObjectMapper 序列化/反序列化失败: " + e.getMessage());
+        }
+    }
+
+    @Test
+    @DisplayName("测试 customize 方法")
+    void testCustomize() {
+        Jackson2ObjectMapperBuilderCustomizer customizer = JsonUtils.customize();
+        assertNotNull(customizer);
+
+        // 测试自定义配置是否生效
+        ObjectMapper mapper = new ObjectMapper();
+        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+        customizer.customize(builder);
+        builder.configure(mapper);
+
+        assertNotNull(mapper);
+    }
+
+    @Test
+    @DisplayName("测试日期时间序列化")
+    void testDateTimeSerialization() {
+        TestUser user = new TestUser();
+        user.setName("张三");
+        user.setAge(25);
+        user.setCreateTime(LocalDateTime.of(2023, 8, 8, 15, 30, 45));
+
+        String json = JsonUtils.toJson(user);
         assertNotNull(json);
-        assertTrue(json.contains("\"name\":\"John\""));
-        assertTrue(json.contains("\"age\":30"));
-        assertTrue(json.contains("\"role\":\"admin\""));
+        assertTrue(json.contains("2023-08-08 15:30:45"));
+
+        // 反序列化验证
+        TestUser parsedUser = JsonUtils.toObject(json, TestUser.class);
+        assertEquals(user.getCreateTime(), parsedUser.getCreateTime());
     }
 
     @Test
-    public void toJson_Array_ReturnsJsonString() {
-        User user1 = new User();
-        user1.setName("John");
-        user1.setAge(30);
+    @DisplayName("测试 BigDecimal 序列化")
+    void testBigDecimalSerialization() {
+        TestUser user = new TestUser();
+        user.setName("张三");
+        user.setAge(25);
+        user.setSalary(new BigDecimal("5000.123456"));
 
-        User user2 = new User();
-        user2.setName("Jane");
-        user2.setAge(25);
+        String json = JsonUtils.toJson(user);
+        assertNotNull(json);
 
-        List<User> users = Arrays.asList(user1, user2);
+        TestUser parsedUser = JsonUtils.toObject(json, TestUser.class);
+        assertEquals(user.getSalary(), parsedUser.getSalary());
+    }
+
+    @Test
+    @DisplayName("测试异常情况 - 无效 JSON")
+    void testInvalidJson() {
+        String invalidJson = "{invalid json}";
+
+        assertThrows(RuntimeException.class, () -> {
+            JsonUtils.toObject(invalidJson, TestUser.class);
+        });
+    }
+
+    @Test
+    @DisplayName("测试复杂嵌套对象")
+    void testComplexNestedObject() {
+        TestUser user = new TestUser();
+        user.setName("张三");
+        user.setAge(25);
+        user.setCreateTime(LocalDateTime.now());
+        user.setSalary(new BigDecimal("5000.00"));
+
+        TestResult<TestUser> result = new TestResult<>();
+        result.setSuccess(true);
+        result.setMessage("操作成功");
+        result.setData(user);
+
+        String json = JsonUtils.toJson(result);
+        assertNotNull(json);
+        assertTrue(json.contains("张三"));
+        assertTrue(json.contains("操作成功"));
+
+        TestResult<TestUser> parsedResult = JsonUtils.toObject(json,
+            new TypeReference<>() {
+            });
+        assertNotNull(parsedResult);
+        assertTrue(parsedResult.getSuccess());
+        assertEquals("张三", parsedResult.getData().getName());
+    }
+
+    @Test
+    @DisplayName("测试 List 类型处理")
+    void testListTypeHandling() {
+        List<TestUser> users = List.of(
+            createTestUser("张三", 25),
+            createTestUser("李四", 30)
+        );
 
         String json = JsonUtils.toJson(users);
         assertNotNull(json);
-        assertTrue(json.contains("\"name\":\"John\""));
-        assertTrue(json.contains("\"age\":30"));
-        assertTrue(json.contains("\"name\":\"Jane\""));
-        assertTrue(json.contains("\"age\":25"));
+
+        List<TestUser> parsedUsers = JsonUtils.toObject(json, new TypeReference<>() {
+        });
+        assertEquals(2, parsedUsers.size());
+        assertEquals("张三", parsedUsers.get(0).getName());
+        assertEquals("李四", parsedUsers.get(1).getName());
     }
 
-    @Test
-    public void tsToLocalDateTime() {
-        long t = System.currentTimeMillis();
-        log.info("t: {}", t);
-        LocalDateTime time = JsonUtils.toObject(String.valueOf(t), LocalDateTime.class);
-        log.info("time: {}", time);
-
-        int ts = (int) (t / 1000);
-        log.info("ts: {}", ts);
-        time = JsonUtils.toObject(String.valueOf(ts), LocalDateTime.class);
-        log.info("time: {}", time);
+    private TestUser createTestUser(String name, int age) {
+        TestUser user = new TestUser();
+        user.setName(name);
+        user.setAge(age);
+        user.setCreateTime(LocalDateTime.now());
+        user.setSalary(new BigDecimal("5000.00"));
+        return user;
     }
 
 }

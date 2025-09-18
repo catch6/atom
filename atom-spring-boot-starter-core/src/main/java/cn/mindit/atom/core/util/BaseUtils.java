@@ -31,20 +31,40 @@ public abstract class BaseUtils {
     }
 
     public static String idToBase(String characters, long id) {
+        if (characters == null || characters.isEmpty()) {
+            throw new IllegalArgumentException("Characters cannot be null or empty");
+        }
+
+        if (id <= 0) {
+            return "";
+        }
+
         int len = characters.length();
         StringBuilder sb = new StringBuilder();
         while (id > 0) {
             sb.insert(0, characters.charAt((int) (id % len)));
-            id = id / characters.length();
+            id = id / len;
         }
         return sb.toString();
     }
 
     public static long baseToId(String characters, String base) {
+        if (characters == null || characters.isEmpty()) {
+            throw new IllegalArgumentException("Characters cannot be null or empty");
+        }
+
+        if (base == null || base.isEmpty()) {
+            return 0L;
+        }
+
         int len = characters.length();
         long id = 0;
         for (int i = 0; i < base.length(); i++) {
-            id = id * len + characters.indexOf(base.charAt(i));
+            int index = characters.indexOf(base.charAt(i));
+            if (index == -1) {
+                return -1L; // 字符不在字符集中，返回 -1
+            }
+            id = id * len + index;
         }
         return id;
     }

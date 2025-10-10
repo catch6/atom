@@ -1,1 +1,1 @@
-cn.mindit.atom.scheduling.config.SchedulingAutoConfiguration
+cn.mindit.atom.scheduling.shedlock.config.ShedAutoConfiguration

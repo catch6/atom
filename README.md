@@ -51,7 +51,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 <parent>
   <groupId>cn.mindit</groupId>
   <artifactId>atom</artifactId>
-  <version>3.1.3</version>
+  <version>3.1.4</version>
   <relativePath/>
 </parent>
 ```

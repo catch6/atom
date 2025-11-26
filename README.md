@@ -169,8 +169,6 @@ atom:
 - 建议在生产环境关闭 doc 及其相关配置
 
 ```yaml
-knife4j:
-  production: true
 springdoc:
   api-docs:
     enabled: false

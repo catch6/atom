@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+  ~ Atom is licensed under Mulan PSL v2.
+  ~ You can use this software according to the terms and conditions of the Mulan PSL v2.
+  ~ You may obtain a copy of Mulan PSL v2 at:
+  ~          http://license.coscl.org.cn/MulanPSL2
+  ~ THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+  ~ EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+  ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  ~ See the Mulan PSL v2 for more details.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>cn.mindit</groupId>
+    <artifactId>atom</artifactId>
+    <version>${revision}</version>
+  </parent>
+
+  <name>atom-spring-boot-starter-websocket</name>
+  <description>Atom WebSocket模块，提供WebSocket客户端连接管理和消息处理，支持多实例连接和自动重连机制。</description>
+  <url>https://github.com/catch6/atom</url>
+
+  <scm>
+    <url>https://github.com/catch6/atom</url>
+    <connection>scm:git:git://github.com/catch6/atom.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/catch6/atom.git</developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>Catch</id>
+      <name>Catch</name>
+      <email>catchlife6@163.com</email>
+      <url>https://github.com/catch6</url>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>+8</timezone>
+    </developer>
+  </developers>
+
+  <artifactId>atom-spring-boot-starter-websocket</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>cn.mindit</groupId>
+      <artifactId>atom-spring-boot-starter-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-websocket</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>

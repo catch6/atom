@@ -62,12 +62,17 @@ public class JsonUtils {
      * @return json 字符串
      */
     public static <T> String toJson(T object) {
-        return switch (object) {
-            case null -> null;
-            case CharSequence charSequence -> charSequence.toString();
-            case Number number -> number.toString();
-            default -> jsonMapper.writeValueAsString(object);
-        };
+        if (object == null) {
+            return null;
+        }
+        if (object instanceof CharSequence charSequence) {
+            return charSequence.toString();
+        }
+        if (object instanceof Number number) {
+            return number.toString();
+        }
+
+        return jsonMapper.writeValueAsString(object);
     }
 
     /**
@@ -78,13 +83,17 @@ public class JsonUtils {
      * @return json 字符串
      */
     public static <T> String toPrettyJson(T object) {
-        return switch (object) {
-            case null -> null;
-            case CharSequence charSequence -> charSequence.toString();
-            case Number number -> number.toString();
-            default -> jsonMapper.writerWithDefaultPrettyPrinter()
-                                 .writeValueAsString(object);
-        };
+        if (object == null) {
+            return null;
+        }
+        if (object instanceof CharSequence charSequence) {
+            return charSequence.toString();
+        }
+        if (object instanceof Number number) {
+            return number.toString();
+        }
+        return jsonMapper.writerWithDefaultPrettyPrinter()
+                         .writeValueAsString(object);
     }
 
     /**

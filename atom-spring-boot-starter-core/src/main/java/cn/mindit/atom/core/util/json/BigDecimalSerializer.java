@@ -12,18 +12,15 @@
 
 package cn.mindit.atom.core.util.json;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.type.WritableTypeId;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import com.fasterxml.jackson.databind.ser.ContextualSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.type.WritableTypeId;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.annotation.JacksonStdImpl;
+import tools.jackson.databind.jsontype.TypeSerializer;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -33,7 +30,7 @@ import java.text.DecimalFormat;
  * @since 2024-12-20
  */
 @JacksonStdImpl
-public class BigDecimalSerializer extends JsonSerializer<BigDecimal> implements ContextualSerializer {
+public class BigDecimalSerializer extends ValueSerializer<BigDecimal> {
 
     public static final BigDecimalSerializer instance = new BigDecimalSerializer();
 
@@ -48,7 +45,7 @@ public class BigDecimalSerializer extends JsonSerializer<BigDecimal> implements 
     }
 
     @Override
-    public void serialize(BigDecimal value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(BigDecimal value, JsonGenerator gen, SerializationContext context) {
         if (decimalFormat == null) {
             gen.writeString(value.toPlainString());
             return;
@@ -57,14 +54,14 @@ public class BigDecimalSerializer extends JsonSerializer<BigDecimal> implements 
     }
 
     @Override
-    public void serializeWithType(BigDecimal value, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        WritableTypeId typeIdDef = typeSer.writeTypePrefix(gen, typeSer.typeId(value, JsonToken.VALUE_STRING));
-        serialize(value, gen, serializers);
-        typeSer.writeTypeSuffix(gen, typeIdDef);
+    public void serializeWithType(BigDecimal value, JsonGenerator gen, SerializationContext context, TypeSerializer typeSer) {
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(gen, context, typeSer.typeId(value, JsonToken.VALUE_STRING));
+        serialize(value, gen, context);
+        typeSer.writeTypeSuffix(gen, context, typeIdDef);
     }
 
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException {
+    public ValueSerializer<?> createContextual(SerializationContext context, BeanProperty property) {
         if (property == null) {
             return BigDecimalSerializer.instance;
         }

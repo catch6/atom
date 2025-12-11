@@ -13,7 +13,7 @@
 package cn.mindit.atom.core.util.json;
 
 import com.fasterxml.jackson.annotation.JacksonAnnotation;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.annotation.JsonSerialize;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

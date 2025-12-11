@@ -15,23 +15,19 @@ package cn.mindit.atom.core.util.json;
 import cn.hutool.core.util.DesensitizedUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.mindit.atom.core.util.MaskType;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.type.WritableTypeId;
-import com.fasterxml.jackson.databind.BeanProperty;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import com.fasterxml.jackson.databind.ser.ContextualSerializer;
-
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.type.WritableTypeId;
+import tools.jackson.databind.BeanProperty;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.jsontype.TypeSerializer;
 
 /**
  * @author Catch
  * @since 2023-08-25
  */
-public class MaskSerializer extends JsonSerializer<Object> implements ContextualSerializer {
+public class MaskSerializer extends ValueSerializer<Object> {
 
     public static final MaskSerializer instance = new MaskSerializer();
 
@@ -51,7 +47,7 @@ public class MaskSerializer extends JsonSerializer<Object> implements Contextual
     }
 
     @Override
-    public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+    public void serialize(Object value, JsonGenerator gen, SerializationContext ctxt) {
         if (value == null) {
             return;
         }
@@ -112,14 +108,14 @@ public class MaskSerializer extends JsonSerializer<Object> implements Contextual
     }
 
     @Override
-    public void serializeWithType(Object value, JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        WritableTypeId typeIdDef = typeSer.writeTypePrefix(gen, typeSer.typeId(value, JsonToken.VALUE_STRING));
-        serialize(value, gen, serializers);
-        typeSer.writeTypeSuffix(gen, typeIdDef);
+    public void serializeWithType(Object value, JsonGenerator gen, SerializationContext context, TypeSerializer typeSer) {
+        WritableTypeId typeIdDef = typeSer.writeTypePrefix(gen, context, typeSer.typeId(value, JsonToken.VALUE_STRING));
+        serialize(value, gen, context);
+        typeSer.writeTypeSuffix(gen, context, typeIdDef);
     }
 
     @Override
-    public JsonSerializer<?> createContextual(SerializerProvider provider, BeanProperty property) throws JsonMappingException {
+    public ValueSerializer<?> createContextual(SerializationContext context, BeanProperty property) {
         if (property == null) {
             return MaskSerializer.instance;
         }
@@ -131,7 +127,7 @@ public class MaskSerializer extends JsonSerializer<Object> implements Contextual
         if (annotation != null) {
             return new MaskSerializer(annotation.value(), annotation.start(), annotation.end());
         }
-        return provider.findValueSerializer(property.getType(), property);
+        return context.findValueSerializer(property.getType());
     }
 
 }

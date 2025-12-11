@@ -12,15 +12,12 @@
 package cn.mindit.atom.test.core.utils;
 
 import cn.mindit.atom.core.util.JsonUtils;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import lombok.Data;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -56,12 +53,6 @@ class JsonUtilsTest {
         private String message;
         private T data;
 
-    }
-
-    @BeforeEach
-    void setUp() {
-        // 重置命名策略为默认值
-        JsonUtils.setDefaultPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
     }
 
     @Test
@@ -213,26 +204,9 @@ class JsonUtilsTest {
     }
 
     @Test
-    @DisplayName("测试 setDefaultPropertyNamingStrategy 方法")
-    void testSetDefaultPropertyNamingStrategy() {
-        // 设置为下划线命名策略
-        JsonUtils.setDefaultPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-
-        TestUser user = new TestUser();
-        user.setName("张三");
-        user.setAge(25);
-
-        String json = JsonUtils.toJson(user);
-        assertNotNull(json);
-        assertTrue(json.contains("name")); // 检查基本字段存在
-        // 验证字段名转换
-        assertTrue(json.contains("\"name\":") || json.contains("\"user_name\":"));
-    }
-
-    @Test
     @DisplayName("测试 objectMapper 方法")
-    void testObjectMapper() {
-        ObjectMapper mapper = JsonUtils.objectMapper();
+    void testJsonMapper() {
+        tools.jackson.databind.json.JsonMapper mapper = JsonUtils.jsonMapper();
         assertNotNull(mapper);
 
         // 测试序列化和反序列化
@@ -246,23 +220,22 @@ class JsonUtilsTest {
             assertEquals(user.getName(), parsedUser.getName());
             assertEquals(user.getAge(), parsedUser.getAge());
         } catch (Exception e) {
-            fail("ObjectMapper 序列化/反序列化失败: " + e.getMessage());
+            fail("JsonMapper 序列化/反序列化失败: " + e.getMessage());
         }
     }
 
     @Test
     @DisplayName("测试 customize 方法")
     void testCustomize() {
-        Jackson2ObjectMapperBuilderCustomizer customizer = JsonUtils.customize();
+        JsonMapperBuilderCustomizer customizer = JsonUtils.customize();
         assertNotNull(customizer);
 
         // 测试自定义配置是否生效
-        ObjectMapper mapper = new ObjectMapper();
-        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+        JsonMapper.Builder builder = JsonMapper.builder();
         customizer.customize(builder);
-        builder.configure(mapper);
+        JsonMapper jsonMapper = builder.build();
 
-        assertNotNull(mapper);
+        assertNotNull(jsonMapper);
     }
 
     @Test

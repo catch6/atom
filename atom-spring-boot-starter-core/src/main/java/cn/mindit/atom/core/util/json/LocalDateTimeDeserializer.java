@@ -1,13 +1,12 @@
 package cn.mindit.atom.core.util.json;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.annotation.JacksonStdImpl;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +16,7 @@ import java.time.format.DateTimeFormatter;
  * @since 2025-06-13
  */
 @JacksonStdImpl
-public class LocalDateTimeDeserializer extends com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer {
+public class LocalDateTimeDeserializer extends tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer {
 
     public LocalDateTimeDeserializer() {
         super();
@@ -27,18 +26,18 @@ public class LocalDateTimeDeserializer extends com.fasterxml.jackson.datatype.js
         super(formatter);
     }
 
-    public LocalDateTimeDeserializer(com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer base, Boolean leniency) {
+    public LocalDateTimeDeserializer(tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer base, Boolean leniency) {
         super(base, leniency);
     }
 
-    public LocalDateTimeDeserializer(com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer base, Boolean leniency, DateTimeFormatter formatter, JsonFormat.Shape shape, Boolean readTimestampsAsNanosOverride) {
+    public LocalDateTimeDeserializer(tools.jackson.databind.ext.javatime.deser.LocalDateTimeDeserializer base, Boolean leniency, DateTimeFormatter formatter, JsonFormat.Shape shape, Boolean readTimestampsAsNanosOverride) {
         super(base, leniency, formatter, shape, readTimestampsAsNanosOverride);
     }
 
     @Override
-    public LocalDateTime deserialize(JsonParser parser, DeserializationContext context) throws IOException {
+    public LocalDateTime deserialize(JsonParser parser, DeserializationContext context) {
         if (parser.hasTokenId(6)) {
-            return this._fromString(parser, context, parser.getText());
+            return this._fromString(parser, context, parser.getString());
         } else if (parser.isExpectedStartObjectToken()) {
             return this._fromString(parser, context, context.extractScalarFromObject(parser, this, this.handledType()));
         } else {
@@ -96,7 +95,7 @@ public class LocalDateTimeDeserializer extends com.fasterxml.jackson.datatype.js
                 return (LocalDateTime) parser.getEmbeddedObject();
             } else {
                 if (parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
-                    int length = parser.getTextLength();
+                    int length = parser.getStringLength();
                     Instant instant;
                     if (length > 10) {
                         instant = Instant.ofEpochMilli(parser.getLongValue());
@@ -106,7 +105,7 @@ public class LocalDateTimeDeserializer extends com.fasterxml.jackson.datatype.js
                     return LocalDateTime.ofInstant(instant, context.getTimeZone().toZoneId());
                 }
 
-                return (LocalDateTime) this._handleUnexpectedToken(context, parser, "Expected array or string.", new Object[0]);
+                return this._handleUnexpectedToken(context, parser, "Expected array or string.", new Object[0]);
             }
         }
     }

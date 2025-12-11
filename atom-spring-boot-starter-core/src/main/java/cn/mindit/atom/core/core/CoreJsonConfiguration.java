@@ -14,7 +14,7 @@ package cn.mindit.atom.core.core;
 
 import cn.mindit.atom.core.util.JsonUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
 public class CoreJsonConfiguration {
 
     @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
+    public JsonMapperBuilderCustomizer jsonMapperBuilderCustomizer() {
         return JsonUtils.customize();
     }
 

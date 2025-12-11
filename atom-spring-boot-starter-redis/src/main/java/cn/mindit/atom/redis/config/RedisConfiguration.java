@@ -12,8 +12,8 @@
 
 package cn.mindit.atom.redis.config;
 
-import lombok.RequiredArgsConstructor;
 import cn.mindit.atom.core.util.JsonUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +21,7 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -87,7 +87,7 @@ public class RedisConfiguration {
     }
 
     private RedisSerializer<Object> jacksonRedisSerializer() {
-        return new GenericJackson2JsonRedisSerializer(JsonUtils.objectMapper);
+        return new GenericJacksonJsonRedisSerializer(JsonUtils.jsonMapper());
     }
 
     private PrefixStringRedisSerializer prefixStringRedisSerializer() {

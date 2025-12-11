@@ -12,15 +12,13 @@
 
 package cn.mindit.atom.feign.config;
 
+import cn.mindit.atom.core.util.Result;
 import feign.FeignException;
 import feign.Response;
 import lombok.extern.slf4j.Slf4j;
-import cn.mindit.atom.core.util.Result;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
-import org.springframework.cloud.openfeign.support.HttpMessageConverterCustomizer;
+import org.springframework.cloud.openfeign.support.FeignHttpMessageConverters;
 import org.springframework.cloud.openfeign.support.SpringDecoder;
 import org.springframework.stereotype.Component;
 
@@ -36,8 +34,8 @@ import java.lang.reflect.Type;
 @ConditionalOnProperty(value = "atom.feign.decode", matchIfMissing = true)
 public class FeignClientDecoder extends SpringDecoder {
 
-    public FeignClientDecoder(ObjectFactory<HttpMessageConverters> messageConverters, ObjectProvider<HttpMessageConverterCustomizer> customizers) {
-        super(messageConverters, customizers);
+    public FeignClientDecoder(ObjectProvider<FeignHttpMessageConverters> converters) {
+        super(converters);
     }
 
     @Override

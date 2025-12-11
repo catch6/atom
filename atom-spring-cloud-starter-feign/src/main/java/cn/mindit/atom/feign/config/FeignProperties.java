@@ -28,7 +28,7 @@ public class FeignProperties {
      */
     private Boolean enabled = true;
     /**
-     * 是否启用Feign请求响应日志记录
+     * 是否启用 Feign 请求响应日志记录
      */
     private Boolean logging = true;
     /**

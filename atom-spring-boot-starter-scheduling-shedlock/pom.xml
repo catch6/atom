@@ -40,6 +40,10 @@
       <artifactId>atom-spring-boot-starter-scheduling</artifactId>
     </dependency>
     <dependency>
+      <groupId>cn.mindit</groupId>
+      <artifactId>atom-spring-boot-starter-redis</artifactId>
+    </dependency>
+    <dependency>
       <groupId>net.javacrumbs.shedlock</groupId>
       <artifactId>shedlock-spring</artifactId>
     </dependency>

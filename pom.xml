@@ -82,7 +82,7 @@
   <properties>
     <java.version>25</java.version>
 
-    <revision>3.5.1</revision>
+    <revision>4.0.0</revision>
     <spring-cloud-dependencies.version>2025.0.0</spring-cloud-dependencies.version>
     <spring-cloud-alibaba-dependencies.version>2025.0.0.0</spring-cloud-alibaba-dependencies.version>
     <spring-modulith-bom.version>1.4.5</spring-modulith-bom.version>

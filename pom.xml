@@ -349,33 +349,33 @@
   <build>
     <pluginManagement>
       <plugins>
-        <!-- <plugin> -->
-        <!--   <groupId>org.apache.maven.plugins</groupId> -->
-        <!--   <artifactId>maven-compiler-plugin</artifactId> -->
-        <!--   <configuration> -->
-        <!--     <annotationProcessorPaths> -->
-        <!--       <path> -->
-        <!--         <groupId>org.projectlombok</groupId> -->
-        <!--         <artifactId>lombok</artifactId> -->
-        <!--         <version>${lombok.version}</version> -->
-        <!--       </path> -->
-        <!--       <dependency> -->
-        <!--         <groupId>org.projectlombok</groupId> -->
-        <!--         <artifactId>lombok-mapstruct-binding</artifactId> -->
-        <!--         <version>${lombok-mapstruct-binding.version}</version> -->
-        <!--       </dependency> -->
-        <!--       <path> -->
-        <!--         <groupId>io.github.linpeilie</groupId> -->
-        <!--         <artifactId>mapstruct-plus-processor</artifactId> -->
-        <!--         <version>${mapstruct-plus.version}</version> -->
-        <!--       </path> -->
-        <!--       <path> -->
-        <!--         <groupId>org.springframework.boot</groupId> -->
-        <!--         <artifactId>spring-boot-configuration-processor</artifactId> -->
-        <!--       </path> -->
-        <!--     </annotationProcessorPaths> -->
-        <!--   </configuration> -->
-        <!-- </plugin> -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+              </path>
+              <!-- <dependency> -->
+              <!--   <groupId>org.projectlombok</groupId> -->
+              <!--   <artifactId>lombok-mapstruct-binding</artifactId> -->
+              <!--   <version>${lombok-mapstruct-binding.version}</version> -->
+              <!-- </dependency> -->
+              <!-- <path> -->
+              <!--   <groupId>io.github.linpeilie</groupId> -->
+              <!--   <artifactId>mapstruct-plus-processor</artifactId> -->
+              <!--   <version>${mapstruct-plus.version}</version> -->
+              <!-- </path> -->
+              <path>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+              </path>
+            </annotationProcessorPaths>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>

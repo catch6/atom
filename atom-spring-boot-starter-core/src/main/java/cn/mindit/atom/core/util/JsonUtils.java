@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer;
 import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.SerializationFeature;
@@ -288,6 +289,7 @@ public class JsonUtils {
                                  .changeDefaultPropertyInclusion(include -> include.withContentInclusion(JsonInclude.Include.ALWAYS))
                                  // 即如果一个类没有public的方法或属性时，会导致序列化失败。关闭后，会得到一个空JSON串。
                                  .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                                 .disable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
                                  .addModules(simpleModule);
     }
 

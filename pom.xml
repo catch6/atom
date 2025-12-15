@@ -80,7 +80,7 @@
   </modules>
 
   <properties>
-    <java.version>25</java.version>
+    <java.version>17</java.version>
 
     <revision>3.5.1</revision>
     <spring-cloud-dependencies.version>2025.0.0</spring-cloud-dependencies.version>

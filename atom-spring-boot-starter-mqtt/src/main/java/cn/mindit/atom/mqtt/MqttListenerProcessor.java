@@ -12,11 +12,15 @@
 
 package cn.mindit.atom.mqtt;
 
+import cn.mindit.atom.core.util.JsonUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.Ordered;
@@ -34,14 +38,21 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 @Getter
-public class MqttListenerProcessor implements BeanPostProcessor, Ordered {
+public class MqttListenerProcessor implements BeanPostProcessor, Ordered, BeanFactoryAware {
 
     private final List<MqttConsumer> consumers;
 
     private final Set<Class<?>> nonAnnotatedClasses = Collections.newSetFromMap(new ConcurrentHashMap<>(64));
 
+    private BeanFactory beanFactory;
+
     public MqttListenerProcessor() {
         consumers = new ArrayList<>();
+    }
+
+    @Override
+    public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 
     @Override
@@ -66,11 +77,16 @@ public class MqttListenerProcessor implements BeanPostProcessor, Ordered {
             Method method = entry.getKey();
             MqttListener listener = entry.getValue();
             Method methodToUse = checkProxy(method, bean);
+            validateMethodSignature(methodToUse);
+            Class<?> payloadType = methodToUse.getParameterTypes()[1];
+            boolean needsConversion = payloadType != String.class;
+            String errorHandlerBeanName = listener.errorHandler();
             MqttConsumer consumer = new MqttConsumer(listener.id(), listener.topics(), listener.qos(), (topic, value) -> {
                 try {
-                    methodToUse.invoke(bean, topic, value);
+                    Object arg = needsConversion ? JsonUtils.toObject(value, payloadType) : value;
+                    methodToUse.invoke(bean, topic, arg);
                 } catch (Exception e) {
-                    log.error("MQTT invoke error", e);
+                    handleInvokeError(errorHandlerBeanName, topic, value, e);
                 }
             });
             consumers.add(consumer);
@@ -84,6 +100,44 @@ public class MqttListenerProcessor implements BeanPostProcessor, Ordered {
     @Override
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
+    }
+
+    private void validateMethodSignature(Method method) {
+        Class<?>[] paramTypes = method.getParameterTypes();
+        if (paramTypes.length != 2) {
+            throw new IllegalArgumentException(String.format(
+                "@MqttListener method '%s' in '%s' must have exactly 2 parameters: (String topic, T message)",
+                method.getName(), method.getDeclaringClass().getSimpleName()));
+        }
+        if (paramTypes[0] != String.class) {
+            throw new IllegalArgumentException(String.format(
+                "@MqttListener method '%s' in '%s' first parameter must be String (topic)",
+                method.getName(), method.getDeclaringClass().getSimpleName()));
+        }
+    }
+
+    private void handleInvokeError(String errorHandlerBeanName, String topic, String message, Exception e) {
+        MqttListenerErrorHandler handler = resolveErrorHandler(errorHandlerBeanName);
+        if (handler != null) {
+            try {
+                handler.handleError(topic, message, e);
+            } catch (Exception ex) {
+                log.error("MQTT error handler threw exception for topic '{}': {}", topic, ex.getMessage(), ex);
+            }
+        } else {
+            log.error("MQTT invoke error on topic '{}'", topic, e);
+        }
+    }
+
+    private MqttListenerErrorHandler resolveErrorHandler(String errorHandlerBeanName) {
+        if (errorHandlerBeanName != null && !errorHandlerBeanName.isEmpty()) {
+            return beanFactory.getBean(errorHandlerBeanName, MqttListenerErrorHandler.class);
+        }
+        try {
+            return beanFactory.getBean(MqttListenerErrorHandler.class);
+        } catch (NoSuchBeanDefinitionException e) {
+            return null;
+        }
     }
 
     private Method checkProxy(Method methodArg, Object bean) {

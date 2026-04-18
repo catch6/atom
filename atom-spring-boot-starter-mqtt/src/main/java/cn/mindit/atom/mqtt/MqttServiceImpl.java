@@ -12,9 +12,9 @@
 
 package cn.mindit.atom.mqtt;
 
+import cn.mindit.atom.mqtt.config.MqttProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import cn.mindit.atom.mqtt.config.MqttProperties;
 import org.springframework.context.ApplicationContext;
 
 import java.nio.charset.StandardCharsets;

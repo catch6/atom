@@ -12,8 +12,8 @@
 
 package cn.mindit.atom.mqtt;
 
-import lombok.Data;
 import cn.mindit.atom.mqtt.config.MqttProperties;
+import lombok.Data;
 import org.springframework.util.Assert;
 
 import java.util.Arrays;

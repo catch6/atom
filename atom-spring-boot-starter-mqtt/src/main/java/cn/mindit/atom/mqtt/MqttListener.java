@@ -44,4 +44,11 @@ public @interface MqttListener {
      */
     int[] qos() default 0;
 
+    /**
+     * 异常处理器 Bean 名称, 为空则使用全局 {@link MqttListenerErrorHandler} Bean
+     *
+     * @return 异常处理器 Bean 名称
+     */
+    String errorHandler() default "";
+
 }

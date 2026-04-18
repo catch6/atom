@@ -12,8 +12,8 @@
 
 package cn.mindit.atom.mqtt;
 
-import lombok.extern.slf4j.Slf4j;
 import cn.mindit.atom.mqtt.config.MqttProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

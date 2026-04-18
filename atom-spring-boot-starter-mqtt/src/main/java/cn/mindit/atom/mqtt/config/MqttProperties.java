@@ -61,6 +61,16 @@ public class MqttProperties {
     private String clientId;
 
     /**
+     * 是否开启异步分发, 开启后 MQTT 消息将通过线程池分发到监听器, 避免阻塞 Paho 回调线程
+     */
+    private Boolean async = false;
+
+    /**
+     * 异步分发线程池配置, 仅在 async=true 时生效
+     */
+    private MqttExecutor executor = new MqttExecutor();
+
+    /**
      * MQTT 实例配置
      */
     private List<MqttInstance> instances;
@@ -92,6 +102,28 @@ public class MqttProperties {
          * 实例客户端 ID, 默认为 ${spring.application.name}-${spring.profiles.active}-随机6位字符
          */
         private String clientId;
+
+    }
+
+    @Data
+    public static class MqttExecutor {
+
+        /**
+         * 核心线程数
+         */
+        private Integer corePoolSize = 4;
+        /**
+         * 最大线程数
+         */
+        private Integer maxPoolSize = 16;
+        /**
+         * 队列容量
+         */
+        private Integer queueCapacity = 1024;
+        /**
+         * 线程名前缀
+         */
+        private String threadNamePrefix = "mqtt-listener-";
 
     }
 

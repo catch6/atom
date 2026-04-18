@@ -13,11 +13,11 @@
 package cn.mindit.atom.mqtt.config;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import cn.mindit.atom.mqtt.MqttConsumer;
 import cn.mindit.atom.mqtt.MqttConsumerProcessor;
 import cn.mindit.atom.mqtt.MqttSubscriber;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.mqttv5.client.IMqttMessageListener;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
@@ -33,11 +33,13 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * @author Catch
@@ -55,6 +57,8 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
     private final List<MqttSubscriber> mqttSubscribers;
     private final List<MqttClient> managedClients = new ArrayList<>();
 
+    private ThreadPoolTaskExecutor asyncExecutor;
+
     @Value("${spring.application.name:-atom}")
     private String applicationName;
     @Value("${spring.profiles.active:-}")
@@ -70,6 +74,8 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
         ConfigurableApplicationContext applicationContext = event.getApplicationContext();
         ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
         Map<String, List<MqttConsumer>> consumerMap = MqttConsumerProcessor.processConsumerMap(applicationContext, mqttProperties, mqttSubscribers);
+
+        Executor executor = initExecutor();
 
         for (MqttProperties.MqttInstance instance : instances) {
             if (!instance.getEnabled()) {
@@ -109,7 +115,7 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
                     IMqttMessageListener[] listeners = new IMqttMessageListener[topics.length];
                     for (int i = 0; i < topics.length; i++) {
                         subscriptions[i] = new MqttSubscription(topics[i], qos[i]);
-                        listeners[i] = (topic, message) -> consumer.getConsumer().accept(topic, new String(message.getPayload(), StandardCharsets.UTF_8));
+                        listeners[i] = createListener(consumer, executor);
                     }
                     mqttClient.subscribe(subscriptions, listeners);
                 }
@@ -117,6 +123,33 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
                 throw new RuntimeException("MQTT connect error: " + e.getMessage(), e);
             }
         }
+    }
+
+    private IMqttMessageListener createListener(MqttConsumer consumer, Executor executor) {
+        if (executor != null) {
+            return (topic, message) -> {
+                String payload = new String(message.getPayload(), StandardCharsets.UTF_8);
+                executor.execute(() -> consumer.getConsumer().accept(topic, payload));
+            };
+        }
+        return (topic, message) -> consumer.getConsumer().accept(topic, new String(message.getPayload(), StandardCharsets.UTF_8));
+    }
+
+    private Executor initExecutor() {
+        if (!Boolean.TRUE.equals(mqttProperties.getAsync())) {
+            return null;
+        }
+        MqttProperties.MqttExecutor config = mqttProperties.getExecutor();
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(config.getCorePoolSize());
+        executor.setMaxPoolSize(config.getMaxPoolSize());
+        executor.setQueueCapacity(config.getQueueCapacity());
+        executor.setThreadNamePrefix(config.getThreadNamePrefix() + "v5-");
+        executor.initialize();
+        this.asyncExecutor = executor;
+        log.info("MQTT v5 async executor initialized: core={}, max={}, queue={}",
+            config.getCorePoolSize(), config.getMaxPoolSize(), config.getQueueCapacity());
+        return executor;
     }
 
     @Override
@@ -137,6 +170,9 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
             }
         }
         managedClients.clear();
+        if (asyncExecutor != null) {
+            asyncExecutor.shutdown();
+        }
     }
 
 }

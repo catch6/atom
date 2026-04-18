@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
  *          http://license.coscl.org.cn/MulanPSL2
@@ -39,7 +39,7 @@ class MustTest {
     void testIsEquals() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isEquals("相同", "相同", "应该相等"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isEquals("值1", "值2", "应该相等");
@@ -83,7 +83,7 @@ class MustTest {
     void testNotEquals() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.notEquals("值1", "值2", "应该不相等"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.notEquals("相同", "相同", "应该不相等");
@@ -96,7 +96,7 @@ class MustTest {
     void testIsTrue() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isTrue(true, "应该为true"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isTrue(false, "应该为true");
@@ -109,7 +109,7 @@ class MustTest {
     void testIsFalse() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isFalse(false, "应该为false"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isFalse(true, "应该为false");
@@ -122,7 +122,7 @@ class MustTest {
     void testIsNull() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isNull(null, "应该为null"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isNull("非null值", "应该为null");
@@ -135,7 +135,7 @@ class MustTest {
     void testNotNull() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.notNull("非null值", "不应该为null"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.notNull(null, "不应该为null");
@@ -149,7 +149,7 @@ class MustTest {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isEmpty((String) "", "应该为空字符串"));
         assertDoesNotThrow(() -> Must.isEmpty((String) null, "应该为空字符串"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isEmpty((String) "非空字符串", "应该为空字符串");
@@ -162,13 +162,13 @@ class MustTest {
     void testNotEmptyString() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.notEmpty((String) "非空字符串", "不应该为空字符串"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.notEmpty((String) "", "不应该为空字符串");
         });
         assertEquals("不应该为空字符串", exception.getMessage());
-        
+
         exception = assertThrows(ServiceException.class, () -> {
             Must.notEmpty((String) null, "不应该为空字符串");
         });
@@ -182,7 +182,7 @@ class MustTest {
         assertDoesNotThrow(() -> Must.isBlank("", "应该为空白"));
         assertDoesNotThrow(() -> Must.isBlank(null, "应该为空白"));
         assertDoesNotThrow(() -> Must.isBlank("   ", "应该为空白"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isBlank("非空白字符串", "应该为空白");
@@ -195,18 +195,18 @@ class MustTest {
     void testNotBlank() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.notBlank("非空白字符串", "不应该为空白"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.notBlank("", "不应该为空白");
         });
         assertEquals("不应该为空白", exception.getMessage());
-        
+
         exception = assertThrows(ServiceException.class, () -> {
             Must.notBlank(null, "不应该为空白");
         });
         assertEquals("不应该为空白", exception.getMessage());
-        
+
         exception = assertThrows(ServiceException.class, () -> {
             Must.notBlank("   ", "不应该为空白");
         });
@@ -218,7 +218,7 @@ class MustTest {
     void testIsContains() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isContains("Hello World", "World", "应该包含"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isContains("Hello World", "Java", "应该包含");
@@ -231,7 +231,7 @@ class MustTest {
     void testNotContains() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.notContains("Hello World", "Java", "不应该包含"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.notContains("Hello World", "World", "不应该包含");
@@ -245,7 +245,7 @@ class MustTest {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isEmpty((Object[]) new Object[0], "应该为空数组"));
         assertDoesNotThrow(() -> Must.isEmpty((Object[]) null, "应该为空数组"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isEmpty((Object[]) new Object[]{1, 2, 3}, "应该为空数组");
@@ -258,13 +258,13 @@ class MustTest {
     void testNotEmptyArray() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.notEmpty((Object[]) new Object[]{1, 2, 3}, "不应该为空数组"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.notEmpty((Object[]) new Object[0], "不应该为空数组");
         });
         assertEquals("不应该为空数组", exception.getMessage());
-        
+
         exception = assertThrows(ServiceException.class, () -> {
             Must.notEmpty((Object[]) null, "不应该为空数组");
         });
@@ -277,7 +277,7 @@ class MustTest {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.noNullElements((Object[]) new Object[]{1, 2, 3}, "不应该有null元素"));
         assertDoesNotThrow(() -> Must.noNullElements((Object[]) null, "不应该有null元素"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.noNullElements((Object[]) new Object[]{1, null, 3}, "不应该有null元素");
@@ -291,7 +291,7 @@ class MustTest {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isEmpty((Collection<?>) Collections.emptyList(), "应该为空集合"));
         assertDoesNotThrow(() -> Must.isEmpty((Collection<?>) null, "应该为空集合"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isEmpty((Collection<?>) Arrays.asList(1, 2, 3), "应该为空集合");
@@ -304,13 +304,13 @@ class MustTest {
     void testNotEmptyCollection() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.notEmpty((Collection<?>) Arrays.asList(1, 2, 3), "不应该为空集合"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.notEmpty((Collection<?>) Collections.emptyList(), "不应该为空集合");
         });
         assertEquals("不应该为空集合", exception.getMessage());
-        
+
         exception = assertThrows(ServiceException.class, () -> {
             Must.notEmpty((Collection<?>) null, "不应该为空集合");
         });
@@ -323,7 +323,7 @@ class MustTest {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.noNullElements((Collection<?>) Arrays.asList(1, 2, 3), "不应该有null元素"));
         assertDoesNotThrow(() -> Must.noNullElements((Collection<?>) null, "不应该有null元素"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.noNullElements((Collection<?>) Arrays.asList(1, null, 3), "不应该有null元素");
@@ -337,7 +337,7 @@ class MustTest {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isEmpty((Map<?, ?>) Collections.emptyMap(), "应该为空Map"));
         assertDoesNotThrow(() -> Must.isEmpty((Map<?, ?>) null, "应该为空Map"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isEmpty((Map<?, ?>) Map.of("key", "value"), "应该为空Map");
@@ -350,13 +350,13 @@ class MustTest {
     void testNotEmptyMap() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.notEmpty((Map<?, ?>) Map.of("key", "value"), "不应该为空Map"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.notEmpty((Map<?, ?>) Collections.emptyMap(), "不应该为空Map");
         });
         assertEquals("不应该为空Map", exception.getMessage());
-        
+
         exception = assertThrows(ServiceException.class, () -> {
             Must.notEmpty((Map<?, ?>) null, "不应该为空Map");
         });
@@ -368,7 +368,7 @@ class MustTest {
     void testIsInstanceOf() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isInstanceOf(String.class, "Hello", "应该是String类型"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isInstanceOf(Integer.class, "Hello", "应该是Integer类型");
@@ -381,7 +381,7 @@ class MustTest {
     void testNotInstanceOf() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.notInstanceOf(Integer.class, "Hello", "不应该为Integer类型"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.notInstanceOf(String.class, "Hello", "不应该为String类型");
@@ -394,7 +394,7 @@ class MustTest {
     void testIsAssignable() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.isAssignable(Number.class, Integer.class, "应该可赋值"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isAssignable(String.class, Integer.class, "应该可赋值");
@@ -407,7 +407,7 @@ class MustTest {
     void testNotAssignable() {
         // 测试正常情况
         assertDoesNotThrow(() -> Must.notAssignable(String.class, Integer.class, "不应该可赋值"));
-        
+
         // 测试异常情况
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.notAssignable(Number.class, Integer.class, "不应该可赋值");
@@ -448,11 +448,11 @@ class MustTest {
             messageBuilder.append("消息已生成");
             return "动态消息";
         };
-        
+
         // 不应该触发Supplier
         assertDoesNotThrow(() -> Must.isTrue(true, supplier));
         assertEquals("", messageBuilder.toString());
-        
+
         // 应该触发Supplier
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isTrue(false, supplier);
@@ -467,10 +467,10 @@ class MustTest {
         // 测试复杂对象的相等性比较
         Object obj1 = new Object();
         Object obj2 = new Object();
-        
+
         // 相同对象应该相等
         assertDoesNotThrow(() -> Must.isEquals(obj1, obj1, "相同对象应该相等"));
-        
+
         // 不同对象不应该相等
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             Must.isEquals(obj1, obj2, "不同对象不应该相等");
@@ -483,7 +483,7 @@ class MustTest {
     void testTypeCheckingEdgeCases() {
         // 测试null对象的类型检查
         assertThrows(ServiceException.class, () -> Must.isInstanceOf(String.class, null, "null不是任何类型的实例"));
-        
+
         // 测试基本类型和包装类型的兼容性
         assertDoesNotThrow(() -> Must.isInstanceOf(Integer.class, 1, "整数应该是Integer的实例"));
         assertDoesNotThrow(() -> Must.isAssignable(Number.class, Integer.class, "Integer应该可以赋值给Number"));
@@ -491,22 +491,25 @@ class MustTest {
 
     // 测试用的 ResultProvider 实现
     static class TestResultProvider implements ResultProvider {
+
         private final int code;
         private final String message;
-        
+
         public TestResultProvider(int code, String message) {
             this.code = code;
             this.message = message;
         }
-        
+
         @Override
         public int getCode() {
             return code;
         }
-        
+
         @Override
         public String getMessage() {
             return message;
         }
+
     }
+
 }

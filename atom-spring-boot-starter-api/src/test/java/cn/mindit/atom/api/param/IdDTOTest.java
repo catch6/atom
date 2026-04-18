@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -53,7 +53,7 @@ class IdDTOTest extends BaseTest {
     @Test
     void testValidId() {
         IdDTO idDTO = new IdDTO(123L);
-        
+
         Set<ConstraintViolation<IdDTO>> violations = validator.validate(idDTO);
         assertTrue(violations.isEmpty());
     }
@@ -62,10 +62,10 @@ class IdDTOTest extends BaseTest {
     @NullSource
     void testNullIdValidation(Long id) {
         IdDTO idDTO = new IdDTO(id);
-        
+
         Set<ConstraintViolation<IdDTO>> violations = validator.validate(idDTO);
         assertFalse(violations.isEmpty());
-        
+
         ConstraintViolation<IdDTO> violation = violations.iterator().next();
         assertEquals("ID不能为空", violation.getMessage());
         assertEquals("id", violation.getPropertyPath().toString());
@@ -75,7 +75,7 @@ class IdDTOTest extends BaseTest {
     @ValueSource(longs = {0L, 1L, 100L, 1000L, Long.MAX_VALUE, Long.MIN_VALUE})
     void testVariousValidIds(Long id) {
         IdDTO idDTO = new IdDTO(id);
-        
+
         Set<ConstraintViolation<IdDTO>> violations = validator.validate(idDTO);
         assertTrue(violations.isEmpty());
     }
@@ -83,7 +83,7 @@ class IdDTOTest extends BaseTest {
     @Test
     void testSetterGetter() {
         IdDTO idDTO = new IdDTO();
-        
+
         idDTO.setId(789L);
         assertEquals(789L, idDTO.getId());
     }
@@ -93,7 +93,7 @@ class IdDTOTest extends BaseTest {
         IdDTO idDTO1 = new IdDTO(123L);
         IdDTO idDTO2 = new IdDTO(123L);
         IdDTO idDTO3 = new IdDTO(456L);
-        
+
         assertEquals(idDTO1, idDTO2);
         assertNotEquals(idDTO1, idDTO3);
         assertEquals(idDTO1.hashCode(), idDTO2.hashCode());
@@ -102,10 +102,10 @@ class IdDTOTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({
-            "1, 1",
-            "100, 100",
-            "999999999, 999999999",
-            "-1, -1"
+        "1, 1",
+        "100, 100",
+        "999999999, 999999999",
+        "-1, -1"
     })
     void testStaticOfMethodWithVariousIds(long inputId, long expectedId) {
         IdDTO idDTO = IdDTO.of(inputId);
@@ -116,7 +116,7 @@ class IdDTOTest extends BaseTest {
     void testToString() {
         IdDTO idDTO = new IdDTO(123L);
         String toString = idDTO.toString();
-        
+
         assertTrue(toString.contains("123"));
         assertTrue(toString.contains("IdDTO"));
     }
@@ -125,14 +125,14 @@ class IdDTOTest extends BaseTest {
     void testBoundaryValues() {
         IdDTO idDTO1 = new IdDTO(Long.MAX_VALUE);
         assertEquals(Long.MAX_VALUE, idDTO1.getId());
-        
+
         IdDTO idDTO2 = new IdDTO(Long.MIN_VALUE);
         assertEquals(Long.MIN_VALUE, idDTO2.getId());
-        
+
         // 验证边界值的验证
         Set<ConstraintViolation<IdDTO>> violations1 = validator.validate(idDTO1);
         assertTrue(violations1.isEmpty());
-        
+
         Set<ConstraintViolation<IdDTO>> violations2 = validator.validate(idDTO2);
         assertTrue(violations2.isEmpty());
     }
@@ -140,10 +140,10 @@ class IdDTOTest extends BaseTest {
     @Test
     void testMultipleValidationFailures() {
         IdDTO idDTO = new IdDTO(null);
-        
+
         Set<ConstraintViolation<IdDTO>> violations = validator.validate(idDTO);
         assertEquals(1, violations.size());
-        
+
         ConstraintViolation<IdDTO> violation = violations.iterator().next();
         assertEquals("id", violation.getPropertyPath().toString());
         assertEquals("ID不能为空", violation.getMessage());
@@ -152,9 +152,10 @@ class IdDTOTest extends BaseTest {
     @Test
     void testValidationGroups() {
         IdDTO idDTO = new IdDTO(null);
-        
+
         // 测试默认验证组
         Set<ConstraintViolation<IdDTO>> violations = validator.validate(idDTO);
         assertFalse(violations.isEmpty());
     }
+
 }

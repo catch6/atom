@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You may use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -45,7 +45,7 @@ class PageVOTest extends BaseTest {
     @Test
     void testDefaultConstructor() {
         PageVO<String> pageVO = new PageVO<>();
-        
+
         assertEquals(1L, pageVO.getPageNo());
         assertEquals(15L, pageVO.getPageSize());
         assertEquals(0L, pageVO.getTotalPage());
@@ -57,7 +57,7 @@ class PageVOTest extends BaseTest {
     void testParameterizedConstructor() {
         List<String> items = Arrays.asList("test1", "test2");
         PageVO<String> pageVO = new PageVO<>(2L, 20L, 3L, 50L, items);
-        
+
         assertEquals(2L, pageVO.getPageNo());
         assertEquals(20L, pageVO.getPageSize());
         assertEquals(3L, pageVO.getTotalPage());
@@ -68,7 +68,7 @@ class PageVOTest extends BaseTest {
     @Test
     void testStaticOfMethod() {
         PageVO<String> pageVO = PageVO.of();
-        
+
         assertEquals(1L, pageVO.getPageNo());
         assertEquals(15L, pageVO.getPageSize());
         assertEquals(0L, pageVO.getTotalPage());
@@ -79,7 +79,7 @@ class PageVOTest extends BaseTest {
     @Test
     void testStaticOfMethodWithPage() {
         PageVO<String> pageVO = PageVO.of(testPage);
-        
+
         assertEquals(2L, pageVO.getPageNo());
         assertEquals(10L, pageVO.getPageSize());
         assertEquals(5L, pageVO.getTotalPage());
@@ -90,12 +90,12 @@ class PageVOTest extends BaseTest {
     @Test
     void testStaticOfMethodWithPageAndFunction() {
         PageVO<Integer> pageVO = PageVO.of(testPage, String::length);
-        
+
         assertEquals(2L, pageVO.getPageNo());
         assertEquals(10L, pageVO.getPageSize());
         assertEquals(5L, pageVO.getTotalPage());
         assertEquals(50L, pageVO.getTotalRow());
-        
+
         List<Integer> expectedLengths = Arrays.asList(5, 5, 5, 5, 5);
         assertEquals(expectedLengths, pageVO.getItems());
     }
@@ -106,9 +106,9 @@ class PageVOTest extends BaseTest {
         negativeSizePage.setRecords(testData);
         negativeSizePage.setTotal(-1L);
         negativeSizePage.setPages(1L);
-        
+
         PageVO<String> pageVO = PageVO.of(negativeSizePage);
-        
+
         assertEquals(1L, pageVO.getPageNo());
         assertEquals(-1L, pageVO.getPageSize());
         assertEquals(1L, pageVO.getTotalPage());
@@ -120,13 +120,13 @@ class PageVOTest extends BaseTest {
     void testSettersAndGetters() {
         PageVO<String> pageVO = new PageVO<>();
         List<String> items = Arrays.asList("test1", "test2");
-        
+
         pageVO.setPageNo(3L);
         pageVO.setPageSize(25L);
         pageVO.setTotalPage(10L);
         pageVO.setTotalRow(250L);
         pageVO.setItems(items);
-        
+
         assertEquals(3L, pageVO.getPageNo());
         assertEquals(25L, pageVO.getPageSize());
         assertEquals(10L, pageVO.getTotalPage());
@@ -140,7 +140,7 @@ class PageVOTest extends BaseTest {
         PageVO<String> pageVO1 = new PageVO<>(1L, 10L, 2L, 20L, items);
         PageVO<String> pageVO2 = new PageVO<>(1L, 10L, 2L, 20L, items);
         PageVO<String> pageVO3 = new PageVO<>(2L, 10L, 2L, 20L, items);
-        
+
         assertEquals(pageVO1, pageVO2);
         assertNotEquals(pageVO1, pageVO3);
         assertEquals(pageVO1.hashCode(), pageVO2.hashCode());
@@ -150,7 +150,7 @@ class PageVOTest extends BaseTest {
     @Test
     void testFunctionTransformation() {
         PageVO<String> pageVO = PageVO.of(testPage, String::toUpperCase);
-        
+
         List<String> expected = Arrays.asList("ITEM1", "ITEM2", "ITEM3", "ITEM4", "ITEM5");
         assertEquals(expected, pageVO.getItems());
     }
@@ -161,9 +161,9 @@ class PageVOTest extends BaseTest {
         emptyPage.setRecords(Arrays.asList());
         emptyPage.setTotal(0L);
         emptyPage.setPages(0L);
-        
+
         PageVO<String> pageVO = PageVO.of(emptyPage);
-        
+
         assertEquals(1L, pageVO.getPageNo());
         assertEquals(10L, pageVO.getPageSize());
         assertEquals(0L, pageVO.getTotalPage());
@@ -175,7 +175,7 @@ class PageVOTest extends BaseTest {
     void testNullItems() {
         PageVO<String> pageVO = new PageVO<>();
         pageVO.setItems(null);
-        
+
         assertNull(pageVO.getItems());
     }
 
@@ -183,11 +183,12 @@ class PageVOTest extends BaseTest {
     void testBoundaryValues() {
         List<String> items = Arrays.asList("test");
         PageVO<String> pageVO = new PageVO<>(Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE, items);
-        
+
         assertEquals(Long.MAX_VALUE, pageVO.getPageNo());
         assertEquals(Long.MAX_VALUE, pageVO.getPageSize());
         assertEquals(Long.MAX_VALUE, pageVO.getTotalPage());
         assertEquals(Long.MAX_VALUE, pageVO.getTotalRow());
         assertEquals(items, pageVO.getItems());
     }
+
 }

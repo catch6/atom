@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2025 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You may use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -32,7 +32,7 @@ class PageDTOTest extends BaseTest {
     @Test
     void testDefaultConstructor() {
         PageDTO pageDTO = new PageDTO();
-        
+
         assertEquals(1L, pageDTO.getPageNo());
         assertEquals(15L, pageDTO.getPageSize());
     }
@@ -40,7 +40,7 @@ class PageDTOTest extends BaseTest {
     @Test
     void testParameterizedConstructor() {
         PageDTO pageDTO = new PageDTO(2L, 20L);
-        
+
         assertEquals(2L, pageDTO.getPageNo());
         assertEquals(20L, pageDTO.getPageSize());
     }
@@ -49,7 +49,7 @@ class PageDTOTest extends BaseTest {
     void testToPage() {
         PageDTO pageDTO = new PageDTO(3L, 10L);
         Page<String> page = pageDTO.toPage();
-        
+
         assertEquals(3L, page.getCurrent());
         assertEquals(10L, page.getSize());
     }
@@ -57,7 +57,7 @@ class PageDTOTest extends BaseTest {
     @Test
     void testStaticOfMethod() {
         PageDTO pageDTO = PageDTO.of();
-        
+
         assertEquals(1L, pageDTO.getPageNo());
         assertEquals(15L, pageDTO.getPageSize());
     }
@@ -65,7 +65,7 @@ class PageDTOTest extends BaseTest {
     @Test
     void testStaticOfMethodWithParameters() {
         PageDTO pageDTO = PageDTO.of(5L, 25L);
-        
+
         assertEquals(5L, pageDTO.getPageNo());
         assertEquals(25L, pageDTO.getPageSize());
     }
@@ -90,7 +90,7 @@ class PageDTOTest extends BaseTest {
         PageDTO pageDTO1 = new PageDTO(Long.MAX_VALUE, Long.MAX_VALUE);
         assertEquals(Long.MAX_VALUE, pageDTO1.getPageNo());
         assertEquals(Long.MAX_VALUE, pageDTO1.getPageSize());
-        
+
         PageDTO pageDTO2 = new PageDTO(Long.MIN_VALUE, Long.MIN_VALUE);
         assertEquals(Long.MIN_VALUE, pageDTO2.getPageNo());
         assertEquals(Long.MIN_VALUE, pageDTO2.getPageSize());
@@ -99,11 +99,11 @@ class PageDTOTest extends BaseTest {
     @Test
     void testSettersAndGetters() {
         PageDTO pageDTO = new PageDTO();
-        
+
         // 测试 pageNo setter
         pageDTO.setPageNo(10L);
         assertEquals(10L, pageDTO.getPageNo());
-        
+
         // 测试 pageSize setter
         pageDTO.setPageSize(30L);
         assertEquals(30L, pageDTO.getPageSize());
@@ -114,7 +114,7 @@ class PageDTOTest extends BaseTest {
         PageDTO pageDTO1 = new PageDTO(1L, 15L);
         PageDTO pageDTO2 = new PageDTO(1L, 15L);
         PageDTO pageDTO3 = new PageDTO(2L, 15L);
-        
+
         assertEquals(pageDTO1, pageDTO2);
         assertNotEquals(pageDTO1, pageDTO3);
         assertEquals(pageDTO1.hashCode(), pageDTO2.hashCode());
@@ -123,16 +123,17 @@ class PageDTOTest extends BaseTest {
 
     @ParameterizedTest
     @CsvSource({
-            "1, 10",
-            "2, 20",
-            "5, 50",
-            "10, 100"
+        "1, 10",
+        "2, 20",
+        "5, 50",
+        "10, 100"
     })
     void testToPageWithVariousParameters(long pageNo, long pageSize) {
         PageDTO pageDTO = new PageDTO(pageNo, pageSize);
         Page<String> page = pageDTO.toPage();
-        
+
         assertEquals(pageNo, page.getCurrent());
         assertEquals(pageSize, page.getSize());
     }
+
 }

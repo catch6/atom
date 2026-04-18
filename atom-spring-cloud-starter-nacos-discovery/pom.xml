@@ -17,12 +17,13 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>cn.mindit</groupId>
-    <artifactId>atom</artifactId>
+    <artifactId>atom-build</artifactId>
     <version>${revision}</version>
+    <relativePath>../atom-build</relativePath>
   </parent>
 
   <name>atom-spring-cloud-starter-nacos-discovery</name>
-  <description>Atom Nacos发现模块，提供服务注册与发现功能，支持动态服务发现和健康检查。</description>
+  <description>Atom Nacos 发现模块,提供服务注册与发现功能,支持动态服务发现和健康检查。</description>
   <url>https://github.com/catch6/atom</url>
 
   <scm>
@@ -30,19 +31,6 @@
     <connection>scm:git:git://github.com/catch6/atom.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/catch6/atom.git</developerConnection>
   </scm>
-
-  <developers>
-    <developer>
-      <id>Catch</id>
-      <name>Catch</name>
-      <email>catchlife6@163.com</email>
-      <url>https://github.com/catch6</url>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>+8</timezone>
-    </developer>
-  </developers>
 
   <artifactId>atom-spring-cloud-starter-nacos-discovery</artifactId>
 

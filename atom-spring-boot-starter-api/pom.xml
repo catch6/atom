@@ -17,12 +17,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>cn.mindit</groupId>
-    <artifactId>atom</artifactId>
+    <artifactId>atom-build</artifactId>
     <version>${revision}</version>
+    <relativePath>../atom-build</relativePath>
   </parent>
 
+  <artifactId>atom-spring-boot-starter-api</artifactId>
   <name>atom-spring-boot-starter-api</name>
-  <description>Atom API开发模块，提供统一响应格式、参数验证、OpenAPI文档支持，简化RESTful API开发流程。</description>
+  <description>Atom API 开发模块,提供统一响应格式、参数验证、OpenAPI 文档支持,简化 RESTful API 开发流程。</description>
   <url>https://github.com/catch6/atom</url>
 
   <scm>
@@ -30,21 +32,6 @@
     <connection>scm:git:git://github.com/catch6/atom.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/catch6/atom.git</developerConnection>
   </scm>
-
-  <developers>
-    <developer>
-      <id>Catch</id>
-      <name>Catch</name>
-      <email>catchlife6@163.com</email>
-      <url>https://github.com/catch6</url>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>+8</timezone>
-    </developer>
-  </developers>
-
-  <artifactId>atom-spring-boot-starter-api</artifactId>
 
   <dependencies>
     <dependency>

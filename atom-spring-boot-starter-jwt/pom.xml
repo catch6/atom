@@ -17,12 +17,13 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>cn.mindit</groupId>
-    <artifactId>atom</artifactId>
+    <artifactId>atom-build</artifactId>
     <version>${revision}</version>
+    <relativePath>../atom-build</relativePath>
   </parent>
 
   <name>atom-spring-boot-starter-jwt</name>
-  <description>Atom JWT认证模块，提供JWT令牌生成、验证和管理功能，实现基于令牌的身份认证和授权。</description>
+  <description>Atom JWT 认证模块,提供 JWT 令牌生成、验证和管理功能,实现基于令牌的身份认证和授权。</description>
   <url>https://github.com/catch6/atom</url>
 
   <scm>
@@ -30,19 +31,6 @@
     <connection>scm:git:git://github.com/catch6/atom.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/catch6/atom.git</developerConnection>
   </scm>
-
-  <developers>
-    <developer>
-      <id>Catch</id>
-      <name>Catch</name>
-      <email>catchlife6@163.com</email>
-      <url>https://github.com/catch6</url>
-      <roles>
-        <role>Developer</role>
-      </roles>
-      <timezone>+8</timezone>
-    </developer>
-  </developers>
 
   <artifactId>atom-spring-boot-starter-jwt</artifactId>
 

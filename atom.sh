@@ -29,7 +29,7 @@ function error() {
 }
 
 function setCurrentVersion() {
-  VERSION=$(awk -F'[><]' '/<revision>/{print $3}' pom.xml)
+  VERSION=$(awk -F'[><]' '/<revision>/{print $3}' atom-dependencies/pom.xml)
 }
 
 if [ "${ACTION}" == "version" ]; then
@@ -44,9 +44,9 @@ if [ "${ACTION}" == "version" ]; then
   sed -i '' "s/<version>.*<\/version>/<version>${VERSION}<\/version>/g" README.md
   info "修改 README.md 版本号...OK!\n"
 
-  info "更新 pom.xml 中 revision 版本号..."
-  sed -i '' "s/<revision>.*<\/revision>/<revision>${VERSION}<\/revision>/g" pom.xml
-  info "更新 pom.xml 中 revision 版本号...OK!\n"
+  info "更新 atom-dependencies/pom.xml 中 revision 版本号..."
+  sed -i '' "s/<revision>.*<\/revision>/<revision>${VERSION}<\/revision>/g" atom-dependencies/pom.xml
+  info "更新 atom-dependencies/pom.xml 中 revision 版本号...OK!\n"
 
   info "版本${VERSION}设置完成!"
 elif [ "${ACTION}" == "deploy" ]; then
@@ -77,7 +77,7 @@ elif [ "${ACTION}" == "deploy" ]; then
   info "发布到 maven..."
   RETRY_COUNT=0
   MAX_RETRIES=5
-  until mvn -Pmindit -Prelease clean deploy -U -DskipTests; do
+  until mvn -Prelease clean deploy -U -DskipTests; do
     RETRY_COUNT=$((RETRY_COUNT + 1))
     if [ ${RETRY_COUNT} -ge ${MAX_RETRIES} ]; then
       error "发布到 maven 失败，已重试 ${MAX_RETRIES} 次"
@@ -137,9 +137,9 @@ elif [ "${ACTION}" == "deploy" ]; then
   sed -i '' "s/<version>.*<\/version>/<version>${NEW_VERSION}<\/version>/g" README.md
   info "修改 README.md 版本号...OK!\n"
 
-  info "更新 pom.xml 中 revision 版本号..."
-  sed -i '' "s/<revision>.*<\/revision>/<revision>${NEW_VERSION}<\/revision>/g" pom.xml
-  info "更新 pom.xml 中 revision 版本号...OK!\n"
+  info "更新 atom-dependencies/pom.xml 中 revision 版本号..."
+  sed -i '' "s/<revision>.*<\/revision>/<revision>${NEW_VERSION}<\/revision>/g" atom-dependencies/pom.xml
+  info "更新 atom-dependencies/pom.xml 中 revision 版本号...OK!\n"
 
   info "提交代码并推送..."
   git add .

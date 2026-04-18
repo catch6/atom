@@ -26,7 +26,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .order(Ordered.HIGHEST_PRECEDENCE);
 
-        if (loggingProperties.getEnabled()) {
+        if (Boolean.TRUE.equals(loggingProperties.getEnabled())) {
             registry.addInterceptor(loggingInterceptor)
                     .addPathPatterns(loggingProperties.getIncludePath())
                     .excludePathPatterns(loggingProperties.getInternalExcludePath())

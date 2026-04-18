@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -27,6 +27,7 @@ import org.eclipse.milo.opcua.sdk.client.subscriptions.ManagedSubscription;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
@@ -39,8 +40,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Catch
@@ -49,10 +52,13 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
-public class OpcUaConfiguration implements ApplicationListener<ApplicationStartedEvent>, Ordered {
+public class OpcUaConfiguration implements ApplicationListener<ApplicationStartedEvent>, Ordered, DisposableBean {
+
+    private static final long DISCONNECT_TIMEOUT_SECONDS = 3L;
 
     private final OpcUaProperties opcUaProperties;
     private final List<OpcUaSubscriber> opcUaSubscribers;
+    private final List<OpcUaClient> managedClients = new ArrayList<>();
 
     @Override
     public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
@@ -99,7 +105,8 @@ public class OpcUaConfiguration implements ApplicationListener<ApplicationStarte
                         .setRequestTimeout(UInteger.valueOf(5000))
                         .build()
                 );
-                opcUaClient.connect().get();
+                opcUaClient.connect().get(DISCONNECT_TIMEOUT_SECONDS * 2, TimeUnit.SECONDS);
+                managedClients.add(opcUaClient);
 
                 List<OpcUaConsumer> consumers = consumerMap.get(instance.getId());
                 if (consumers == null || consumers.isEmpty()) {
@@ -138,6 +145,18 @@ public class OpcUaConfiguration implements ApplicationListener<ApplicationStarte
     @Override
     public int getOrder() {
         return opcUaProperties.getOrder();
+    }
+
+    @Override
+    public void destroy() {
+        for (OpcUaClient client : managedClients) {
+            try {
+                client.disconnect().get(DISCONNECT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            } catch (Exception e) {
+                log.warn("Failed to disconnect OPC UA client", e);
+            }
+        }
+        managedClients.clear();
     }
 
 }

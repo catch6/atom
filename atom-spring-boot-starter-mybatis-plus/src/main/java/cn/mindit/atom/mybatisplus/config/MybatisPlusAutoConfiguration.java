@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 
 /**
  * @author Catch
@@ -30,6 +31,7 @@ import org.springframework.context.annotation.PropertySource;
 @EnableConfigurationProperties(MybatisPlusProperties.class)
 @PropertySource("classpath:application-mybatis-plus.properties")
 @ConditionalOnProperty(value = "atom.mybatis-plus.enabled", matchIfMissing = true)
+@AutoConfiguration
 public class MybatisPlusAutoConfiguration {
 
     @ConditionalOnProperty(value = "atom.mybatis-plus.pagination", matchIfMissing = true)

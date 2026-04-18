@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import cn.mindit.atom.core.util.JsonUtils;
 import cn.mindit.atom.redis.service.RedisService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.time.Duration;
@@ -221,7 +223,15 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public Set<String> keys(String pattern) {
-        return stringRedisTemplate.keys(pattern);
+        // 使用 SCAN 代替 KEYS,避免在大数据量时阻塞 Redis 主线程.
+        Set<String> result = new HashSet<>();
+        ScanOptions options = ScanOptions.scanOptions().match(pattern).count(1000L).build();
+        try (Cursor<String> cursor = stringRedisTemplate.scan(options)) {
+            while (cursor.hasNext()) {
+                result.add(cursor.next());
+            }
+        }
+        return result;
     }
 
     @Override

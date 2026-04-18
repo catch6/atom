@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 
 /**
  * @author Catch
@@ -19,6 +20,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @RequiredArgsConstructor
 @EnableConfigurationProperties(SchedulingShedlockProperties.class)
 @ConditionalOnProperty(value = "atom.scheduling.shedlock.enabled", matchIfMissing = true)
+@AutoConfiguration
 public class ShedAutoConfiguration {
 
     @Bean

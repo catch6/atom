@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -165,12 +165,16 @@ public class WebSocketClientManagerImpl implements WebSocketClientManager, Dispo
 
     private void handleDisconnection(String id, Throwable exception) {
         sessions.remove(id);
-        eventPublisher.publishEvent(new WebSocketDisconnectedEvent(this, id, instanceConfigs.get(id).getUrl(),
+        WebSocketProperties.WebSocketInstance config = instanceConfigs.get(id);
+        if (config == null) {
+            log.warn("Disconnection event for unknown WebSocket id: {}", id);
+            return;
+        }
+        eventPublisher.publishEvent(new WebSocketDisconnectedEvent(this, id, config.getUrl(),
             exception instanceof Exception ? (Exception) exception : new Exception("Connection closed")));
 
         // 自动重连逻辑
-        WebSocketProperties.WebSocketInstance config = instanceConfigs.get(id);
-        if (config != null && config.getAutoReconnect()) {
+        if (config.getAutoReconnect()) {
             Integer attempts = reconnectAttempts.get(id);
             if (attempts == null) {
                 attempts = 0;
@@ -227,13 +231,22 @@ public class WebSocketClientManagerImpl implements WebSocketClientManager, Dispo
 
     @Override
     public void destroy() throws Exception {
-        scheduler.shutdown();
         for (String id : getClientIds()) {
             try {
                 disconnect(id);
             } catch (Exception e) {
                 log.warn("Failed to disconnect WebSocket during shutdown: {}", id, e);
             }
+        }
+        scheduler.shutdown();
+        try {
+            if (!scheduler.awaitTermination(10, TimeUnit.SECONDS)) {
+                log.warn("WebSocket scheduler did not terminate in 10s, forcing shutdown");
+                scheduler.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            scheduler.shutdownNow();
         }
     }
 

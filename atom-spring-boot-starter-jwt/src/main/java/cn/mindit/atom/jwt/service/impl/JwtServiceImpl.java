@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -20,7 +20,6 @@ import cn.mindit.atom.core.util.ServiceException;
 import cn.mindit.atom.jwt.service.JwtService;
 
 import java.text.ParseException;
-import java.util.Optional;
 
 /**
  * @author Catch
@@ -34,15 +33,14 @@ public class JwtServiceImpl implements JwtService {
 
     private final JWSVerifier jwsVerifier;
 
+    private static final JWSAlgorithm DEFAULT_ALGORITHM = JWSAlgorithm.HS256;
+
     @Override
     public <T> String sign(T payload) {
-        Optional<JWSAlgorithm> jwsAlgorithm = jwsSigner.supportedJWSAlgorithms()
-                                                       .stream()
-                                                       .findFirst();
-        if (jwsAlgorithm.isEmpty()) {
-            throw new ServiceException("未知签名算法");
-        }
-        JWSHeader jwsHeader = new JWSHeader(jwsAlgorithm.get());
+        JWSAlgorithm algorithm = jwsSigner.supportedJWSAlgorithms().contains(DEFAULT_ALGORITHM)
+            ? DEFAULT_ALGORITHM
+            : jwsSigner.supportedJWSAlgorithms().stream().findFirst().orElseThrow(() -> new ServiceException("未知签名算法"));
+        JWSHeader jwsHeader = new JWSHeader(algorithm);
         JWSObject jwsObject = new JWSObject(jwsHeader, new Payload(JsonUtils.toJson(payload)));
         try {
             jwsObject.sign(jwsSigner);

@@ -19,6 +19,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 
 /**
  * @author Catch
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.PropertySource;
 @EnableConfigurationProperties(RedisProperties.class)
 @PropertySource("classpath:application-redis.properties")
 @ConditionalOnProperty(value = "atom.redis.enabled", matchIfMissing = true)
+@AutoConfiguration
 public class RedisAutoConfiguration {
 
 }

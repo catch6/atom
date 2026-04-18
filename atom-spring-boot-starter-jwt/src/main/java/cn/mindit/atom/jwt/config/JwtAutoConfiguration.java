@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 import java.util.Base64;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 
 /**
  * @author Catch
@@ -36,6 +37,7 @@ import java.util.Base64;
 @RequiredArgsConstructor
 @EnableConfigurationProperties(JwtProperties.class)
 @ConditionalOnProperty(value = "atom.jwt.enabled", matchIfMissing = true)
+@AutoConfiguration
 public class JwtAutoConfiguration {
 
     private final JwtProperties jwtProperties;
@@ -43,32 +45,33 @@ public class JwtAutoConfiguration {
     @ConditionalOnMissingBean
     @Bean
     public JWSSigner jwsSigner() {
-        String secret = jwtProperties.getSecret();
-        if (secret == null || secret.isEmpty()) {
-            throw new IllegalArgumentException("jwt secret can not be empty");
-        }
-        byte[] secretKey = Base64.getDecoder()
-                                 .decode(secret);
+        byte[] secretKey = decodeSecret(jwtProperties.getSecret());
         try {
             return new MACSigner(secretKey);
         } catch (KeyLengthException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("jwt secret key length is insufficient for MAC signer: " + e.getMessage(), e);
         }
     }
 
     @ConditionalOnMissingBean
     @Bean
     public JWSVerifier jwsVerifier() {
-        String secret = jwtProperties.getSecret();
-        if (secret == null || secret.isEmpty()) {
-            throw new IllegalArgumentException("jwt secret can not be empty");
-        }
-        byte[] secretKey = Base64.getDecoder()
-                                 .decode(secret);
+        byte[] secretKey = decodeSecret(jwtProperties.getSecret());
         try {
             return new MACVerifier(secretKey);
         } catch (JOSEException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("jwt secret key length is insufficient for MAC verifier: " + e.getMessage(), e);
+        }
+    }
+
+    private static byte[] decodeSecret(String secret) {
+        if (secret == null || secret.isEmpty()) {
+            throw new IllegalArgumentException("jwt secret can not be empty");
+        }
+        try {
+            return Base64.getDecoder().decode(secret);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("jwt secret must be Base64 encoded", e);
         }
     }
 

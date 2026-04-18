@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -24,6 +24,7 @@ import org.openscada.opc.lib.da.AutoReconnectController;
 import org.openscada.opc.lib.da.AutoReconnectState;
 import org.openscada.opc.lib.da.Server;
 import org.openscada.opc.lib.list.ServerList;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
@@ -32,6 +33,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -44,10 +46,11 @@ import java.util.function.BiConsumer;
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
-public class OpcDaConfiguration implements ApplicationListener<ApplicationStartedEvent>, Ordered {
+public class OpcDaConfiguration implements ApplicationListener<ApplicationStartedEvent>, Ordered, DisposableBean {
 
     private final OpcDaProperties opcDaProperties;
     private final List<OpcDaSubscriber> opcDaSubscribers;
+    private final List<AutoReconnectController> managedControllers = new ArrayList<>();
 
     @Override
     public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
@@ -80,6 +83,7 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
                 Server server = new Server(ci, Executors.newSingleThreadScheduledExecutor());
                 AutoReconnectController autoReconnectController = new AutoReconnectController(server);
                 autoReconnectController.connect();
+                managedControllers.add(autoReconnectController);
 
                 WriteableAccessBase access;
                 if (instance.isAsync()) {
@@ -151,6 +155,18 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
     @Override
     public int getOrder() {
         return opcDaProperties.getOrder();
+    }
+
+    @Override
+    public void destroy() {
+        for (AutoReconnectController controller : managedControllers) {
+            try {
+                controller.disconnect();
+            } catch (Exception e) {
+                log.warn("Failed to disconnect OPC DA controller", e);
+            }
+        }
+        managedControllers.clear();
     }
 
 }

@@ -259,8 +259,9 @@ public class TaskServiceImpl implements TaskService {
                     taskAction.method.invoke(taskAction.bean);
                 }
             } catch (InvocationTargetException e) {
-                log.error("Exception occurred during execution of task: {} - Method: {}#{}",
-                    task.getId(), task.getClazz(), task.getMethod(), e.getTargetException());
+                Throwable cause = e.getCause() != null ? e.getCause() : e;
+                log.error("Exception occurred during execution of task: {} - Method: {}#{} - {}",
+                    task.getId(), task.getClazz(), task.getMethod(), cause.getMessage(), cause);
             } catch (IllegalAccessException e) {
                 log.error("Illegal access during execution of task: {} - Method: {}#{}",
                     task.getId(), task.getClazz(), task.getMethod(), e);

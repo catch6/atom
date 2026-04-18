@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -107,7 +107,7 @@ public class OpcUaProperties {
             instance.setPassword(password);
             instances.add(instance);
         }
-        if (this.instances != null && !instances.isEmpty()) {
+        if (this.instances != null && !this.instances.isEmpty()) {
             instances.addAll(this.instances);
         }
         return instances;

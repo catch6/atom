@@ -18,12 +18,15 @@ import cn.mindit.atom.core.util.JsonUtils;
 import cn.mindit.atom.redis.config.RedisProperties;
 import cn.mindit.atom.redis.service.CacheService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -36,7 +39,8 @@ import java.util.function.Supplier;
 @ConditionalOnProperty(value = "atom.redis.cache-service", matchIfMissing = true)
 public class CacheServiceImpl implements CacheService {
 
-    private static final String NULL_VALUE = "";
+    private static final String NULL_VALUE = "__ATOM_NULL__";
+    private static final long SCAN_COUNT = 1000L;
 
     private final StringRedisTemplate stringRedisTemplate;
     private final RedisProperties redisProperties;
@@ -75,7 +79,7 @@ public class CacheServiceImpl implements CacheService {
         ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
         String json = ops.get(key);
         if (json != null) {
-            return deserializer.apply(json);
+            return NULL_VALUE.equals(json) ? null : deserializer.apply(json);
         }
         T data = supplier.get();
         if (timeout == null) {
@@ -93,7 +97,7 @@ public class CacheServiceImpl implements CacheService {
         ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
         String json = ops.get(key);
         if (json != null) {
-            return deserializer.apply(json);
+            return NULL_VALUE.equals(json) ? null : deserializer.apply(json);
         }
         T data = supplier.get();
         if (data == null) {
@@ -116,8 +120,21 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public void evictAll(String pattern) {
-        Set<String> keys = stringRedisTemplate.keys(pattern);
-        stringRedisTemplate.delete(keys);
+        // 使用 SCAN 代替 KEYS,避免大数据量时阻塞 Redis 主线程.
+        ScanOptions options = ScanOptions.scanOptions().match(pattern).count(SCAN_COUNT).build();
+        List<String> batch = new ArrayList<>();
+        try (Cursor<String> cursor = stringRedisTemplate.scan(options)) {
+            while (cursor.hasNext()) {
+                batch.add(cursor.next());
+                if (batch.size() >= SCAN_COUNT) {
+                    stringRedisTemplate.delete(batch);
+                    batch.clear();
+                }
+            }
+        }
+        if (!batch.isEmpty()) {
+            stringRedisTemplate.delete(batch);
+        }
     }
 
 }

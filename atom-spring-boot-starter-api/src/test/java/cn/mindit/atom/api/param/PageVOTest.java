@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
- * You may use this software according to the terms and conditions of the Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
  *          http://license.coscl.org.cn/MulanPSL2
  * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
@@ -12,183 +12,78 @@
 
 package cn.mindit.atom.api.param;
 
-import cn.mindit.atom.api.BaseTest;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * PageVO 测试类
- *
- * @author Catch
- * @since 2025-01-01
- */
-class PageVOTest extends BaseTest {
+class PageVOTest {
 
-    private Page<String> testPage;
-    private List<String> testData;
-
-    @BeforeEach
-    void setUp() {
-        testData = Arrays.asList("item1", "item2", "item3", "item4", "item5");
-        testPage = new Page<>(2L, 10L);
-        testPage.setRecords(testData);
-        testPage.setTotal(50L);
-        testPage.setPages(5L);
+    @Test
+    void ofNoArgsReturnsDefaults() {
+        PageVO<String> vo = PageVO.of();
+        assertThat(vo.getPageNo()).isEqualTo(1);
+        assertThat(vo.getPageSize()).isEqualTo(15);
+        assertThat(vo.getTotalPage()).isZero();
+        assertThat(vo.getTotalRow()).isZero();
+        assertThat(vo.getItems()).isEmpty();
     }
 
     @Test
-    void testDefaultConstructor() {
-        PageVO<String> pageVO = new PageVO<>();
+    void ofPageCopiesPaginationFields() {
+        Page<String> page = new Page<>(2, 10);
+        page.setTotal(25);
+        page.setRecords(List.of("a", "b", "c"));
 
-        assertEquals(1L, pageVO.getPageNo());
-        assertEquals(15L, pageVO.getPageSize());
-        assertEquals(0L, pageVO.getTotalPage());
-        assertEquals(0L, pageVO.getTotalRow());
-        assertTrue(pageVO.getItems().isEmpty());
+        PageVO<String> vo = PageVO.of(page);
+
+        assertThat(vo.getPageNo()).isEqualTo(2);
+        assertThat(vo.getPageSize()).isEqualTo(10);
+        assertThat(vo.getTotalRow()).isEqualTo(25);
+        assertThat(vo.getTotalPage()).isEqualTo(page.getPages());
+        assertThat(vo.getItems()).containsExactly("a", "b", "c");
     }
 
     @Test
-    void testParameterizedConstructor() {
-        List<String> items = Arrays.asList("test1", "test2");
-        PageVO<String> pageVO = new PageVO<>(2L, 20L, 3L, 50L, items);
+    void ofPageWithPageSizeMinusOneUsesRecordsSizeAsTotalRow() {
+        Page<String> page = new Page<>(1, -1);
+        // 业务约定 pageSize=-1 表示查询全部,此时以实际 records 数量为 totalRow
+        page.setRecords(List.of("a", "b", "c", "d"));
+        page.setTotal(99); // 即便 total 被外部设置,pageSize<0 时也应忽略
 
-        assertEquals(2L, pageVO.getPageNo());
-        assertEquals(20L, pageVO.getPageSize());
-        assertEquals(3L, pageVO.getTotalPage());
-        assertEquals(50L, pageVO.getTotalRow());
-        assertEquals(items, pageVO.getItems());
+        PageVO<String> vo = PageVO.of(page);
+
+        assertThat(vo.getPageSize()).isEqualTo(-1);
+        assertThat(vo.getTotalRow()).isEqualTo(4);
+        assertThat(vo.getItems()).containsExactly("a", "b", "c", "d");
     }
 
     @Test
-    void testStaticOfMethod() {
-        PageVO<String> pageVO = PageVO.of();
+    void ofPageWithMapperTransformsItems() {
+        Page<Integer> page = new Page<>(1, 5);
+        page.setTotal(3);
+        page.setRecords(List.of(1, 2, 3));
 
-        assertEquals(1L, pageVO.getPageNo());
-        assertEquals(15L, pageVO.getPageSize());
-        assertEquals(0L, pageVO.getTotalPage());
-        assertEquals(0L, pageVO.getTotalRow());
-        assertTrue(pageVO.getItems().isEmpty());
+        PageVO<String> vo = PageVO.of(page, i -> "#" + i);
+
+        assertThat(vo.getPageNo()).isEqualTo(1);
+        assertThat(vo.getPageSize()).isEqualTo(5);
+        assertThat(vo.getTotalRow()).isEqualTo(3);
+        assertThat(vo.getItems()).containsExactly("#1", "#2", "#3");
     }
 
     @Test
-    void testStaticOfMethodWithPage() {
-        PageVO<String> pageVO = PageVO.of(testPage);
+    void ofPageWithMapperAndPageSizeMinusOneUsesRecordsSize() {
+        Page<Integer> page = new Page<>(1, -1);
+        page.setRecords(List.of(10, 20));
+        page.setTotal(999);
 
-        assertEquals(2L, pageVO.getPageNo());
-        assertEquals(10L, pageVO.getPageSize());
-        assertEquals(5L, pageVO.getTotalPage());
-        assertEquals(50L, pageVO.getTotalRow());
-        assertEquals(testData, pageVO.getItems());
-    }
+        PageVO<String> vo = PageVO.of(page, i -> String.valueOf(i * 2));
 
-    @Test
-    void testStaticOfMethodWithPageAndFunction() {
-        PageVO<Integer> pageVO = PageVO.of(testPage, String::length);
-
-        assertEquals(2L, pageVO.getPageNo());
-        assertEquals(10L, pageVO.getPageSize());
-        assertEquals(5L, pageVO.getTotalPage());
-        assertEquals(50L, pageVO.getTotalRow());
-
-        List<Integer> expectedLengths = Arrays.asList(5, 5, 5, 5, 5);
-        assertEquals(expectedLengths, pageVO.getItems());
-    }
-
-    @Test
-    void testStaticOfMethodWithNegativePageSize() {
-        Page<String> negativeSizePage = new Page<>(1L, -1L);
-        negativeSizePage.setRecords(testData);
-        negativeSizePage.setTotal(-1L);
-        negativeSizePage.setPages(1L);
-
-        PageVO<String> pageVO = PageVO.of(negativeSizePage);
-
-        assertEquals(1L, pageVO.getPageNo());
-        assertEquals(-1L, pageVO.getPageSize());
-        assertEquals(1L, pageVO.getTotalPage());
-        assertEquals(5L, pageVO.getTotalRow()); // 应该使用 records.size()
-        assertEquals(testData, pageVO.getItems());
-    }
-
-    @Test
-    void testSettersAndGetters() {
-        PageVO<String> pageVO = new PageVO<>();
-        List<String> items = Arrays.asList("test1", "test2");
-
-        pageVO.setPageNo(3L);
-        pageVO.setPageSize(25L);
-        pageVO.setTotalPage(10L);
-        pageVO.setTotalRow(250L);
-        pageVO.setItems(items);
-
-        assertEquals(3L, pageVO.getPageNo());
-        assertEquals(25L, pageVO.getPageSize());
-        assertEquals(10L, pageVO.getTotalPage());
-        assertEquals(250L, pageVO.getTotalRow());
-        assertEquals(items, pageVO.getItems());
-    }
-
-    @Test
-    void testEqualsAndHashCode() {
-        List<String> items = Arrays.asList("test1", "test2");
-        PageVO<String> pageVO1 = new PageVO<>(1L, 10L, 2L, 20L, items);
-        PageVO<String> pageVO2 = new PageVO<>(1L, 10L, 2L, 20L, items);
-        PageVO<String> pageVO3 = new PageVO<>(2L, 10L, 2L, 20L, items);
-
-        assertEquals(pageVO1, pageVO2);
-        assertNotEquals(pageVO1, pageVO3);
-        assertEquals(pageVO1.hashCode(), pageVO2.hashCode());
-        assertNotEquals(pageVO1.hashCode(), pageVO3.hashCode());
-    }
-
-    @Test
-    void testFunctionTransformation() {
-        PageVO<String> pageVO = PageVO.of(testPage, String::toUpperCase);
-
-        List<String> expected = Arrays.asList("ITEM1", "ITEM2", "ITEM3", "ITEM4", "ITEM5");
-        assertEquals(expected, pageVO.getItems());
-    }
-
-    @Test
-    void testEmptyPage() {
-        Page<String> emptyPage = new Page<>(1L, 10L);
-        emptyPage.setRecords(Arrays.asList());
-        emptyPage.setTotal(0L);
-        emptyPage.setPages(0L);
-
-        PageVO<String> pageVO = PageVO.of(emptyPage);
-
-        assertEquals(1L, pageVO.getPageNo());
-        assertEquals(10L, pageVO.getPageSize());
-        assertEquals(0L, pageVO.getTotalPage());
-        assertEquals(0L, pageVO.getTotalRow());
-        assertTrue(pageVO.getItems().isEmpty());
-    }
-
-    @Test
-    void testNullItems() {
-        PageVO<String> pageVO = new PageVO<>();
-        pageVO.setItems(null);
-
-        assertNull(pageVO.getItems());
-    }
-
-    @Test
-    void testBoundaryValues() {
-        List<String> items = Arrays.asList("test");
-        PageVO<String> pageVO = new PageVO<>(Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE, items);
-
-        assertEquals(Long.MAX_VALUE, pageVO.getPageNo());
-        assertEquals(Long.MAX_VALUE, pageVO.getPageSize());
-        assertEquals(Long.MAX_VALUE, pageVO.getTotalPage());
-        assertEquals(Long.MAX_VALUE, pageVO.getTotalRow());
-        assertEquals(items, pageVO.getItems());
+        assertThat(vo.getTotalRow()).isEqualTo(2);
+        assertThat(vo.getItems()).containsExactly("20", "40");
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -20,9 +20,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Catch
@@ -32,7 +32,7 @@ import java.util.Map;
 public class OpcDaConsumerProcessor {
 
     public static Map<String, List<OpcDaConsumer>> processConsumerMap(ConfigurableApplicationContext applicationContext, OpcDaProperties properties, List<OpcDaSubscriber> subscribers) {
-        Map<String, List<OpcDaConsumer>> consumerMap = new HashMap<>();
+        Map<String, List<OpcDaConsumer>> consumerMap = new ConcurrentHashMap<>();
         processListener(consumerMap, applicationContext, properties);
         processSubscriber(consumerMap, subscribers, properties);
         return consumerMap;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Catch(catchlife6@163.com).
+ * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
  * Atom is licensed under Mulan PSL v2.
  * You can use this software according to the terms and conditions of the Mulan PSL v2.
  * You may obtain a copy of Mulan PSL v2 at:
@@ -14,6 +14,7 @@ package cn.mindit.atom.mqtt.config;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import cn.mindit.atom.mqtt.MqttConsumer;
 import cn.mindit.atom.mqtt.MqttConsumerProcessor;
 import cn.mindit.atom.mqtt.MqttSubscriber;
@@ -22,6 +23,7 @@ import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttSubscription;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -33,6 +35,7 @@ import org.springframework.core.Ordered;
 import org.springframework.lang.NonNull;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,13 +43,17 @@ import java.util.Map;
  * @author Catch
  * @since 2024-06-26
  */
+@Slf4j
 @RequiredArgsConstructor
 @ConditionalOnClass(MqttClient.class)
 @Configuration
-public class Mqttv5Configuration implements ApplicationListener<ApplicationStartedEvent>, Ordered {
+public class Mqttv5Configuration implements ApplicationListener<ApplicationStartedEvent>, Ordered, DisposableBean {
+
+    private static final long DISCONNECT_TIMEOUT_MS = 3000L;
 
     private final MqttProperties mqttProperties;
     private final List<MqttSubscriber> mqttSubscribers;
+    private final List<MqttClient> managedClients = new ArrayList<>();
 
     @Value("${spring.application.name:-atom}")
     private String applicationName;
@@ -84,6 +91,7 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
                 }
                 options.setAutomaticReconnect(true);
                 mqttClient.connect(options);
+                managedClients.add(mqttClient);
 
                 beanFactory.registerSingleton(MqttProperties.CLIENT_BEAN_PREFIX + instance.getId(), mqttClient);
 
@@ -114,6 +122,21 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
     @Override
     public int getOrder() {
         return mqttProperties.getOrder();
+    }
+
+    @Override
+    public void destroy() {
+        for (MqttClient client : managedClients) {
+            try {
+                if (client.isConnected()) {
+                    client.disconnectForcibly(DISCONNECT_TIMEOUT_MS);
+                }
+                client.close();
+            } catch (Exception e) {
+                log.warn("Failed to close MQTT v5 client: {}", client.getClientId(), e);
+            }
+        }
+        managedClients.clear();
     }
 
 }

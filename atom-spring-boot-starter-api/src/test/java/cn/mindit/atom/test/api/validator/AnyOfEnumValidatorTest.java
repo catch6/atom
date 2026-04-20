@@ -1,14 +1,16 @@
-package cn.mindit.atom.api.validator;
+package cn.mindit.atom.test.api.validator;
 
+import cn.mindit.atom.api.validator.AnyOfEnum;
+import cn.mindit.atom.api.validator.AnyOfEnumValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class AnyOfEnumValidatorTest {
 
     enum Status {
-        ACTIVE, INACTIVE, PENDING
+        ACTIVE,
+        INACTIVE,
+        PENDING
     }
 
     enum OtherEnum {

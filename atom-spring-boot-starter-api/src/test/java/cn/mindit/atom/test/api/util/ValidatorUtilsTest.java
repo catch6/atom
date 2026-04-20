@@ -1,5 +1,6 @@
-package cn.mindit.atom.api.util;
+package cn.mindit.atom.test.api.util;
 
+import cn.mindit.atom.api.util.ValidatorUtils;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.Min;
@@ -9,9 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 class ValidatorUtilsTest {
 
@@ -46,34 +45,34 @@ class ValidatorUtilsTest {
     void validateThrowsWhenObjectIsInvalid() {
         Sample sample = new Sample("", 0);
         assertThatExceptionOfType(ConstraintViolationException.class)
-                .isThrownBy(() -> ValidatorUtils.validate(validator, sample))
-                .satisfies(e -> assertThat(e.getConstraintViolations()).isNotEmpty());
+            .isThrownBy(() -> ValidatorUtils.validate(validator, sample))
+            .satisfies(e -> assertThat(e.getConstraintViolations()).isNotEmpty());
     }
 
     @Test
     void validatePropertyPassesWhenPropertyIsValid() {
         Sample sample = new Sample("Alice", 0); // age 非法但不校验这个属性
         assertThatCode(() -> ValidatorUtils.validateProperty(validator, sample, "name"))
-                .doesNotThrowAnyException();
+            .doesNotThrowAnyException();
     }
 
     @Test
     void validatePropertyThrowsWhenPropertyIsInvalid() {
         Sample sample = new Sample("", 18);
         assertThatExceptionOfType(ConstraintViolationException.class)
-                .isThrownBy(() -> ValidatorUtils.validateProperty(validator, sample, "name"));
+            .isThrownBy(() -> ValidatorUtils.validateProperty(validator, sample, "name"));
     }
 
     @Test
     void validateValuePassesWhenValueIsValid() {
         assertThatCode(() -> ValidatorUtils.validateValue(validator, Sample.class, "age", 1))
-                .doesNotThrowAnyException();
+            .doesNotThrowAnyException();
     }
 
     @Test
     void validateValueThrowsWhenValueIsInvalid() {
         assertThatExceptionOfType(ConstraintViolationException.class)
-                .isThrownBy(() -> ValidatorUtils.validateValue(validator, Sample.class, "age", 0));
+            .isThrownBy(() -> ValidatorUtils.validateValue(validator, Sample.class, "age", 0));
     }
 
     @Test

@@ -1,11 +1,10 @@
-package cn.mindit.atom.api.validator;
+package cn.mindit.atom.test.api.validator;
 
+import cn.mindit.atom.api.validator.PhoneValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class PhoneValidatorTest {
 
@@ -30,14 +29,14 @@ class PhoneValidatorTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "",                 // 空串
-            "12345678901",      // 第二位非 3-9
-            "10000000000",      // 第二位 0
-            "1380013800",       // 10 位
-            "138001380001",     // 12 位
-            "1380013800a",      // 含字母
-            "23800138000",      // 不是 1 开头
-            " 13800138000",     // 前置空格
+        "",                 // 空串
+        "12345678901",      // 第二位非 3-9
+        "10000000000",      // 第二位 0
+        "1380013800",       // 10 位
+        "138001380001",     // 12 位
+        "1380013800a",      // 含字母
+        "23800138000",      // 不是 1 开头
+        " 13800138000",     // 前置空格
     })
     void invalidPhones(String phone) {
         assertThat(validator.isValid(phone, null)).isFalse();

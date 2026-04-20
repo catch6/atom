@@ -1,9 +1,9 @@
-package cn.mindit.atom.api.validator;
+package cn.mindit.atom.test.api.validator;
 
+import cn.mindit.atom.api.validator.AnyOfInt;
+import cn.mindit.atom.api.validator.AnyOfIntValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class AnyOfIntValidatorTest {
 

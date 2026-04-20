@@ -1,9 +1,9 @@
-package cn.mindit.atom.api.validator;
+package cn.mindit.atom.test.api.validator;
 
+import cn.mindit.atom.api.validator.AnyOfLong;
+import cn.mindit.atom.api.validator.AnyOfLongValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class AnyOfLongValidatorTest {
 

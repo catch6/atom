@@ -1,10 +1,10 @@
 package cn.mindit.atom.core.core;
 
-import lombok.extern.slf4j.Slf4j;
 import cn.mindit.atom.core.util.NanoIdUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.MDC;
 import org.springframework.core.task.TaskDecorator;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

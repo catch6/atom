@@ -22,7 +22,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 
 | Atom | JDK | SpringBoot | SpringCloud | SpringCloud Alibaba |
 |------|-----|------------|-------------|---------------------|
-| 4.0+ | 25+ | 4.0+       | 2025.1.0    | 2025.0.0.0          |
+| 4.0+ | 17+ | 4.0+       | 2025.1.0    | 2025.1.0.0          |
 | 3.5+ | 17+ | 3.5+       | 2025.0.0    | 2025.0.0.0          |
 | 3.0+ | 17+ | 3.0+       | 2022.x      | 2022.x              |
 | 1.0+ | 8+  | 2.7+       | 2021.x      | 2021.x              |
@@ -72,6 +72,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 适用于希望复用 atom 构建配置 (编译、注解处理、插件管理) 的新项目。
 
 ```xml
+
 <parent>
   <groupId>cn.mindit</groupId>
   <artifactId>atom-parent</artifactId>
@@ -85,6 +86,7 @@ Atom 是一个基于 SpringBoot 和 SpringCloud 的企业级常用组件封装�
 两种接入方式引入模块的写法一致,无需声明 version:
 
 ```xml
+
 <dependency>
   <groupId>cn.mindit</groupId>
   <artifactId>atom-spring-boot-starter-xxx</artifactId>

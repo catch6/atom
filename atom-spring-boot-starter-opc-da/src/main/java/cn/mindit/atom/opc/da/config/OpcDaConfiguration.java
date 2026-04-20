@@ -1,24 +1,13 @@
-/*
- * Copyright (c) 2022-2026 Catch(catchlife6@163.com).
- * Atom is licensed under Mulan PSL v2.
- * You can use this software according to the terms and conditions of the Mulan PSL v2.
- * You may obtain a copy of Mulan PSL v2 at:
- *          http://license.coscl.org.cn/MulanPSL2
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PSL v2 for more details.
- */
-
 package cn.mindit.atom.opc.da.config;
 
 import cn.hutool.core.util.StrUtil;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import cn.mindit.atom.opc.da.*;
 import cn.mindit.atom.opc.da.util.OpcDaUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jinterop.dcom.common.JISystem;
 import org.jinterop.dcom.core.JIVariant;
+import org.jspecify.annotations.NonNull;
 import org.openscada.opc.lib.common.ConnectionInformation;
 import org.openscada.opc.lib.da.AutoReconnectController;
 import org.openscada.opc.lib.da.AutoReconnectState;
@@ -31,7 +20,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;

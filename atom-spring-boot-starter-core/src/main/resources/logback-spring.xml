@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (c) 2022-2026 Catch(catchlife6@163.com).
-  ~ Atom is licensed under Mulan PSL v2.
-  ~ You can use this software according to the terms and conditions of the Mulan PSL v2.
-  ~ You may obtain a copy of Mulan PSL v2 at:
-  ~          http://license.coscl.org.cn/MulanPSL2
-  ~ THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
-  ~ EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
-  ~ MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-  ~ See the Mulan PSL v2 for more details.
-  -->
-
 <configuration debug="false" scan="false">
 
   <springProperty scop="context" name="user.home" source="user.home"/>
@@ -76,12 +64,8 @@
       <pattern>${FILE_LOG_PATTERN}</pattern>
     </encoder>
   </appender>
-
-  <!--cn.mindit.atom.web.handler.WebExceptionHandler 已打印错误日志,避免重复打印-->
-  <logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="OFF"/>
-  <!-- 屏蔽 nacos 大量心跳日志 -->
-  <logger name="com.alibaba.nacos" level="WARN"/>
-  <!-- Stop output INFO at start -->
+  
+  <!-- 禁止 logback 启动时输出自身状态日志 -->
   <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
 
   <springProfile name="prod">

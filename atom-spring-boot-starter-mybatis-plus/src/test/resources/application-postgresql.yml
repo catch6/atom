@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    username: root
+    password: homelocal
+    url: jdbc:postgresql://home-db.mindit.local:5432/atom_test?currentSchema=public

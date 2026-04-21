@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    username: root
+    password: homelocal
+    url: jdbc:mysql://home-db.mindit.local:3306/atom_test?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&rewriteBatchedStatements=true

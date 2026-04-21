@@ -21,7 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class WebSocketConfiguration {
 
-    @Bean(destroyMethod = "destroy")
+    @Bean
     public WebSocketClientManager webSocketClientManager(ApplicationEventPublisher eventPublisher,
                                                          WebSocketProperties webSocketProperties) {
         return new WebSocketClientManagerImpl(eventPublisher, webSocketProperties);

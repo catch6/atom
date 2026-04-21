@@ -1,5 +1,6 @@
 spring:
-  datasource:
-    username: root
-    password: homelocal
-    url: jdbc:mysql://mysql.home.local:3306/atom_mybatis_plus_test?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&rewriteBatchedStatements=true
+  profiles:
+    active: postgresql
+logging:
+  level:
+    "cn.mindit.atom.test.mybatisplus.mapper": debug

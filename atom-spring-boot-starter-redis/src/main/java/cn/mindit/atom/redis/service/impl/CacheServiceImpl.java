@@ -1,10 +1,10 @@
 package cn.mindit.atom.redis.service.impl;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import cn.mindit.atom.core.util.JsonUtils;
 import cn.mindit.atom.redis.config.RedisProperties;
 import cn.mindit.atom.redis.service.CacheService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.ScanOptions;
@@ -27,7 +27,7 @@ import java.util.function.Supplier;
 @ConditionalOnProperty(value = "atom.redis.cache-service", matchIfMissing = true)
 public class CacheServiceImpl implements CacheService {
 
-    private static final String NULL_VALUE = "__ATOM_NULL__";
+    private static final String NULL_VALUE = "__NULL__";
     private static final long SCAN_COUNT = 1000L;
 
     private final StringRedisTemplate stringRedisTemplate;

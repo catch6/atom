@@ -3,6 +3,8 @@ package cn.mindit.atom.test.api.param;
 import cn.mindit.atom.api.param.PageVO;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class PageVOTest {
 
     @Test

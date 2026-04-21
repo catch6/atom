@@ -5,6 +5,8 @@ import cn.mindit.atom.api.validator.AnyOfIntValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class AnyOfIntValidatorTest {
 
     @AnyOfInt({1, 2, 3})

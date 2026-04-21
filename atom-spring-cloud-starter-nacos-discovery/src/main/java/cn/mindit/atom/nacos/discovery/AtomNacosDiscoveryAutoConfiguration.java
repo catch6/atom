@@ -1,0 +1,35 @@
+package cn.mindit.atom.kafka;
+
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+
+/**
+ * @author Catch
+ * @since 2023-08-13
+ */
+@Import(KafkaService.class)
+@RequiredArgsConstructor
+@EnableConfigurationProperties(KafkaProperties.class)
+@ConditionalOnProperty(value = "atom.kafka.enabled", matchIfMissing = true)
+@AutoConfiguration
+public class KafkaAutoConfiguration {
+
+    private final KafkaProperties kafkaProperties;
+    private final GenericApplicationContext genericApplicationContext;
+
+    @PostConstruct
+    public void initKafkaTopics() {
+        if (kafkaProperties.getTopics() != null) {
+            for (KafkaProperties.Topic topic : kafkaProperties.getTopics()) {
+                genericApplicationContext.registerBean(topic.getName(), NewTopic.class, () -> new NewTopic(topic.getName(), topic.getNumPartitions(), topic.getReplicationFactor()));
+            }
+        }
+    }
+
+}

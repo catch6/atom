@@ -55,7 +55,6 @@
     <spring-ai.version>2.0.0-M4</spring-ai.version>
 
     <mybatis-plus.version>3.5.16</mybatis-plus.version>
-    <spring-boot-starter-aop.version>4.0.0-M2</spring-boot-starter-aop.version>
     <nimbus-jose-jwt.version>10.9</nimbus-jose-jwt.version>
     <hutool-all.version>5.8.44</hutool-all.version>
     <guava.version>33.6.0-jre</guava.version>
@@ -207,11 +206,6 @@
       </dependency>
 
       <!-- 第三方 -->
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-aop</artifactId>
-        <version>${spring-boot-starter-aop.version}</version>
-      </dependency>
       <dependency>
         <groupId>com.nimbusds</groupId>
         <artifactId>nimbus-jose-jwt</artifactId>

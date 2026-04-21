@@ -10,6 +10,7 @@
     <relativePath>../atom-build</relativePath>
   </parent>
 
+  <artifactId>atom-spring-boot-starter-mqtt</artifactId>
   <name>atom-spring-boot-starter-mqtt</name>
   <description>Atom MQTT 消息模块,提供 MQTT 客户端连接和消息处理,支持 IoT 设备通信和实时消息传输。</description>
   <url>https://github.com/catch6/atom</url>
@@ -20,21 +21,16 @@
     <developerConnection>scm:git:ssh://git@github.com/catch6/atom.git</developerConnection>
   </scm>
 
-  <artifactId>atom-spring-boot-starter-mqtt</artifactId>
-
   <dependencies>
     <dependency>
       <groupId>cn.mindit</groupId>
       <artifactId>atom-spring-boot-starter-core</artifactId>
     </dependency>
+
     <dependency>
-      <groupId>org.eclipse.paho</groupId>
-      <artifactId>org.eclipse.paho.mqttv5.client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.paho</groupId>
-      <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-      <optional>true</optional>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jackson-test</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -47,11 +43,17 @@
       <artifactId>spring-boot-configuration-processor</artifactId>
       <optional>true</optional>
     </dependency>
+
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
+      <groupId>org.eclipse.paho</groupId>
+      <artifactId>org.eclipse.paho.mqttv5.client</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.paho</groupId>
+      <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+      <optional>true</optional>
+    </dependency>
+
   </dependencies>
 
 </project>

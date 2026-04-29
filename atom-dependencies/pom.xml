@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>4.0.5</version>
+    <version>4.0.6</version>
     <relativePath/>
   </parent>
 
@@ -60,7 +60,7 @@
     <guava.version>33.6.0-jre</guava.version>
     <springdoc-openapi-starter-webmvc-ui.version>3.0.3</springdoc-openapi-starter-webmvc-ui.version>
     <swagger-annotations-jakarta.version>2.2.48</swagger-annotations-jakarta.version>
-    <fastexcel.version>1.3.0</fastexcel.version>
+    <fesod-sheet.version>2.0.1-incubating</fesod-sheet.version>
     <logback-adapter.version>1.1.4</logback-adapter.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <mapstruct-plus.version>1.5.0</mapstruct-plus.version>
@@ -232,9 +232,9 @@
         <version>${swagger-annotations-jakarta.version}</version>
       </dependency>
       <dependency>
-        <groupId>cn.idev.excel</groupId>
-        <artifactId>fastexcel</artifactId>
-        <version>${fastexcel.version}</version>
+        <groupId>org.apache.fesod</groupId>
+        <artifactId>fesod-sheet</artifactId>
+        <version>${fesod-sheet.version}</version>
       </dependency>
       <dependency>
         <groupId>com.alibaba.nacos</groupId>

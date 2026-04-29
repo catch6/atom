@@ -64,7 +64,7 @@
             <configuration>
               <notimestamp>true</notimestamp>
               <quiet>true</quiet>
-              <!-- <doclint>none</doclint> -->
+              <doclint>none</doclint>
             </configuration>
             <executions>
               <execution>

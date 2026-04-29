@@ -42,17 +42,7 @@
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-validation-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webmvc-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-actuator-test</artifactId>
       <scope>test</scope>
     </dependency>
     <!-- <dependency> -->
@@ -73,11 +63,11 @@
     </dependency>
 
     <dependency>
-      <groupId>cn.idev.excel</groupId>
-      <artifactId>fastexcel</artifactId>
+      <groupId>org.apache.fesod</groupId>
+      <artifactId>fesod-sheet</artifactId>
       <optional>true</optional>
     </dependency>
-    
+
   </dependencies>
 
 </project>

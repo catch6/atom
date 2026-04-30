@@ -47,7 +47,7 @@
   </developers>
 
   <properties>
-    <revision>4.0.0</revision>
+    <revision>4.0.1</revision>
 
     <spring-cloud.version>2025.1.0</spring-cloud.version>
     <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>

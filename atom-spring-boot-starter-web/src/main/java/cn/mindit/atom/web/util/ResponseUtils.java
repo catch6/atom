@@ -3,8 +3,9 @@ package cn.mindit.atom.web.util;
 import jakarta.servlet.ServletResponse;
 import lombok.SneakyThrows;
 import cn.mindit.atom.core.util.JsonUtils;
+import org.springframework.http.MediaType;
 
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -13,26 +14,19 @@ import java.nio.charset.StandardCharsets;
  */
 public abstract class ResponseUtils {
 
-    private static final String TYPE_JSON = "application/json";
-
     @SneakyThrows
     public static void renderJson(ServletResponse response, Object object) {
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setContentType(TYPE_JSON);
-        try (PrintWriter writer = response.getWriter()) {
-            String json = JsonUtils.toJson(object);
-            response.setContentLength(json.length());
-            writer.print(json);
-        }
+        renderJson(response, JsonUtils.toJson(object));
     }
 
     @SneakyThrows
     public static void renderJson(ServletResponse response, String json) {
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setContentType(TYPE_JSON);
-        try (PrintWriter writer = response.getWriter()) {
-            response.setContentLength(json.length());
-            writer.print(json);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+        response.setContentLength(bytes.length);
+        try (OutputStream out = response.getOutputStream()) {
+            out.write(bytes);
         }
     }
 

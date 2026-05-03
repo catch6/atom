@@ -90,23 +90,16 @@ public class OpcDaUtils {
         try {
             for (int i = 0; i < branches.size(); i++) {
                 Branch branch = branches.get(i);
-                if (i < branches.size() - 1) {
-                    log.info("{}{}{}", prefix, "├── ", branch.getName());
-                } else {
-                    log.info("{}{}{}", prefix, "└── ", branch.getName());
-                }
-                prefix += "│   ";
+                boolean lastBranch = i == branches.size() - 1;
+                log.info("{}{}{}", prefix, lastBranch ? "└── " : "├── ", branch.getName());
+                String childPrefix = prefix + (lastBranch ? "    " : "│   ");
                 List<Leaf> leaves = branch.getLeaves().stream().toList();
                 for (int j = 0; j < leaves.size(); j++) {
                     Leaf leaf = leaves.get(j);
-                    if (j < leaves.size() - 1) {
-                        log.info("{}{}{}", prefix, "├── ", leaf.getName());
-                    } else {
-                        log.info("{}{}{}", prefix, "└── ", leaf.getName());
-                    }
+                    log.info("{}{}{}", childPrefix, j == leaves.size() - 1 ? "└── " : "├── ", leaf.getName());
                 }
                 List<Branch> subBranches = branch.getBranches().stream().toList();
-                showItemTree(subBranches, prefix);
+                showItemTree(subBranches, childPrefix);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -4,9 +4,8 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
-import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.lang.Nullable;
 import org.springframework.util.FastByteArrayOutputStream;
 
 import java.io.*;
@@ -290,7 +289,7 @@ public class CachedResponseWrapper extends HttpServletResponseWrapper {
         }
 
         @Override
-        public void write(@NonNull byte[] b, int off, int len) throws IOException {
+        public void write(byte[] b, int off, int len) throws IOException {
             content.write(b, off, len);
         }
 
@@ -313,13 +312,13 @@ public class CachedResponseWrapper extends HttpServletResponseWrapper {
         }
 
         @Override
-        public void write(@NonNull char[] buf, int off, int len) {
+        public void write(char[] buf, int off, int len) {
             super.write(buf, off, len);
             super.flush();
         }
 
         @Override
-        public void write(@NonNull String s, int off, int len) {
+        public void write(String s, int off, int len) {
             super.write(s, off, len);
             super.flush();
         }

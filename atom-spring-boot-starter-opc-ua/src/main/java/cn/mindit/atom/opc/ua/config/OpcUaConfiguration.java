@@ -24,10 +24,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -58,18 +54,6 @@ public class OpcUaConfiguration implements ApplicationListener<ApplicationStarte
         ConfigurableApplicationContext applicationContext = event.getApplicationContext();
         ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
         Map<String, List<OpcUaConsumer>> consumerMap = OpcUaConsumerProcessor.processConsumerMap(applicationContext, opcUaProperties, opcUaSubscribers);
-
-        Path securityTempDir;
-        if (opcUaProperties.getCertificatePath() == null) {
-            securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "security");
-        } else {
-            securityTempDir = Paths.get(opcUaProperties.getCertificatePath());
-        }
-        try {
-            Files.createDirectories(securityTempDir);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to create security dir: " + securityTempDir, e);
-        }
 
         for (OpcUaProperties.OpcUaInstance instance : instances) {
             if (!instance.getEnabled()) {

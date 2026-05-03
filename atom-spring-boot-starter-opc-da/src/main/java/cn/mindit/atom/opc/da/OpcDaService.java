@@ -50,7 +50,7 @@ public class OpcDaService {
             return;
         }
         AutoReconnectController controller = applicationContext.getBean(OpcDaProperties.CONNECTION_BEAN_PREFIX + id, AutoReconnectController.class);
-        WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
+        WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableAccessBase.class);
         OpcDaConsumer opcDaConsumer = new OpcDaConsumer(id, items, consumer);
         OpcDaConfiguration.addListener(controller, access, List.of(opcDaConsumer));
     }
@@ -60,7 +60,7 @@ public class OpcDaService {
     }
 
     public String readItem(String id, String item) {
-        WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
+        WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableAccessBase.class);
         Item cachedItem = access.getItem(item);
         try {
             JIVariant jiVariant = cachedItem.read(false).getValue();
@@ -75,7 +75,7 @@ public class OpcDaService {
     }
 
     public void updateItem(String id, String item, Object value) {
-        WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
+        WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableAccessBase.class);
         access.updateItem(item, value);
     }
 
@@ -84,7 +84,7 @@ public class OpcDaService {
     }
 
     public void removeItem(String id, String item) {
-        WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableSyncAccess.class);
+        WriteableAccessBase access = applicationContext.getBean(OpcDaProperties.CLIENT_BEAN_PREFIX + id, WriteableAccessBase.class);
         access.removeItem(item);
     }
 

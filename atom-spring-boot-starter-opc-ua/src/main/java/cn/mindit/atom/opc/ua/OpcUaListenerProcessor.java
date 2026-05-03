@@ -21,9 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2024-06-16
  */
 @Slf4j
-@Getter
 public class OpcUaListenerProcessor implements BeanPostProcessor, Ordered {
 
+    @Getter
     private final List<OpcUaConsumer> consumers;
 
     private final Set<Class<?>> nonAnnotatedClasses = Collections.newSetFromMap(new ConcurrentHashMap<>(64));
@@ -48,6 +48,7 @@ public class OpcUaListenerProcessor implements BeanPostProcessor, Ordered {
             (MethodIntrospector.MetadataLookup<OpcUaListener>) method -> AnnotatedElementUtils.findMergedAnnotation(method, OpcUaListener.class)
         );
         if (annotatedMethods.isEmpty()) {
+            nonAnnotatedClasses.add(bean.getClass());
             return bean;
         }
         for (Map.Entry<Method, OpcUaListener> entry : annotatedMethods.entrySet()) {

@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
  */
 public abstract class IpUtils {
 
-    private static final String COMMA = ",";
-
     /**
      * 获取 ip 地址
      * 格式 xxx.xxx.xxx.xxx
@@ -73,7 +71,7 @@ public abstract class IpUtils {
         if (originIp == null) {
             return null;
         }
-        String[] ips = originIp.split(COMMA);
+        String[] ips = originIp.split(",");
         return Arrays.stream(ips).map(String::trim).collect(Collectors.toList());
     }
 

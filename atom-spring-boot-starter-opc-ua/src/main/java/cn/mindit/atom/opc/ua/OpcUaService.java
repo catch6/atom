@@ -39,7 +39,6 @@ public class OpcUaService {
                 .get(DEFAULT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
             return JsonUtils.toJson(dataValue.getValue().getValue());
         } catch (TimeoutException e) {
-            Thread.currentThread().interrupt();
             throw new RuntimeException("OPC UA read timeout: id=" + id + ", item=" + item, e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

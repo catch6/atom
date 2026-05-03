@@ -36,6 +36,9 @@ import java.util.function.BiConsumer;
 @Configuration
 public class OpcDaConfiguration implements ApplicationListener<ApplicationStartedEvent>, Ordered, DisposableBean {
 
+    // 192 = OPC_QUALITY_GOOD, 数据可正常获取
+    private static final short QUALITY_GOOD = 192;
+
     private final OpcDaProperties opcDaProperties;
     private final List<OpcDaSubscriber> opcDaSubscribers;
     private final List<AutoReconnectController> managedControllers = new ArrayList<>();
@@ -97,11 +100,13 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
             if (state == AutoReconnectState.DISABLED) {
                 try {
                     controller.disconnect();
-                } catch (Exception ignore) {
+                } catch (Exception e) {
+                    log.warn("OPC DA disconnect failed during reconnect", e);
                 }
                 try {
                     controller.connect();
-                } catch (Exception ignore) {
+                } catch (Exception e) {
+                    log.warn("OPC DA reconnect failed", e);
                 }
             }
         });
@@ -121,7 +126,7 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
                             access.addItem(item, (it, itState) -> {
                                 try {
                                     Short quality = itState.getQuality();
-                                    if (quality == 192) { // 192 为 Good 信号,数据可以正常获取
+                                    if (quality == QUALITY_GOOD) {
                                         JIVariant jiVariant = itState.getValue();
                                         String value = OpcDaUtils.getString(jiVariant);
                                         itemsConsumer.accept(item, value);

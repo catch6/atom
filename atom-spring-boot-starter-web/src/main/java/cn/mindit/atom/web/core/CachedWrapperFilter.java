@@ -47,7 +47,7 @@ public class CachedWrapperFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
         String method = request.getMethod();
         // 排除 OPTIONS 请求
-        if ("OPTIONS".contains(method)) {
+        if ("OPTIONS".equalsIgnoreCase(method)) {
             return true;
         }
         // 排除 Server-Sent Events (SSE) 的请求

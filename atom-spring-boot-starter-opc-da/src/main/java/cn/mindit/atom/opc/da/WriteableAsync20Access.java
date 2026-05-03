@@ -51,7 +51,7 @@ public class WriteableAsync20Access extends WriteableAccessBase implements IOPCD
                 throw new NotConnectedException();
             }
 
-            this.group.getAsyncIO20().refresh(OPCDATASOURCE.OPC_DS_CACHE, 0);
+            async20.refresh(OPCDATASOURCE.OPC_DS_CACHE, 0);
         }
     }
 

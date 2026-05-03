@@ -46,9 +46,9 @@ public class Mqttv3Configuration implements ApplicationListener<ApplicationStart
 
     private ThreadPoolTaskExecutor asyncExecutor;
 
-    @Value("${spring.application.name:-atom}")
+    @Value("${spring.application.name}")
     private String applicationName;
-    @Value("${spring.profiles.active:-}")
+    @Value("${spring.profiles.active}")
     private String activeProfile;
 
     @Override

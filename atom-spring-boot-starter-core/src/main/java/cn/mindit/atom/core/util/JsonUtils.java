@@ -41,7 +41,7 @@ public class JsonUtils {
     private JsonUtils() {
     }
 
-    public static JsonMapper jsonMapper = jsonMapper();
+    public static final JsonMapper jsonMapper = jsonMapper();
 
     /**
      * 将 Java 对象转为 Json 字符串

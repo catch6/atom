@@ -1,11 +1,11 @@
 package cn.mindit.atom.jwt.service.impl;
 
-import com.nimbusds.jose.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import cn.mindit.atom.core.util.JsonUtils;
 import cn.mindit.atom.core.util.ServiceException;
 import cn.mindit.atom.jwt.service.JwtService;
+import com.nimbusds.jose.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
 
@@ -44,6 +44,7 @@ public class JwtServiceImpl implements JwtService {
         try {
             JWSObject jwsObject = JWSObject.parse(signed);
             if (!jwsObject.verify(jwsVerifier)) {
+                log.debug("JWT verify failed");
                 return null;
             }
             if (clazz == String.class) {
@@ -51,6 +52,7 @@ public class JwtServiceImpl implements JwtService {
             }
             return JsonUtils.toObject(jwsObject.getPayload().toString(), clazz);
         } catch (ParseException | JOSEException e) {
+            log.debug("JWT parse failed: {}", e.getMessage());
             return null;
         }
     }

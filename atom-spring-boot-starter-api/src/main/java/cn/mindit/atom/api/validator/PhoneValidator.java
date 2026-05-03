@@ -15,31 +15,11 @@ import java.util.regex.Pattern;
  */
 public class PhoneValidator implements ConstraintValidator<Phone, CharSequence> {
 
-    private Pattern pattern;
+    private static final Pattern PATTERN = Pattern.compile("^1[3-9]\\d{9}$");
 
-    /**
-     * 初始化手机号验证器，编译手机号正则表达式
-     * 正则表达式规则：以 1 开头，第二位是3-9，后面跟9位数字
-     *
-     * @param constraintAnnotation Phone注解实例
-     */
-    @Override
-    public void initialize(Phone constraintAnnotation) {
-        pattern = Pattern.compile("^1[3-9]\\d{9}$");
-    }
-
-    /**
-     * 验证手机号是否有效
-     *
-     * @param value   待验证的手机号字符串
-     * @param context 验证上下文
-     * @return 如果值为null或符合手机号格式返回true，否则返回false
-     */
     @Override
     public boolean isValid(CharSequence value, ConstraintValidatorContext context) {
-        return value == null || pattern.matcher(value).matches();
+        return value == null || PATTERN.matcher(value).matches();
     }
 
 }
-
-

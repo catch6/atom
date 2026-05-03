@@ -26,11 +26,11 @@ public class PageDTO {
     @Schema(description = "每页结果数(-1:查询全部)", example = "15", defaultValue = "15")
     private long pageSize = 15;
 
-    public static <T> PageDTO of() {
+    public static PageDTO of() {
         return new PageDTO();
     }
 
-    public static <T> PageDTO of(long pageNo, long pageSize) {
+    public static PageDTO of(long pageNo, long pageSize) {
         return new PageDTO(pageNo, pageSize);
     }
 

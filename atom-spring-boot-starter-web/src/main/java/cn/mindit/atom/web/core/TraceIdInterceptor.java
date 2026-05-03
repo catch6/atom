@@ -18,8 +18,12 @@ public class TraceIdInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
-        MDC.put(CoreConstants.TRACE_ID, NanoIdUtils.nanoId());
-        response.setHeader(CoreConstants.TRACE_ID, MDC.get(CoreConstants.TRACE_ID));
+        String traceId = request.getHeader(CoreConstants.TRACE_ID);
+        if (traceId == null || traceId.isEmpty()) {
+            traceId = NanoIdUtils.nanoId();
+        }
+        MDC.put(CoreConstants.TRACE_ID, traceId);
+        response.setHeader(CoreConstants.TRACE_ID, traceId);
         return true;
     }
 

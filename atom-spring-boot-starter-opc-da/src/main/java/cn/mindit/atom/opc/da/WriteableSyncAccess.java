@@ -47,6 +47,8 @@ public class WriteableSyncAccess extends WriteableAccessBase implements Runnable
             try {
                 Thread.sleep(getPeriod());
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
             }
         }
     }

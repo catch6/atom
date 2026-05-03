@@ -6,6 +6,7 @@ import feign.Response;
 import feign.Util;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -20,8 +21,6 @@ import static feign.Util.decodeOrDefault;
 @ConditionalOnProperty(value = "atom.feign.logging", matchIfMissing = true)
 @Component
 public class FeignLogger extends Logger {
-
-    private static final ThreadLocal<Long> TIMER = new ThreadLocal<>();
 
     private final org.slf4j.Logger logger;
 
@@ -42,13 +41,12 @@ public class FeignLogger extends Logger {
     }
 
     protected void logRequest(String configKey, Level logLevel, Request request) {
-        TIMER.set(System.currentTimeMillis());
+        if (!this.logger.isInfoEnabled()) {
+            return;
+        }
         String bodyText = null;
-        if (request.body() != null) {
-            bodyText =
-                request.charset() != null
-                    ? new String(request.body(), request.charset())
-                    : null;
+        if (request.body() != null && request.charset() != null) {
+            bodyText = new String(request.body(), request.charset());
         }
         if (bodyText == null) {
             this.logger.info("THIRD-REQUEST: {} {}", request.httpMethod().name(), request.url());
@@ -59,15 +57,18 @@ public class FeignLogger extends Logger {
 
     protected Response logAndRebufferResponse(String configKey, Level logLevel, Response response, long elapsedTime) throws IOException {
         int status = response.status();
-        long time = System.currentTimeMillis() - TIMER.get();
-        TIMER.remove();
-        if (response.body() != null && !(status == 204 || status == 205)) {
+        boolean noContent = status == HttpStatus.NO_CONTENT.value() || status == HttpStatus.RESET_CONTENT.value();
+        if (response.body() != null && !noContent) {
             byte[] bodyData = Util.toByteArray(response.body().asInputStream());
-            String bodyText = decodeOrDefault(bodyData, UTF_8, null);
-            this.logger.info("THIRD-RESPONSE: {}ms {} {}", time, status, bodyText);
+            if (this.logger.isInfoEnabled()) {
+                String bodyText = decodeOrDefault(bodyData, UTF_8, null);
+                this.logger.info("THIRD-RESPONSE: {}ms {} {}", elapsedTime, status, bodyText);
+            }
             return response.toBuilder().body(bodyData).build();
         }
-        this.logger.info("THIRD-RESPONSE: {}ms {}", time, status);
+        if (this.logger.isInfoEnabled()) {
+            this.logger.info("THIRD-RESPONSE: {}ms {}", elapsedTime, status);
+        }
         return response;
     }
 

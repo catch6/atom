@@ -58,11 +58,17 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, Exception ex) {
+        if (!log.isInfoEnabled()) {
+            TIMER.remove();
+            return;
+        }
+        Long start = TIMER.get();
+        TIMER.remove();
+        long elapsed = start == null ? -1 : System.currentTimeMillis() - start;
         StringBuilder loggingText = new StringBuilder();
         loggingText.append("RESPONSE:")
-                   .append(" ").append(System.currentTimeMillis() - TIMER.get()).append("ms")
+                   .append(" ").append(elapsed).append("ms")
                    .append(" ").append(response.getStatus());
-        TIMER.remove();
         if (response instanceof CachedResponseWrapper responseToUse) {
             String contentType = response.getContentType();
             if (contentType != null

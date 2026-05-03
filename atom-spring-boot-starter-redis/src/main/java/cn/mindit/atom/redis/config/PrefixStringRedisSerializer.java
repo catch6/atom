@@ -34,20 +34,19 @@ public class PrefixStringRedisSerializer extends StringRedisSerializer {
         this.prefix = prefix;
     }
 
-    @NonNull
     @Override
     public byte[] serialize(String value) throws SerializationException {
-        return super.serialize(prefix + value);
+        return prefix.isEmpty() ? super.serialize(value) : super.serialize(prefix + value);
     }
 
     @NonNull
     @Override
     public String deserialize(byte[] bytes) throws SerializationException {
         String deserialized = super.deserialize(bytes);
-        if (deserialized.startsWith(prefix)) {
-            return deserialized.substring(prefix.length());
+        if (prefix.isEmpty() || !deserialized.startsWith(prefix)) {
+            return deserialized;
         }
-        return deserialized;
+        return deserialized.substring(prefix.length());
     }
 
 }

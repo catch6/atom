@@ -25,9 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2024-06-16
  */
 @Slf4j
-@Getter
 public class MqttListenerProcessor implements BeanPostProcessor, Ordered, BeanFactoryAware {
 
+    @Getter
     private final List<MqttConsumer> consumers;
 
     private final Set<Class<?>> nonAnnotatedClasses = Collections.newSetFromMap(new ConcurrentHashMap<>(64));
@@ -59,6 +59,7 @@ public class MqttListenerProcessor implements BeanPostProcessor, Ordered, BeanFa
             (MethodIntrospector.MetadataLookup<MqttListener>) method -> AnnotatedElementUtils.findMergedAnnotation(method, MqttListener.class)
         );
         if (annotatedMethods.isEmpty()) {
+            nonAnnotatedClasses.add(bean.getClass());
             return bean;
         }
         for (Map.Entry<Method, MqttListener> entry : annotatedMethods.entrySet()) {

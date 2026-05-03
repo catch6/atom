@@ -6,7 +6,6 @@ import cn.mindit.atom.core.util.JsonUtils;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
-import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,7 +15,6 @@ import java.util.concurrent.CompletableFuture;
  */
 @RequiredArgsConstructor
 @Slf4j
-@Service
 public class KafkaService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;

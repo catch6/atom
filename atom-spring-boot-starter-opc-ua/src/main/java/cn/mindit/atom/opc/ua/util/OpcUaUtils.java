@@ -28,11 +28,13 @@ public class OpcUaUtils {
     private OpcUaUtils() {
     }
 
-    // public static void main(String[] args) {
-    // 	// OpcUaUtils.showItemList("opc.tcp://opcuaserver.com:48010", null, null);
-    // 	OpcUaUtils.showItemTree("opc.tcp://opcuaserver.com:48010", null, null);
-    // }
-
+    /**
+     *
+     * @param url      opc.tcp://opcuaserver.com:48010
+     * @param username null
+     * @param password nul
+     * @return OpcUaClient
+     */
     public static OpcUaClient getClient(String url, String username, String password) {
         Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "security");
         try {

@@ -27,6 +27,7 @@ import org.springframework.core.Ordered;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,61 +56,70 @@ public class OpcUaConfiguration implements ApplicationListener<ApplicationStarte
         ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
         Map<String, List<OpcUaConsumer>> consumerMap = OpcUaConsumerProcessor.processConsumerMap(applicationContext, opcUaProperties, opcUaSubscribers);
 
-        for (OpcUaProperties.OpcUaInstance instance : instances) {
-            if (!instance.getEnabled()) {
+        List<OpcUaProperties.OpcUaInstance> enabledInstances = instances.stream().filter(OpcUaProperties.OpcUaInstance::getEnabled).toList();
+        List<CompletableFuture<OpcUaClient>> futures = enabledInstances.stream()
+            .map(instance -> CompletableFuture.supplyAsync(() -> connectInstance(instance)))
+            .toList();
+
+        for (int i = 0; i < enabledInstances.size(); i++) {
+            OpcUaProperties.OpcUaInstance instance = enabledInstances.get(i);
+            OpcUaClient opcUaClient = futures.get(i).join();
+            managedClients.add(opcUaClient);
+
+            List<OpcUaConsumer> consumers = consumerMap.get(instance.getId());
+            if (consumers != null && !consumers.isEmpty()) {
+                try {
+                    attachConsumers(opcUaClient, consumers);
+                } catch (Exception e) {
+                    throw new RuntimeException("OPC UA subscribe error: " + e.getMessage(), e);
+                }
+            }
+            beanFactory.registerSingleton(OpcUaProperties.CLIENT_BEAN_PREFIX + instance.getId(), opcUaClient);
+        }
+    }
+
+    private OpcUaClient connectInstance(OpcUaProperties.OpcUaInstance instance) {
+        try {
+            IdentityProvider identityProvider = instance.getUsername() == null
+                ? new AnonymousProvider()
+                : new UsernameProvider(instance.getUsername(), instance.getPassword());
+            OpcUaClient opcUaClient = OpcUaClient.create(instance.getUrl(),
+                endpoints -> endpoints.stream().findFirst(),
+                configBuilder -> configBuilder
+                    .setApplicationName(LocalizedText.english("Atom Opc Ua Client"))
+                    .setApplicationUri("urn:atom:opc:ua:client")
+                    .setIdentityProvider(identityProvider)
+                    .setRequestTimeout(UInteger.valueOf(5000))
+                    .build()
+            );
+            opcUaClient.connect().get(DISCONNECT_TIMEOUT_SECONDS * 2, TimeUnit.SECONDS);
+            return opcUaClient;
+        } catch (Exception e) {
+            throw new RuntimeException("OPC UA connect error: " + e.getMessage(), e);
+        }
+    }
+
+    private void attachConsumers(OpcUaClient opcUaClient, List<OpcUaConsumer> consumers) throws Exception {
+        ManagedSubscription subscription = ManagedSubscription.create(opcUaClient);
+        for (OpcUaConsumer consumer : consumers) {
+            String[] items = consumer.getItems();
+            if (items == null || items.length == 0) {
                 continue;
             }
-            try {
-                IdentityProvider identityProvider;
-                if (instance.getUsername() == null) {
-                    identityProvider = new AnonymousProvider();
-                } else {
-                    identityProvider = new UsernameProvider(instance.getUsername(), instance.getPassword());
-                }
-                OpcUaClient opcUaClient = OpcUaClient.create(instance.getUrl(),
-                    endpoints -> endpoints
-                        .stream()
-                        .findFirst(),
-                    configBuilder -> configBuilder
-                        .setApplicationName(LocalizedText.english("Atom Opc Ua Client"))
-                        .setApplicationUri("urn:atom:opc:ua:client")
-                        .setIdentityProvider(identityProvider)
-                        .setRequestTimeout(UInteger.valueOf(5000))
-                        .build()
-                );
-                opcUaClient.connect().get(DISCONNECT_TIMEOUT_SECONDS * 2, TimeUnit.SECONDS);
-                managedClients.add(opcUaClient);
-
-                List<OpcUaConsumer> consumers = consumerMap.get(instance.getId());
-                if (consumers == null || consumers.isEmpty()) {
-                    continue;
-                }
-                ManagedSubscription subscription = ManagedSubscription.create(opcUaClient);
-                for (OpcUaConsumer consumer : consumers) {
-                    String[] items = consumer.getItems();
-                    if (items == null || items.length == 0) {
-                        continue;
+            int[] namespaceIndices = consumer.getNamespaceIndices();
+            for (int i = 0; i < items.length; i++) {
+                String item = items[i];
+                NodeId nodeId = new NodeId(namespaceIndices[i], item);
+                ManagedDataItem dataItem = subscription.createDataItem(nodeId);
+                dataItem.addDataValueListener(dataValue -> {
+                    if (log.isDebugEnabled()) {
+                        log.debug("OPC UA consumer item:{}, value:{}", item, dataValue);
                     }
-                    int[] namespaceIndices = consumer.getNamespaceIndices();
-                    for (int i = 0; i < items.length; i++) {
-                        int namespaceIndex = namespaceIndices[i];
-                        String item = items[i];
-                        NodeId nodeId = new NodeId(namespaceIndex, item);
-                        ManagedDataItem dataItem = subscription.createDataItem(nodeId);
-                        dataItem.addDataValueListener(dataValue -> {
-                            if (log.isDebugEnabled()) {
-                                log.debug("OPC UA consumer item:{}, value:{}", item, dataValue);
-                            }
-                            if (dataValue.getStatusCode() != null && dataValue.getStatusCode().isGood()) {
-                                String value = JsonUtils.toJson(dataValue.getValue().getValue());
-                                consumer.getConsumer().accept(item, value);
-                            }
-                        });
+                    if (dataValue.getStatusCode() != null && dataValue.getStatusCode().isGood()) {
+                        String value = JsonUtils.toJson(dataValue.getValue().getValue());
+                        consumer.getConsumer().accept(item, value);
                     }
-                }
-                beanFactory.registerSingleton(OpcUaProperties.CLIENT_BEAN_PREFIX + instance.getId(), opcUaClient);
-            } catch (Exception e) {
-                throw new RuntimeException("OPC UA connect error: " + e.getMessage(), e);
+                });
             }
         }
     }

@@ -24,6 +24,7 @@ import org.springframework.core.Ordered;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.function.BiConsumer;
 
@@ -54,45 +55,56 @@ public class OpcDaConfiguration implements ApplicationListener<ApplicationStarte
         ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
         Map<String, List<OpcDaConsumer>> consumerMap = OpcDaConsumerProcessor.processConsumerMap(applicationContext, opcDaProperties, opcDaSubscribers);
 
-        for (OpcDaProperties.OpcDaInstance instance : instances) {
-            if (!instance.getEnabled()) {
-                continue;
-            }
-            try {
-                if (StrUtil.isEmpty(instance.getClsId())) {
-                    ServerList serverList = new ServerList(instance.getHost(), instance.getUser(), instance.getPassword(), instance.getDomain());
-                    instance.setClsId(serverList.getClsIdFromProgId(instance.getProgId()));
-                }
-                ConnectionInformation ci = new ConnectionInformation();
-                ci.setHost(instance.getHost());
-                ci.setDomain(instance.getDomain());
-                ci.setUser(instance.getUser());
-                ci.setPassword(instance.getPassword());
-                ci.setProgId(instance.getProgId());
-                ci.setClsid(instance.getClsId());
+        List<OpcDaProperties.OpcDaInstance> enabledInstances = instances.stream().filter(OpcDaProperties.OpcDaInstance::getEnabled).toList();
+        List<CompletableFuture<OpcDaConnection>> futures = enabledInstances.stream()
+            .map(instance -> CompletableFuture.supplyAsync(() -> connectInstance(instance)))
+            .toList();
 
-                Server server = new Server(ci, Executors.newSingleThreadScheduledExecutor());
-                AutoReconnectController autoReconnectController = new AutoReconnectController(server);
-                autoReconnectController.connect();
-                managedControllers.add(autoReconnectController);
+        for (int i = 0; i < enabledInstances.size(); i++) {
+            OpcDaProperties.OpcDaInstance instance = enabledInstances.get(i);
+            OpcDaConnection conn = futures.get(i).join();
+            managedControllers.add(conn.controller());
 
-                WriteableAccessBase access;
-                if (instance.isAsync()) {
-                    JISystem.setJavaCoClassAutoCollection(false);
-                    access = new WriteableAsync20Access(server, instance.getPeriod(), instance.getInitialRefresh());
-                } else {
-                    access = new WriteableSyncAccess(server, instance.getPeriod());
-                }
+            List<OpcDaConsumer> consumers = consumerMap.get(instance.getId());
+            addListener(conn.controller(), conn.access(), consumers);
 
-                List<OpcDaConsumer> consumers = consumerMap.get(instance.getId());
-                addListener(autoReconnectController, access, consumers);
-
-                beanFactory.registerSingleton(OpcDaProperties.CLIENT_BEAN_PREFIX + instance.getId(), access);
-                beanFactory.registerSingleton(OpcDaProperties.CONNECTION_BEAN_PREFIX + instance.getId(), autoReconnectController);
-            } catch (Exception e) {
-                throw new RuntimeException("OPC DA connect error: " + e.getMessage(), e);
-            }
+            beanFactory.registerSingleton(OpcDaProperties.CLIENT_BEAN_PREFIX + instance.getId(), conn.access());
+            beanFactory.registerSingleton(OpcDaProperties.CONNECTION_BEAN_PREFIX + instance.getId(), conn.controller());
         }
+    }
+
+    private OpcDaConnection connectInstance(OpcDaProperties.OpcDaInstance instance) {
+        try {
+            if (StrUtil.isEmpty(instance.getClsId())) {
+                ServerList serverList = new ServerList(instance.getHost(), instance.getUser(), instance.getPassword(), instance.getDomain());
+                instance.setClsId(serverList.getClsIdFromProgId(instance.getProgId()));
+            }
+            ConnectionInformation ci = new ConnectionInformation();
+            ci.setHost(instance.getHost());
+            ci.setDomain(instance.getDomain());
+            ci.setUser(instance.getUser());
+            ci.setPassword(instance.getPassword());
+            ci.setProgId(instance.getProgId());
+            ci.setClsid(instance.getClsId());
+
+            Server server = new Server(ci, Executors.newSingleThreadScheduledExecutor());
+            AutoReconnectController controller = new AutoReconnectController(server);
+            controller.connect();
+
+            WriteableAccessBase access;
+            if (instance.isAsync()) {
+                JISystem.setJavaCoClassAutoCollection(false);
+                access = new WriteableAsync20Access(server, instance.getPeriod(), instance.getInitialRefresh());
+            } else {
+                access = new WriteableSyncAccess(server, instance.getPeriod());
+            }
+            return new OpcDaConnection(controller, access);
+        } catch (Exception e) {
+            throw new RuntimeException("OPC DA connect error: " + e.getMessage(), e);
+        }
+    }
+
+    private record OpcDaConnection(AutoReconnectController controller, WriteableAccessBase access) {
     }
 
     public static void addListener(AutoReconnectController controller, WriteableAccessBase access, List<OpcDaConsumer> consumers) {

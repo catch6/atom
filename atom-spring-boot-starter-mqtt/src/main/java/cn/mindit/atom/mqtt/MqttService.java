@@ -6,20 +6,39 @@ package cn.mindit.atom.mqtt;
  */
 public interface MqttService {
 
-    void send(String topic, String message);
+    int DEFAULT_QOS = 1;
+    boolean DEFAULT_RETAINED = false;
 
-    void send(String topic, String message, int qos);
-
-    void send(String topic, String message, boolean retained);
-
-    void send(String topic, String message, int qos, boolean retained);
-
-    void send(String id, String topic, String message);
-
-    void send(String id, String topic, String message, int qos);
-
-    void send(String id, String topic, String message, boolean retained);
+    String defaultId();
 
     void send(String id, String topic, String message, int qos, boolean retained);
+
+    default void send(String topic, String message) {
+        send(defaultId(), topic, message, DEFAULT_QOS, DEFAULT_RETAINED);
+    }
+
+    default void send(String topic, String message, int qos) {
+        send(defaultId(), topic, message, qos, DEFAULT_RETAINED);
+    }
+
+    default void send(String topic, String message, boolean retained) {
+        send(defaultId(), topic, message, DEFAULT_QOS, retained);
+    }
+
+    default void send(String topic, String message, int qos, boolean retained) {
+        send(defaultId(), topic, message, qos, retained);
+    }
+
+    default void send(String id, String topic, String message) {
+        send(id, topic, message, DEFAULT_QOS, DEFAULT_RETAINED);
+    }
+
+    default void send(String id, String topic, String message, int qos) {
+        send(id, topic, message, qos, DEFAULT_RETAINED);
+    }
+
+    default void send(String id, String topic, String message, boolean retained) {
+        send(id, topic, message, DEFAULT_QOS, retained);
+    }
 
 }

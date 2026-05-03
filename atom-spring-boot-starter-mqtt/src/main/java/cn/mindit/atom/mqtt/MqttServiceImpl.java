@@ -15,45 +15,12 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class MqttServiceImpl implements MqttService {
 
-    public static final int DEFAULT_QOS = 1;
-    public static final boolean DEFAULT_RETAINED = false;
-
     private final ApplicationContext applicationContext;
     private final MqttProperties mqttProperties;
 
     @Override
-    public void send(String topic, String message) {
-        send(mqttProperties.getId(), topic, message, DEFAULT_QOS, DEFAULT_RETAINED);
-    }
-
-    @Override
-    public void send(String topic, String message, int qos) {
-        send(mqttProperties.getId(), topic, message, qos, DEFAULT_RETAINED);
-    }
-
-    @Override
-    public void send(String topic, String message, boolean retained) {
-        send(mqttProperties.getId(), topic, message, DEFAULT_QOS, retained);
-    }
-
-    @Override
-    public void send(String topic, String message, int qos, boolean retained) {
-        send(mqttProperties.getId(), topic, message, qos, retained);
-    }
-
-    @Override
-    public void send(String id, String topic, String message) {
-        send(id, topic, message, DEFAULT_QOS, DEFAULT_RETAINED);
-    }
-
-    @Override
-    public void send(String id, String topic, String message, int qos) {
-        send(id, topic, message, qos, DEFAULT_RETAINED);
-    }
-
-    @Override
-    public void send(String id, String topic, String message, boolean retained) {
-        send(id, topic, message, DEFAULT_QOS, retained);
+    public String defaultId() {
+        return mqttProperties.getId();
     }
 
     @Override
@@ -63,16 +30,16 @@ public class MqttServiceImpl implements MqttService {
         }
         try {
             Object mqttClient = applicationContext.getBean(MqttProperties.CLIENT_BEAN_PREFIX + id);
-            String className = mqttClient.getClass().getName();
-            if ("org.eclipse.paho.mqttv5.client.MqttClient".equals(className)) {
-                ((org.eclipse.paho.mqttv5.client.MqttClient) mqttClient).publish(topic, message.getBytes(StandardCharsets.UTF_8), qos, retained);
+            byte[] payload = message.getBytes(StandardCharsets.UTF_8);
+            if (mqttClient instanceof org.eclipse.paho.mqttv5.client.MqttClient v5) {
+                v5.publish(topic, payload, qos, retained);
                 return;
             }
-            if ("org.eclipse.paho.client.mqttv3.MqttClient".equals(className)) {
-                ((org.eclipse.paho.client.mqttv3.MqttClient) mqttClient).publish(topic, message.getBytes(StandardCharsets.UTF_8), qos, retained);
+            if (mqttClient instanceof org.eclipse.paho.client.mqttv3.MqttClient v3) {
+                v3.publish(topic, payload, qos, retained);
                 return;
             }
-            throw new RuntimeException("MQTT client not supported: " + className);
+            throw new RuntimeException("MQTT client not supported: " + mqttClient.getClass().getName());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

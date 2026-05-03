@@ -1,32 +1,18 @@
 package cn.mindit.atom.mqtt.config;
 
-import cn.hutool.core.util.StrUtil;
 import cn.mindit.atom.mqtt.MqttConsumer;
-import cn.mindit.atom.mqtt.MqttConsumerProcessor;
 import cn.mindit.atom.mqtt.MqttSubscriber;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.mqttv5.client.IMqttMessageListener;
 import org.eclipse.paho.mqttv5.client.MqttClient;
 import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttSubscription;
-import org.jspecify.annotations.NonNull;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executor;
 
 /**
@@ -34,83 +20,47 @@ import java.util.concurrent.Executor;
  * @since 2024-06-26
  */
 @Slf4j
-@RequiredArgsConstructor
 @ConditionalOnClass(MqttClient.class)
 @Configuration
-public class Mqttv5Configuration implements ApplicationListener<ApplicationStartedEvent>, Ordered, DisposableBean {
+public class Mqttv5Configuration extends AbstractMqttConfiguration<MqttClient> {
 
-    private static final long DISCONNECT_TIMEOUT_MS = 3000L;
-
-    private final MqttProperties mqttProperties;
-    private final List<MqttSubscriber> mqttSubscribers;
-    private final List<MqttClient> managedClients = new ArrayList<>();
-
-    private ThreadPoolTaskExecutor asyncExecutor;
-
-    @Value("${spring.application.name}")
-    private String applicationName;
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
+    public Mqttv5Configuration(MqttProperties mqttProperties, List<MqttSubscriber> mqttSubscribers) {
+        super(mqttProperties, mqttSubscribers);
+    }
 
     @Override
-    public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
-        List<MqttProperties.MqttInstance> instances = mqttProperties.getInstances();
-        if (instances == null || instances.isEmpty()) {
-            return;
+    protected String version() {
+        return "v5";
+    }
+
+    @Override
+    protected MqttClient createAndConnect(MqttProperties.MqttInstance instance) throws Exception {
+        String[] urls = instance.getUrl().split(",");
+        MqttClient client = new MqttClient(urls[0], instance.getClientId(), new MemoryPersistence());
+        MqttConnectionOptions options = new MqttConnectionOptions();
+        options.setServerURIs(urls);
+        if (instance.getUsername() != null) {
+            options.setUserName(instance.getUsername());
         }
-
-        ConfigurableApplicationContext applicationContext = event.getApplicationContext();
-        ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-        Map<String, List<MqttConsumer>> consumerMap = MqttConsumerProcessor.processConsumerMap(applicationContext, mqttProperties, mqttSubscribers);
-
-        Executor executor = initExecutor();
-
-        for (MqttProperties.MqttInstance instance : instances) {
-            if (!instance.getEnabled()) {
-                continue;
-            }
-            try {
-                if (StrUtil.isBlank(instance.getClientId())) {
-                    instance.setClientId(applicationName + "-" + activeProfile);
-                }
-                String[] urls = instance.getUrl().split(",");
-                MqttClient mqttClient = new MqttClient(urls[0], instance.getClientId(), new MemoryPersistence());
-                MqttConnectionOptions options = new MqttConnectionOptions();
-                options.setServerURIs(urls);
-                if (instance.getUsername() != null) {
-                    options.setUserName(instance.getUsername());
-                }
-                if (instance.getPassword() != null) {
-                    options.setPassword(instance.getPassword().getBytes(StandardCharsets.UTF_8));
-                }
-                options.setAutomaticReconnect(true);
-                mqttClient.connect(options);
-                managedClients.add(mqttClient);
-
-                beanFactory.registerSingleton(MqttProperties.CLIENT_BEAN_PREFIX + instance.getId(), mqttClient);
-
-                List<MqttConsumer> consumers = consumerMap.get(instance.getId());
-                if (consumers == null || consumers.isEmpty()) {
-                    continue;
-                }
-                for (MqttConsumer consumer : consumers) {
-                    String[] topics = consumer.getTopics();
-                    if (topics == null || topics.length == 0) {
-                        continue;
-                    }
-                    int[] qos = consumer.getQos();
-                    MqttSubscription[] subscriptions = new MqttSubscription[topics.length];
-                    IMqttMessageListener[] listeners = new IMqttMessageListener[topics.length];
-                    for (int i = 0; i < topics.length; i++) {
-                        subscriptions[i] = new MqttSubscription(topics[i], qos[i]);
-                        listeners[i] = createListener(consumer, executor);
-                    }
-                    mqttClient.subscribe(subscriptions, listeners);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException("MQTT connect error: " + e.getMessage(), e);
-            }
+        if (instance.getPassword() != null) {
+            options.setPassword(instance.getPassword().getBytes(StandardCharsets.UTF_8));
         }
+        options.setAutomaticReconnect(true);
+        client.connect(options);
+        return client;
+    }
+
+    @Override
+    protected void subscribe(MqttClient client, MqttConsumer consumer, Executor executor) throws Exception {
+        String[] topics = consumer.getTopics();
+        int[] qos = consumer.getQos();
+        MqttSubscription[] subscriptions = new MqttSubscription[topics.length];
+        IMqttMessageListener[] listeners = new IMqttMessageListener[topics.length];
+        for (int i = 0; i < topics.length; i++) {
+            subscriptions[i] = new MqttSubscription(topics[i], qos[i]);
+            listeners[i] = createListener(consumer, executor);
+        }
+        client.subscribe(subscriptions, listeners);
     }
 
     private IMqttMessageListener createListener(MqttConsumer consumer, Executor executor) {
@@ -123,44 +73,24 @@ public class Mqttv5Configuration implements ApplicationListener<ApplicationStart
         return (topic, message) -> consumer.getConsumer().accept(topic, new String(message.getPayload(), StandardCharsets.UTF_8));
     }
 
-    private Executor initExecutor() {
-        if (!Boolean.TRUE.equals(mqttProperties.getAsync())) {
-            return null;
-        }
-        MqttProperties.MqttExecutor config = mqttProperties.getExecutor();
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(config.getCorePoolSize());
-        executor.setMaxPoolSize(config.getMaxPoolSize());
-        executor.setQueueCapacity(config.getQueueCapacity());
-        executor.setThreadNamePrefix(config.getThreadNamePrefix() + "v5-");
-        executor.initialize();
-        this.asyncExecutor = executor;
-        log.info("MQTT v5 async executor initialized: core={}, max={}, queue={}",
-            config.getCorePoolSize(), config.getMaxPoolSize(), config.getQueueCapacity());
-        return executor;
+    @Override
+    protected String clientId(MqttClient client) {
+        return client.getClientId();
     }
 
     @Override
-    public int getOrder() {
-        return mqttProperties.getOrder();
+    protected boolean isConnected(MqttClient client) {
+        return client.isConnected();
     }
 
     @Override
-    public void destroy() {
-        for (MqttClient client : managedClients) {
-            try {
-                if (client.isConnected()) {
-                    client.disconnectForcibly(DISCONNECT_TIMEOUT_MS);
-                }
-                client.close();
-            } catch (Exception e) {
-                log.warn("Failed to close MQTT v5 client: {}", client.getClientId(), e);
-            }
-        }
-        managedClients.clear();
-        if (asyncExecutor != null) {
-            asyncExecutor.shutdown();
-        }
+    protected void disconnectForcibly(MqttClient client) throws Exception {
+        client.disconnectForcibly(DISCONNECT_TIMEOUT_MS);
+    }
+
+    @Override
+    protected void close(MqttClient client) throws Exception {
+        client.close();
     }
 
 }

@@ -1,109 +1,31 @@
 package cn.mindit.atom.opc.da;
 
-import lombok.Getter;
+import cn.mindit.atom.core.util.AbstractListenerProcessor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.NonNull;
-import org.springframework.aop.framework.Advised;
-import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.core.MethodIntrospector;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Catch
  * @since 2024-06-16
  */
 @Slf4j
-public class OpcDaListenerProcessor implements BeanPostProcessor, Ordered {
+public class OpcDaListenerProcessor extends AbstractListenerProcessor<OpcDaListener, OpcDaConsumer> {
 
-    @Getter
-    private final List<OpcDaConsumer> consumers;
-
-    private final Set<Class<?>> nonAnnotatedClasses = Collections.newSetFromMap(new ConcurrentHashMap<>(64));
-
-    public OpcDaListenerProcessor() {
-        consumers = new ArrayList<>();
+    @Override
+    protected Class<OpcDaListener> annotationType() {
+        return OpcDaListener.class;
     }
 
     @Override
-    public Object postProcessBeforeInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
-        return bean;
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
-        if (nonAnnotatedClasses.contains(bean.getClass())) {
-            return bean;
-        }
-        Class<?> targetClass = AopUtils.getTargetClass(bean);
-        Map<Method, OpcDaListener> annotatedMethods = MethodIntrospector.selectMethods(
-            targetClass,
-            (MethodIntrospector.MetadataLookup<OpcDaListener>) method -> AnnotatedElementUtils.findMergedAnnotation(method, OpcDaListener.class)
-        );
-        if (annotatedMethods.isEmpty()) {
-            nonAnnotatedClasses.add(bean.getClass());
-            return bean;
-        }
-        for (Map.Entry<Method, OpcDaListener> entry : annotatedMethods.entrySet()) {
-            Method method = entry.getKey();
-            OpcDaListener listener = entry.getValue();
-            Method methodToUse = checkProxy(method, bean);
-            OpcDaConsumer consumer = new OpcDaConsumer(listener.id(), listener.items(), (topic, value) -> {
-                try {
-                    methodToUse.invoke(bean, topic, value);
-                } catch (Exception e) {
-                    log.error("OPC DA invoke error", e);
-                }
-            });
-            consumers.add(consumer);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug("{} @OpcDaListener methods processed on bean '{}': {}", annotatedMethods.size(), beanName, annotatedMethods);
-        }
-        return bean;
-    }
-
-    @Override
-    public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
-    }
-
-    private Method checkProxy(Method methodArg, Object bean) {
-        Method method = methodArg;
-        if (AopUtils.isJdkDynamicProxy(bean)) {
+    protected OpcDaConsumer buildConsumer(Object bean, Method method, OpcDaListener listener) {
+        return new OpcDaConsumer(listener.id(), listener.items(), (topic, value) -> {
             try {
-                // Found a @OpcDaListener method on the target class for this JDK proxy ->
-                // is it also present on the proxy itself?
-                method = bean.getClass().getMethod(method.getName(), method.getParameterTypes());
-                Class<?>[] proxiedInterfaces = ((Advised) bean).getProxiedInterfaces();
-                for (Class<?> iface : proxiedInterfaces) {
-                    try {
-                        method = iface.getMethod(method.getName(), method.getParameterTypes());
-                        break;
-                    } catch (@SuppressWarnings("unused") NoSuchMethodException noMethod) {
-                        // NOSONAR
-                    }
-                }
-            } catch (SecurityException ex) {
-                ReflectionUtils.handleReflectionException(ex);
-            } catch (NoSuchMethodException ex) {
-                throw new IllegalStateException(String.format(
-                    "@OpcDaListener method '%s' found on bean target class '%s', " +
-                        "but not found in any interface(s) for bean JDK proxy. Either " +
-                        "pull the method up to an interface or switch to subclass (CGLIB) " +
-                        "proxies by setting proxy-target-class/proxyTargetClass " +
-                        "attribute to 'true'", method.getName(),
-                    method.getDeclaringClass().getSimpleName()), ex);
+                method.invoke(bean, topic, value);
+            } catch (Exception e) {
+                log.error("OPC DA invoke error", e);
             }
-        }
-        return method;
+        });
     }
 
 }

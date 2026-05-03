@@ -1,9 +1,8 @@
 package cn.mindit.atom.opc.da;
 
 import lombok.extern.slf4j.Slf4j;
+import cn.mindit.atom.core.util.ExpressionResolverUtils;
 import cn.mindit.atom.opc.da.config.OpcDaProperties;
-import org.springframework.beans.factory.config.BeanExpressionContext;
-import org.springframework.beans.factory.config.BeanExpressionResolver;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -34,49 +33,17 @@ public class OpcDaConsumerProcessor {
         }
 
         ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
-        BeanExpressionContext expressionContext = new BeanExpressionContext(beanFactory, null);
-        BeanExpressionResolver expressionResolver = beanFactory.getBeanExpressionResolver();
-
         for (OpcDaConsumer consumer : consumers) {
             String id = consumer.getId();
             if (id == null || id.isEmpty()) {
                 consumer.setId(properties.getId());
             }
-            String[] items = processExpression(consumer.getItems(), beanFactory, expressionContext, expressionResolver);
+            String[] items = ExpressionResolverUtils.resolveStringArray(consumer.getItems(), beanFactory, "OPC DA item");
             consumer.setItems(items);
             consumer.initialize();
             List<OpcDaConsumer> list = consumerMap.computeIfAbsent(consumer.getId(), k -> new ArrayList<>());
             list.add(consumer);
         }
-    }
-
-    private static String[] processExpression(String[] items, ConfigurableListableBeanFactory beanFactory, BeanExpressionContext expressionContext, BeanExpressionResolver expressionResolver) {
-        if (items == null || items.length == 0) {
-            return null;
-        }
-        if (expressionResolver != null) {
-            List<String> newItems = new ArrayList<>();
-            for (String item : items) {
-                Object object = expressionResolver.evaluate(beanFactory.resolveEmbeddedValue(item), expressionContext);
-                if (object == null) {
-                    throw new IllegalArgumentException("OPC DA item must not be null");
-                }
-                if (object instanceof String str) {
-                    newItems.add(str);
-                } else if (object instanceof String[] strs) {
-                    for (String str : strs) {
-                        if (str == null) {
-                            throw new IllegalArgumentException("OPC DA item must not be null");
-                        }
-                        newItems.add(str);
-                    }
-                } else {
-                    throw new IllegalArgumentException("OPC DA item must be String or String[]");
-                }
-            }
-            items = newItems.toArray(new String[0]);
-        }
-        return items;
     }
 
     private static void processSubscriber(Map<String, List<OpcDaConsumer>> consumerMap, List<OpcDaSubscriber> subscribers, OpcDaProperties properties) {

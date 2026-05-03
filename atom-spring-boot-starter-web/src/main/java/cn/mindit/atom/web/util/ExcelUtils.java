@@ -863,26 +863,60 @@ public abstract class ExcelUtils {
         }
     }
 
+    private static final byte[] BORDER_RGB = {(byte) 255, (byte) 255, (byte) 255};
+    private static final byte[] HEAD_BG_RGB = {(byte) 72, (byte) 85, (byte) 106};
+    private static final byte[] HEAD_TEXT_RGB = {(byte) 255, (byte) 255, (byte) 255};
+    private static final byte[] BODY_BG_RGB = {(byte) 227, (byte) 232, (byte) 240};
+    private static final byte[] BODY_TEXT_RGB = {(byte) 0, (byte) 0, (byte) 0};
+
     private static CellWriteHandler defaultCellStyle() {
         return new CellWriteHandler() {
+            private XSSFCellStyle headStyle;
+            private XSSFCellStyle bodyStyle;
+            private boolean columnWidthSet;
+
             @Override
             public void afterCellDispose(CellWriteHandlerContext context) {
                 Cell cell = context.getCell();
                 Row row = context.getRow();
                 Workbook workbook = context.getWriteWorkbookHolder().getWorkbook();
-                XSSFCellStyle cellStyle = (XSSFCellStyle) workbook.createCellStyle();
                 Sheet sheet = context.getWriteSheetHolder().getSheet();
-                Boolean isHead = context.getHead();
+                boolean isHead = Boolean.TRUE.equals(context.getHead());
 
-                // 设置列宽
-                sheet.setDefaultColumnWidth(22);
+                if (!columnWidthSet) {
+                    sheet.setDefaultColumnWidth(22);
+                    columnWidthSet = true;
+                }
 
-                // 居中
+                XSSFCellStyle cellStyle;
+                if (isHead) {
+                    if (headStyle == null) {
+                        headStyle = buildStyle(workbook, true);
+                    }
+                    cellStyle = headStyle;
+                    if (cell.getColumnIndex() == 0) {
+                        row.setHeightInPoints(35);
+                    }
+                } else {
+                    if (bodyStyle == null) {
+                        bodyStyle = buildStyle(workbook, false);
+                    }
+                    cellStyle = bodyStyle;
+                    if (cell.getColumnIndex() == 0) {
+                        row.setHeightInPoints(30);
+                    }
+                }
+
+                cell.setCellStyle(cellStyle);
+                context.getFirstCellData().setWriteCellStyle(null);
+            }
+
+            private XSSFCellStyle buildStyle(Workbook workbook, boolean isHead) {
+                XSSFCellStyle cellStyle = (XSSFCellStyle) workbook.createCellStyle();
                 cellStyle.setAlignment(HorizontalAlignment.CENTER);
                 cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
-                // 边框样式
-                XSSFColor borderColor = new XSSFColor(new byte[]{(byte) 255, (byte) 255, (byte) 255});
+                XSSFColor borderColor = new XSSFColor(BORDER_RGB);
                 cellStyle.setTopBorderColor(borderColor);
                 cellStyle.setBottomBorderColor(borderColor);
                 cellStyle.setLeftBorderColor(borderColor);
@@ -891,38 +925,23 @@ public abstract class ExcelUtils {
                 cellStyle.setBorderBottom(BorderStyle.THIN);
                 cellStyle.setBorderLeft(BorderStyle.THIN);
                 cellStyle.setBorderRight(BorderStyle.THIN);
-
-                // 背景颜色
                 cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                XSSFColor bgColor, textColor;
+
+                XSSFColor bgColor = new XSSFColor(isHead ? HEAD_BG_RGB : BODY_BG_RGB);
+                XSSFColor textColor = new XSSFColor(isHead ? HEAD_TEXT_RGB : BODY_TEXT_RGB);
+                cellStyle.setFillForegroundColor(bgColor);
+
                 XSSFFont font = (XSSFFont) workbook.createFont();
-                if (isHead) { // 标题
-                    row.setHeightInPoints(35);
-                    bgColor = new XSSFColor(new byte[]{(byte) 72, (byte) 85, (byte) 106});
-                    textColor = new XSSFColor(new byte[]{(byte) 255, (byte) 255, (byte) 255});
-                    font.setFontName("宋体");
+                font.setFontName("宋体");
+                font.setColor(textColor);
+                if (isHead) {
                     font.setBold(true);
-                    font.setColor(textColor);
                     font.setFontHeightInPoints((short) 14);
-                } else { // 内容
-                    row.setHeightInPoints(30);
-                    // // 斑马线
-                    // if (row.getRowNum() % 2 == 0) {
-                    //     bgColor = new XSSFColor(new byte[]{(byte) 242, (byte) 245, (byte) 249});
-                    // } else {
-                    //     bgColor = new XSSFColor(new byte[]{(byte) 227, (byte) 232, (byte) 240});
-                    // }
-                    bgColor = new XSSFColor(new byte[]{(byte) 227, (byte) 232, (byte) 240});
-                    textColor = new XSSFColor(new byte[]{(byte) 0, (byte) 0, (byte) 0});
-                    font.setFontName("宋体");
-                    font.setColor(textColor);
+                } else {
                     font.setFontHeightInPoints((short) 12);
                 }
-                cellStyle.setFillForegroundColor(bgColor);
                 cellStyle.setFont(font);
-
-                cell.setCellStyle(cellStyle);
-                context.getFirstCellData().setWriteCellStyle(null);
+                return cellStyle;
             }
         };
     }

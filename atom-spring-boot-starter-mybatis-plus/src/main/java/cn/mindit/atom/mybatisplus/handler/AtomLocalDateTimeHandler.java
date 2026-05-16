@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  * @since 2024-10-28
  */
 @Slf4j
-@MappedJdbcTypes({JdbcType.TIMESTAMP, JdbcType.TIMESTAMP_WITH_TIMEZONE})
+@MappedJdbcTypes(JdbcType.TIMESTAMP)
 @MappedTypes({LocalDateTime.class, Timestamp.class})
 public class AtomLocalDateTimeHandler extends LocalDateTimeTypeHandler {
 

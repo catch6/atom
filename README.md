@@ -88,7 +88,7 @@
 <parent>
   <groupId>cn.mindit</groupId>
   <artifactId>atom-parent</artifactId>
-  <version>4.0.2</version>
+  <version>4.0.3</version>
   <relativePath/>
 </parent>
 ```
@@ -104,7 +104,7 @@
     <dependency>
       <groupId>cn.mindit</groupId>
       <artifactId>atom-dependencies</artifactId>
-      <version>4.0.2</version>
+      <version>4.0.3</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
